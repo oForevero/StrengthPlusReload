@@ -1,0 +1,13 @@
+name: strengthPlus
+main: top.mccat.StrengthPlus
+# 插件版本
+version: 2.1.0-Alpha
+# api版本
+api-version: 1.19
+
+#softdepend:
+commands:
+  sp:
+    description: "strengthPlus command"
+    usage: /sp
+    aliases: [ stregnthplus,qh ]
