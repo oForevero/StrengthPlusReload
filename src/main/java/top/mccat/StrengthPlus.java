@@ -1,6 +1,10 @@
 package top.mccat;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import top.mccat.utils.YamlLoadUtils;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author Raven
@@ -10,6 +14,7 @@ public class StrengthPlus extends JavaPlugin {
     @Override
     public void onLoad() {
         super.onLoad();
+
     }
 
     @Override

@@ -12,8 +12,7 @@ import java.util.ArrayList;
  */
 public class LoreList extends ArrayList<String> {
     public LoreList() {
-        Yaml yaml = new Yaml();
-        yaml.load(new InputStreamReader(LoreList.class.getClassLoader().getResourceAsStream("strength-")));
+
     }
 
     @Override
