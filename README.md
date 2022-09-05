@@ -1,2 +1,2 @@
 # StrengthPlusReload
-a minecraft plugin for 
+a minecraft plugin for Weapon or armor strengh
