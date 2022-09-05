@@ -39,6 +39,19 @@ public class YamlLoadUtils{
         InputStream resourceAsStream = YamlLoadUtils.class.getClassLoader().getResourceAsStream(fileAddress);
         return YAML_OBJ.load(resourceAsStream);
     }
+
+    /**
+     * 进行yaml数据转换为 object
+     * @param fileAddress
+     * @param pluginPath
+     * @param sectionAddress
+     * @param configObj
+     * @return
+     * @throws IOException
+     * @throws InvalidConfigurationException
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     */
     public static Optional<Object> loadYamlAsObject(String fileAddress, String pluginPath, String sectionAddress, Object configObj) throws IOException, InvalidConfigurationException, InvocationTargetException, IllegalAccessException {
         ESSENTIALS_CONFIG.load(new File(pluginPath+"/"+fileAddress));
         ConfigurationSection configurationSection = ESSENTIALS_CONFIG.getConfigurationSection(sectionAddress);
@@ -49,13 +62,13 @@ public class YamlLoadUtils{
         Field[] fields = aClass.getDeclaredFields();
         Map<String, Object> values = configurationSection.getValues(true);
         Method[] methods = aClass.getMethods();
-        String methodName = "";
+        String methodName;
         for(Field field : fields){
             for(Method method : methods){
                 if ((methodName = (method.getName())).contains("set")){
                     String key = field.getAnnotation(Value.class).value();
                     if(methodName.substring(3).equalsIgnoreCase(field.getName())){
-                        method.invoke(configObj,key);
+                        method.invoke(configObj,values.get(key));
                     }
                 }
             }

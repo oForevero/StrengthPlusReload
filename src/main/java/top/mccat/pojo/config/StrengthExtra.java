@@ -37,6 +37,30 @@ public class StrengthExtra {
         this.bowDamage = bowDamage;
     }
 
+    public double getCrossBow() {
+        return crossBow;
+    }
+
+    public void setCrossBow(double crossBow) {
+        this.crossBow = crossBow;
+    }
+
+    public double getArmorDefence() {
+        return armorDefence;
+    }
+
+    public void setArmorDefence(double armorDefence) {
+        this.armorDefence = armorDefence;
+    }
+
+    public double getMinDamage() {
+        return minDamage;
+    }
+
+    public void setMinDamage(double minDamage) {
+        this.minDamage = minDamage;
+    }
+
     @Override
     public String toString() {
         return "StrengthExtra{" +
