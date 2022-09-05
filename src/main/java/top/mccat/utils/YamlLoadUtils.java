@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * @author Raven
@@ -42,15 +41,15 @@ public class YamlLoadUtils{
 
     /**
      * 进行yaml数据转换为 object
-     * @param fileAddress
-     * @param pluginPath
-     * @param sectionAddress
-     * @param configObj
-     * @return
-     * @throws IOException
-     * @throws InvalidConfigurationException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
+     * @param fileAddress 文件地址
+     * @param pluginPath 插件地址
+     * @param sectionAddress 配置文件
+     * @param configObj obj对象
+     * @return Optional 包装器的对象
+     * @throws IOException io异常
+     * @throws InvalidConfigurationException 配置文件不存在的异常
+     * @throws InvocationTargetException 方法代理异常
+     * @throws IllegalAccessException 无访问权限异常
      */
     public static Optional<Object> loadYamlAsObject(String fileAddress, String pluginPath, String sectionAddress, Object configObj) throws IOException, InvalidConfigurationException, InvocationTargetException, IllegalAccessException {
         ESSENTIALS_CONFIG.load(new File(pluginPath+"/"+fileAddress));
@@ -66,8 +65,8 @@ public class YamlLoadUtils{
         for(Field field : fields){
             for(Method method : methods){
                 if ((methodName = (method.getName())).contains("set")){
-                    String key = field.getAnnotation(Value.class).value();
                     if(methodName.substring(3).equalsIgnoreCase(field.getName())){
+                        String key = field.getAnnotation(Value.class).value();
                         method.invoke(configObj,values.get(key));
                     }
                 }
