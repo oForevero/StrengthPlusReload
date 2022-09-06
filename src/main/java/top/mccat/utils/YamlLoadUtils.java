@@ -44,34 +44,34 @@ public class YamlLoadUtils{
      * @param fileAddress 文件地址
      * @param pluginPath 插件地址
      * @param sectionAddress 配置文件
-     * @param configObj obj对象
+     * @param configClass obj对象
      * @return Optional 包装器的对象
      * @throws IOException io异常
      * @throws InvalidConfigurationException 配置文件不存在的异常
      * @throws InvocationTargetException 方法代理异常
      * @throws IllegalAccessException 无访问权限异常
      */
-    public static Optional<Object> loadYamlAsObject(String fileAddress, String pluginPath, String sectionAddress, Object configObj) throws IOException, InvalidConfigurationException, InvocationTargetException, IllegalAccessException {
+    public static Optional<Object> loadYamlAsObject(String fileAddress, String pluginPath, String sectionAddress, Class configClass) throws IOException, InvalidConfigurationException, InvocationTargetException, IllegalAccessException, InstantiationException {
         ESSENTIALS_CONFIG.load(new File(pluginPath+"/"+fileAddress));
         ConfigurationSection configurationSection = ESSENTIALS_CONFIG.getConfigurationSection(sectionAddress);
         if(configurationSection==null){
             return Optional.empty();
         }
-        Class<?> aClass = configObj.getClass();
-        Field[] fields = aClass.getDeclaredFields();
+        Field[] fields = configClass.getDeclaredFields();
         Map<String, Object> values = configurationSection.getValues(true);
-        Method[] methods = aClass.getMethods();
+        Method[] methods = configClass.getMethods();
         String methodName;
+        Object o = configClass.newInstance();
         for(Field field : fields){
             for(Method method : methods){
                 if ((methodName = (method.getName())).contains("set")){
                     if(methodName.substring(3).equalsIgnoreCase(field.getName())){
                         String key = field.getAnnotation(Value.class).value();
-                        method.invoke(configObj,values.get(key));
+                        method.invoke(o,values.get(key));
                     }
                 }
             }
         }
-        return Optional.of(configObj);
+        return Optional.of(o);
     }
 }
