@@ -1,7 +1,8 @@
 package top.mccat.enums;
 
 /**
- * @author Distance
+ * @author Raven
+ * @date 2022/09/06 21:31
  */
 
 public enum BaseData {
