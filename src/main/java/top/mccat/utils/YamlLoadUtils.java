@@ -13,8 +13,10 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author Raven
@@ -95,12 +97,15 @@ public class YamlLoadUtils{
         }
         Field[] fields = configClass.getDeclaredFields();
         System.out.println(configurationSection);
-        configurationSection.get(sectionAddress);
+        List<?> mapList = configurationSection.getList("stones");
+        for(Object map : mapList){
+            System.out.println(map);
+        }
         Map<String, Object> values = configurationSection.getValues(true);
-        for (String key : values.keySet()){
+        /*for (String key : values.keySet()){
             Object o = values.get(key);
             System.out.println(o);
-        }
+        }*/
         /*Method[] methods = configClass.getMethods();
         String methodName;
         Object o = configClass.newInstance();
