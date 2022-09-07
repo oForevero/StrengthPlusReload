@@ -74,4 +74,47 @@ public class YamlLoadUtils{
         }
         return Optional.of(o);
     }
+
+    /**
+     * 进行yaml数据转换为 object
+     * @param fileAddress 文件地址
+     * @param pluginPath 插件地址
+     * @param sectionAddress 配置文件
+     * @param configClass obj对象
+     * @return Optional 包装器的对象
+     * @throws IOException io异常
+     * @throws InvalidConfigurationException 配置文件不存在的异常
+     * @throws InvocationTargetException 方法代理异常
+     * @throws IllegalAccessException 无访问权限异常
+     */
+    public static Optional<Object> loadYamlArrayAsObject(String fileAddress, String pluginPath, String sectionAddress, Class configClass) throws IOException, InvalidConfigurationException, InvocationTargetException, IllegalAccessException, InstantiationException {
+        ESSENTIALS_CONFIG.load(new File(pluginPath+"/"+fileAddress));
+        ConfigurationSection configurationSection = ESSENTIALS_CONFIG.getConfigurationSection(sectionAddress);
+        if(configurationSection==null){
+            return Optional.empty();
+        }
+        Field[] fields = configClass.getDeclaredFields();
+        System.out.println(configurationSection);
+        configurationSection.get(sectionAddress);
+        Map<String, Object> values = configurationSection.getValues(true);
+        for (String key : values.keySet()){
+            Object o = values.get(key);
+            System.out.println(o);
+        }
+        /*Method[] methods = configClass.getMethods();
+        String methodName;
+        Object o = configClass.newInstance();
+        for(Field field : fields){
+            for(Method method : methods){
+                if ((methodName = (method.getName())).contains("set")){
+                    if(methodName.substring(3).equalsIgnoreCase(field.getName())){
+                        String key = field.getAnnotation(Value.class).value();
+                        method.invoke(o,values.get(key));
+                    }
+                }
+            }
+        }*/
+        //return Optional.ofNullable(o);
+        return null;
+    }
 }

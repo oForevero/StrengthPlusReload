@@ -2,19 +2,14 @@ package top.mccat.utils;
 
 import com.sun.istack.internal.NotNull;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-import top.mccat.enums.BaseData;
+import top.mccat.enums.BaseDir;
 import top.mccat.pojo.config.BaseConfig;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Optional;
 
 /**
@@ -90,7 +85,7 @@ public class MsgUtils {
      */
     public void reloadMsgConfig(){
         try {
-            Optional<Object> config = YamlLoadUtils.loadYamlAsObject("config.yml", BaseData.BASE_DIR.getDir(), "strengthPlus", BaseConfig.class);
+            Optional<Object> config = YamlLoadUtils.loadYamlAsObject("config.yml", BaseDir.BASE_DIR.getDir(), "strengthPlus", BaseConfig.class);
             config.ifPresent(o -> baseConfig = (BaseConfig) o);
         } catch (IOException | InvalidConfigurationException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
             sendToConsole(baseConfig.getTitle(),"&c错误");

@@ -5,14 +5,14 @@ package top.mccat.enums;
  * @date 2022/09/06 21:31
  */
 
-public enum BaseData {
+public enum BaseDir {
     /**
      * 对应文件地址
      */
-    BASE_DIR("plugins/strengthPlus");
+    BASE_DIR("plugins/StrengthPlus");
     private final String dir;
 
-    BaseData(String dir) {
+    BaseDir(String dir) {
         this.dir = dir;
     }
 
