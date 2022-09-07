@@ -1,15 +1,12 @@
 package top.mccat;
 
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 import top.mccat.pojo.BaseData;
-import top.mccat.pojo.config.StrengthExtra;
+import top.mccat.pojo.bean.StrengthStone;
 import top.mccat.utils.MsgUtils;
 import top.mccat.utils.YamlLoadUtils;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Optional;
+import java.util.List;
 
 /**
  * @author Raven
@@ -37,7 +34,11 @@ public class StrengthPlus extends JavaPlugin {
             e.printStackTrace();
         }*/
         try {
-            YamlLoadUtils.loadYamlArrayAsObject("strength-stone.yml", String.valueOf(this.getDataFolder()), "strength-stone", StrengthExtra.class);
+            List<Object> objects = YamlLoadUtils.loadYamlArrayAsObject("strength-stone.yml", String.valueOf(this.getDataFolder()), "strength-stone", StrengthStone.class).get();
+            for(Object strengthStone : objects){
+                StrengthStone stone = (StrengthStone) strengthStone;
+                System.out.println(stone);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
