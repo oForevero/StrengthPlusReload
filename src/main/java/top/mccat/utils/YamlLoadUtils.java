@@ -54,6 +54,7 @@ public class YamlLoadUtils{
      * @throws IllegalAccessException 无访问权限异常
      */
     public static Optional<Object> loadYamlAsObject(String fileAddress, String pluginPath, String sectionAddress, Class configClass) throws IOException, InvalidConfigurationException, InvocationTargetException, IllegalAccessException, InstantiationException {
+        //记得增加 isexist方法
         ESSENTIALS_CONFIG.load(new File(pluginPath+"/"+fileAddress));
         ConfigurationSection configurationSection = ESSENTIALS_CONFIG.getConfigurationSection(sectionAddress);
         if(configurationSection==null){
