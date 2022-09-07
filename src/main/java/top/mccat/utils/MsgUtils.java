@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import top.mccat.enums.BaseDir;
+import top.mccat.pojo.BaseData;
 import top.mccat.pojo.config.BaseConfig;
 
 import java.io.IOException;
@@ -87,8 +88,8 @@ public class MsgUtils {
         try {
             Optional<Object> config = YamlLoadUtils.loadYamlAsObject("config.yml", BaseDir.BASE_DIR.getDir(), "strengthPlus", BaseConfig.class);
             config.ifPresent(o -> baseConfig = (BaseConfig) o);
-        } catch (IOException | InvalidConfigurationException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
-            sendToConsole(baseConfig.getTitle(),"&c错误");
+        } catch (IOException | IllegalAccessException | InstantiationException e) {
+            sendToConsole(BaseData.PLUGIN_PREFIX,"&c错误，io流读取失败或没有权限进行操作！");
         }
     }
 }

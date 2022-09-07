@@ -6,6 +6,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.yaml.snakeyaml.Yaml;
 import top.mccat.anno.Value;
+import top.mccat.pojo.BaseData;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +30,7 @@ public class YamlLoadUtils{
      */
     public final static Yaml YAML_OBJ = new Yaml();
     private final static FileConfiguration ESSENTIALS_CONFIG = new YamlConfiguration();
+    private final static MsgUtils MSG_UTILS = MsgUtils.newInstance();
     private YamlLoadUtils(){}
 
     /**
@@ -49,13 +51,19 @@ public class YamlLoadUtils{
      * @param configClass obj对象
      * @return Optional 包装器的对象
      * @throws IOException io异常
-     * @throws InvalidConfigurationException 配置文件不存在的异常
-     * @throws InvocationTargetException 方法代理异常
      * @throws IllegalAccessException 无访问权限异常
      */
-    public static Optional<Object> loadYamlAsObject(String fileAddress, String pluginPath, String sectionAddress, Class configClass) throws IOException, InvalidConfigurationException, InvocationTargetException, IllegalAccessException, InstantiationException {
+    public static Optional<Object> loadYamlAsObject(String fileAddress, String pluginPath, String sectionAddress, Class configClass) throws IOException, IllegalAccessException, InstantiationException {
+        File file = new File(pluginPath+"/"+fileAddress);
+        if (!file.exists()){
+            return Optional.empty();
+        }
         //记得增加 isexist方法
-        ESSENTIALS_CONFIG.load(new File(pluginPath+"/"+fileAddress));
+        try {
+            ESSENTIALS_CONFIG.load(file);
+        } catch (InvalidConfigurationException e) {
+            MSG_UTILS.sendToConsole(BaseData.PLUGIN_PREFIX,"&c错误");
+        }
         ConfigurationSection configurationSection = ESSENTIALS_CONFIG.getConfigurationSection(sectionAddress);
         if(configurationSection==null){
             return Optional.empty();
@@ -70,7 +78,11 @@ public class YamlLoadUtils{
                 if ((methodName = (method.getName())).contains("set")){
                     if(methodName.substring(3).equalsIgnoreCase(field.getName())){
                         String key = field.getAnnotation(Value.class).value();
-                        method.invoke(o,values.get(key));
+                        try {
+                            method.invoke(o,values.get(key));
+                        } catch (InvocationTargetException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
