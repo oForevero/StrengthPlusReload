@@ -1,6 +1,7 @@
 package top.mccat;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import top.mccat.factory.ConfigFactory;
 import top.mccat.pojo.BaseData;
 import top.mccat.pojo.bean.StrengthStone;
 import top.mccat.utils.MsgUtils;
@@ -14,9 +15,12 @@ import java.util.List;
  */
 public class StrengthPlus extends JavaPlugin {
     private MsgUtils msgUtils;
+    private ConfigFactory factory;
     @Override
     public void onLoad() {
         msgUtils = MsgUtils.newInstance();
+        factory = ConfigFactory.newInstance(this);
+        factory.writeConfigFile();
         sendToConsole("&c 正在初始化StrengthPlus中，请稍后...");
     }
 
@@ -53,6 +57,7 @@ public class StrengthPlus extends JavaPlugin {
     @Override
     public void reloadConfig() {
         super.reloadConfig();
+
     }
 
     private void sendToConsole(String msg){
