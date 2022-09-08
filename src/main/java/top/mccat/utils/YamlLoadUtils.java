@@ -7,8 +7,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.yaml.snakeyaml.Yaml;
 import top.mccat.anno.Value;
 import top.mccat.pojo.BaseData;
-import top.mccat.pojo.bean.StrengthStone;
-import top.mccat.pojo.list.LoreList;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,12 +50,12 @@ public class YamlLoadUtils{
      * @throws IOException io异常
      * @throws IllegalAccessException 无访问权限异常
      */
-    public static Optional<Object> loadYamlAsObject(String fileAddress, String pluginPath, String sectionAddress, Class configClass) throws IOException, IllegalAccessException, InstantiationException {
+    public static Optional<Object> loadYamlAsObject(String fileAddress, String pluginPath, String sectionAddress, Class<top.mccat.pojo.config.BaseConfig> configClass) throws IOException, IllegalAccessException, InstantiationException {
         File file = new File(pluginPath+"/"+fileAddress);
         if (!file.exists()){
             return Optional.empty();
         }
-        //记得增加 isexist方法
+        //记得增加 isExist方法
         try {
             ESSENTIALS_CONFIG.load(file);
         } catch (InvalidConfigurationException e) {
@@ -75,8 +73,8 @@ public class YamlLoadUtils{
         for(Field field : fields){
             for(Method method : methods){
                 if ((methodName = (method.getName())).contains("set")){
-                    if(methodName.substring(3).equalsIgnoreCase(field.getName())){
-                        String key = field.getAnnotation(Value.class).value();
+                    String key = field.getAnnotation(Value.class).value();
+                    if(methodName.substring(3).equalsIgnoreCase(field.getName()) && values.containsKey(key)){
                         try {
                             method.invoke(o,values.get(key));
                         } catch (InvocationTargetException e) {
@@ -93,6 +91,7 @@ public class YamlLoadUtils{
      * 进行yaml数据转换为 object
      * @param fileAddress 文件地址
      * @param pluginPath 插件地址
+     * @param idName 类数据名
      * @param sectionAddress 配置文件
      * @param configClass obj对象
      * @return Optional 包装器的对象
@@ -101,7 +100,7 @@ public class YamlLoadUtils{
      * @throws InvocationTargetException 方法代理异常
      * @throws IllegalAccessException 无访问权限异常
      */
-    public static Optional<List<Object>> loadYamlArrayAsObject(String fileAddress, String pluginPath, String sectionAddress, Class configClass) throws IOException, InvalidConfigurationException, InvocationTargetException, IllegalAccessException, InstantiationException {
+    public static Optional<List<Object>> loadYamlArrayAsObject(String fileAddress, String pluginPath, String idName, String sectionAddress, Class configClass) throws IOException, InvalidConfigurationException, InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
         ESSENTIALS_CONFIG.load(new File(pluginPath+"/"+fileAddress));
         ConfigurationSection configurationSection = ESSENTIALS_CONFIG.getConfigurationSection(sectionAddress);
         if(configurationSection==null){
@@ -112,17 +111,20 @@ public class YamlLoadUtils{
         List<Object> dataList = new ArrayList<>();
         Method[] methods = configClass.getMethods();
         String methodName;
+        Map<String, Object> values = configurationSection.getValues(true);
         for (String dataName : objectMap.keySet()){
             Object o = configClass.newInstance();
-            Map<String, Object> values = configurationSection.getValues(true);
+            if (!dataName.contains(".")){
+                configClass.getMethod(idName,String.class).invoke(o,dataName);
+            }
             for(Field field : fields){
                 for(Method method : methods){
                     if ((methodName = (method.getName())).contains("set")){
                         if(methodName.substring(3).equalsIgnoreCase(field.getName())){
                             String key = dataName+"."+field.getAnnotation(Value.class).value();
-                            System.out.println(key);
-                            System.out.println(values.get(key).getClass().getName());
-                            method.invoke(o,values.get(key));
+                            if(values.containsKey(key)) {
+                                method.invoke(o, values.get(key));
+                            }
                         }
                     }
                 }

@@ -1,5 +1,6 @@
 name: StrengthPlus
 main: top.mccat.StrengthPlus
+author: raven
 # 插件版本
 version: 2.1.0-Alpha
 # api版本

@@ -16,15 +16,23 @@ public class StrengthStone {
     @Value("lore")
     private List<String> lore;
     @Value("isSafe")
-    private boolean isSafe = false;
+    private boolean safe = false;
     @Value("isSuccess")
-    private boolean isSuccess = false;
+    private boolean success = false;
     @Value("isAdmin")
-    private boolean isAdmin = false;
+    private boolean admin = false;
     @Value("chanceExtra")
     private int chanceExtra = 0;
 
     public StrengthStone() {
+    }
+
+    public void putStoneMaterials(String stoneMaterials) {
+        this.stoneMaterials = stoneMaterials;
+    }
+
+    public String getStoneMaterials() {
+        return stoneMaterials;
     }
 
     public String getName() {
@@ -44,27 +52,27 @@ public class StrengthStone {
     }
 
     public boolean isSafe() {
-        return isSafe;
+        return safe;
     }
 
     public void setSafe(Object safe) {
-        isSafe = (boolean) safe;
+        this.safe = (boolean) safe;
     }
 
     public boolean isSuccess() {
-        return isSuccess;
+        return success;
     }
 
     public void setSuccess(Object success) {
-        isSuccess = (boolean) success;
+        this.success = (boolean) success;
     }
 
     public boolean isAdmin() {
-        return isAdmin;
+        return admin;
     }
 
     public void setAdmin(Object admin) {
-        isAdmin = (boolean) admin;
+        this.admin = (boolean) admin;
     }
 
     public int getChanceExtra() {
@@ -85,9 +93,9 @@ public class StrengthStone {
                 "stoneMaterials='" + stoneMaterials + '\'' +
                 ", name='" + name + '\'' +
                 ", lore=" + lore +
-                ", isSafe=" + isSafe +
-                ", isSuccess=" + isSuccess +
-                ", isAdmin=" + isAdmin +
+                ", isSafe=" + safe +
+                ", isSuccess=" + success +
+                ", isAdmin=" + admin +
                 ", chanceExtra=" + chanceExtra +
                 '}';
     }

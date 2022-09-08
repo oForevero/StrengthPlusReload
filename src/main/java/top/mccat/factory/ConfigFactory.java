@@ -5,4 +5,9 @@ package top.mccat.factory;
  * @date 2022/09/05 15:44
  */
 public class ConfigFactory {
+    private ConfigFactory(){
+
+    }
+
+
 }

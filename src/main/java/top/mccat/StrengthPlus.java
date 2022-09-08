@@ -34,7 +34,8 @@ public class StrengthPlus extends JavaPlugin {
             e.printStackTrace();
         }*/
         try {
-            List<Object> objects = YamlLoadUtils.loadYamlArrayAsObject("strength-stone.yml", String.valueOf(this.getDataFolder()), "strength-stone", StrengthStone.class).get();
+            List<Object> objects = YamlLoadUtils.loadYamlArrayAsObject("strength-stone.yml", String.valueOf(this.getDataFolder()),
+                    "putStoneMaterials", "strength-stone", StrengthStone.class).get();
             for(Object strengthStone : objects){
                 StrengthStone stone = (StrengthStone) strengthStone;
                 System.out.println(stone);
