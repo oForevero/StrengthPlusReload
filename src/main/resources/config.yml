@@ -2,13 +2,8 @@ strengthPlus:
   pluginName: '&e[&b&lStrengthPlus&e]'
   # 是否允许调试模式
   debug: true
-  # 强化lore标题
-  title: '&b[强化等级]:'
-  # 强化lore分割线长度
-  divider: '----------------'
-  # 强化lore等级标识（单一等级标签）
-  levelIcon: '✡'
-  # 每几个等级标识一换行
-  nextLineCount: 10
+  # 是否允许强化menu
+  enableMenu: true
+
 
 

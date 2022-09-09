@@ -1,0 +1,49 @@
+strength-lore:
+  # 强化lore标题
+  title: '&b[强化等级]:'
+  # 强化lore分割线长度
+  divider: '----------------'
+  # 强化lore等级标识（单一等级标签）
+  levelIcon: '✡'
+  # 每几个等级标识一换行
+  nextLineCount: 10
+  # 特殊属性，在允许的属性后增加额外数据
+  especialAttribute:
+    # 近战类型允许的特殊附魔
+    melee:
+      bloodSuck: {
+        name: '&a[&c生命偷取&a]',
+        enable: false,
+      }
+      absoluteDamage: {
+        name: '&a[&6绝对伤害&a]',
+        enable: false
+      }
+      # 给持有玩家赋予力量2属性，持续时间五秒，手握就一直持续
+      powerBlessing: {
+        name: '&a[&b力量祝福&a]',
+        enable: false
+      }
+    remote:
+      bloodSuck: {
+        name: '&a[&c生命偷取&a]',
+        enable: false
+      }
+      absoluteDamage: {
+        name: '&a[&6穿甲伤害&a]',
+        enable: false
+      }
+    defence:
+      protectBlessing: {
+        name: '&a[&b保护祝福&a]',
+        enable: false
+      }
+      slowReply: {
+        name: '&a[&6缓慢恢复&a]',
+        enable: false
+      }
+  attribute:
+    # 基础属性
+    meleeDamage: '&a[&c锋利附加&a]'
+    remotelyDamage: '&a[&c穿透附加&a]'
+    armorDefence: '&a[&b伤害抵御&a]'

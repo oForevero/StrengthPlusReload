@@ -1,6 +1,4 @@
 strength-menu:
-  # 是否使用强化菜单
-  enable: true
   # 强化菜单的title
   menuTitle: '&c&l[&e&lStrengthPlus&c&l]&3&l强化菜单'
   # 是否显示强化几率

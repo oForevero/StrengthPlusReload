@@ -11,14 +11,9 @@ public class BaseConfig {
     private String pluginName;
     @Value("debug")
     private boolean debug;
-    @Value("title")
-    private String title;
-    @Value("divider")
-    private String divider;
-    @Value("levelIcon")
-    private String levelIcon;
-    @Value("nextLineCount")
-    private int nextLineCount;
+    @Value("enableMenu")
+    private boolean enableMenu;
+
 
     public BaseConfig() {
     }
@@ -39,36 +34,12 @@ public class BaseConfig {
         this.debug = (boolean) debug;
     }
 
-    public String getTitle() {
-        return title;
+    public boolean isEnableMenu() {
+        return enableMenu;
     }
 
-    public void setTitle(Object title) {
-        this.title = String.valueOf(title);
-    }
-
-    public String getDivider() {
-        return divider;
-    }
-
-    public void setDivider(Object divider) {
-        this.divider = String.valueOf(divider);
-    }
-
-    public String getLevelIcon() {
-        return levelIcon;
-    }
-
-    public void setLevelIcon(Object levelIcon) {
-        this.levelIcon = String.valueOf(levelIcon);
-    }
-
-    public int getNextLineCount() {
-        return nextLineCount;
-    }
-
-    public void setNextLineCount(Object nextLineCount) {
-        this.nextLineCount = (int) nextLineCount;
+    public void setEnableMenu(boolean enableMenu) {
+        this.enableMenu = enableMenu;
     }
 
     @Override
@@ -76,10 +47,7 @@ public class BaseConfig {
         return "BaseConfig{" +
                 "pluginName='" + pluginName + '\'' +
                 ", debug=" + debug +
-                ", title='" + title + '\'' +
-                ", divider='" + divider + '\'' +
-                ", levelIcon='" + levelIcon + '\'' +
-                ", nextLineCount=" + nextLineCount +
+                ", enableMenu=" + enableMenu +
                 '}';
     }
 }

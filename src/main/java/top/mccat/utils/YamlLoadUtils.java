@@ -50,7 +50,7 @@ public class YamlLoadUtils{
      * @throws IOException io异常
      * @throws IllegalAccessException 无访问权限异常
      */
-    public static Optional<Object> loadYamlAsObject(String fileAddress, String pluginPath, String sectionAddress, Class<top.mccat.pojo.config.BaseConfig> configClass) throws IOException, IllegalAccessException, InstantiationException {
+    public static Optional<Object> loadYamlAsObject(String fileAddress, String pluginPath, String sectionAddress, Class configClass) throws IOException, IllegalAccessException, InstantiationException {
         File file = new File(pluginPath+"/"+fileAddress);
         if (!file.exists()){
             return Optional.empty();
