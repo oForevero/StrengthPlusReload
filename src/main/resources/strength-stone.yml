@@ -6,29 +6,47 @@ strength-stone:
     lore:
       - '仅用于普通强化的强化石'
       - 'demo for test'
-    # 是否为保护强化，必定成功强化，管理员强化（不填默认为false）
-    isSafe: false
-    # 是否为必定成功强化（不填默认为false）
-    isSuccess: false
-    # 是否为管理员强化，一键满级（不填默认为false）
-    isAdmin: false
-    # 额外强化几率，不填默认为0，参数为百分比类型增加，譬如1 为 1%
+    # 是否为保护强化，必定成功强化，管理员强化
+    safe: false
+    # 是否为必定成功强化
+    success: false
+    # 是否为管理员强化，一键满级（
+    admin: false
+    # 额外强化几率
     chanceExtra: 0
   safe-stone:
     name: '保护强化卷'
     lore:
       - '用于使强化物品不破碎的强化'
     # 是否为保护强化，必定成功强化，管理员强化
-    isSafe: true
+    safe: false
+    # 是否为必定成功强化
+    success: false
+    # 是否为管理员强化，一键满级（
+    admin: false
+    # 额外强化几率
+    chanceExtra: 0
   success-stone:
     name: '必定成功强化卷'
     lore:
       - '用于强化物品，本次强化必定成功'
+    # 是否为保护强化，必定成功强化，管理员强化
+    safe: false
     # 是否为必定成功强化
-    isSuccess: true
+    success: false
+    # 是否为管理员强化，一键满级（
+    admin: false
+    # 额外强化几率
+    chanceExtra: 0
   admin-stone:
     name: '管理员强化石'
     lore:
       - '用于强化物品，直接强化到满级'
-    # 是否为管理员强化
-    isAdmin: true
+    # 是否为保护强化，必定成功强化，管理员强化
+    safe: false
+    # 是否为必定成功强化
+    success: false
+    # 是否为管理员强化，一键满级（
+    admin: false
+    # 额外强化几率
+    chanceExtra: 0

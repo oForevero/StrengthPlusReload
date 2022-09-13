@@ -4,10 +4,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import top.mccat.factory.ConfigFactory;
 import top.mccat.pojo.BaseData;
 import top.mccat.pojo.bean.StrengthStone;
+import top.mccat.pojo.config.StrengthAttribute;
+import top.mccat.pojo.config.StrengthExtra;
 import top.mccat.utils.MsgUtils;
 import top.mccat.utils.YamlLoadUtils;
 
-import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author Raven
@@ -27,26 +31,30 @@ public class StrengthPlus extends JavaPlugin {
     @Override
     public void onEnable() {
         sendToConsole("&c 正在注入yaml配置文件对象...");
-        /*demo测试
         MsgUtils msgUtils = MsgUtils.newInstance();
         msgUtils.sendToBroadcast("demo");
         System.out.println(this.getDataFolder());
         try {
-            Optional<Object> o = YamlLoadUtils.loadYamlAsObject("strength-extra.yml", String.valueOf(this.getDataFolder()), "strength-extra", StrengthExtra.class);
-            System.out.println(o.toString());
-        } catch (IOException | InvalidConfigurationException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
+            Optional<Object> o = YamlLoadUtils.loadConfigObject("strength-attribute.yml", String.valueOf(this.getDataFolder()),
+                    "strength-attribute", StrengthAttribute.class);
+            System.out.println(o.get());
+            /*Optional<Object> o = YamlLoadUtils.loadConfigObject("strength-stone.yml", String.valueOf(this.getDataFolder()),
+                    "strength-stone", StrengthStone.class);
+            Map<String,StrengthStone> strengthStoneMap = (Map<String, StrengthStone>) o.get();
+            Set<String> keySet = strengthStoneMap.keySet();
+            for (String s : keySet) {
+                System.out.println(strengthStoneMap.get(s));
+            }*/
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        /*try {
+            Object objects = YamlLoadUtils.loadYamlArrayAsObject("strength-stone.yml", String.valueOf(this.getDataFolder()),"putStoneMaterials",
+                    "strength-stone", StrengthStone.class).get();
+            System.out.println(objects);
+        } catch (Exception e) {
             e.printStackTrace();
         }*/
-        try {
-            List<Object> objects = YamlLoadUtils.loadYamlArrayAsObject("strength-stone.yml", String.valueOf(this.getDataFolder()),
-                    "putStoneMaterials", "strength-stone", StrengthStone.class).get();
-            for(Object strengthStone : objects){
-                StrengthStone stone = (StrengthStone) strengthStone;
-                System.out.println(stone);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override

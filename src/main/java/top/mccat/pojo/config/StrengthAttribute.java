@@ -20,10 +20,18 @@ public class StrengthAttribute {
     private String levelIcon;
     @Value("nextLineCount")
     private int nextLineCount;
-    @Value("especialAttribute")
-    private List<Map<String, Attribute>> especialAttribute;
-    @Value("attribute")
-    private Map<String,String> attribute;
+    @Value(value = "especialAttribute.melee", classType = Attribute.class)
+    private Map<String, Attribute> meleeAttribute;
+    @Value(value = "especialAttribute.remote", classType = Attribute.class)
+    private Map<String, Attribute> remoteAttribute;
+    @Value(value = "especialAttribute.defence", classType = Attribute.class)
+    private Map<String, Attribute> defenceAttribute;
+    @Value(value = "attribute.meleeDamage")
+    private String meleeDamage;
+    @Value(value = "attribute.remotelyDamage")
+    private String remotelyDamage;
+    @Value(value = "attribute.armorDefence")
+    private String armorDefence;
 
     public StrengthAttribute() {
     }
@@ -60,19 +68,67 @@ public class StrengthAttribute {
         this.nextLineCount = nextLineCount;
     }
 
-    public List<Map<String, Attribute>> getEspecialAttribute() {
-        return especialAttribute;
+    public Map<String, Attribute> getMeleeAttribute() {
+        return meleeAttribute;
     }
 
-    public void setEspecialAttribute(List<Map<String, Attribute>> especialAttribute) {
-        this.especialAttribute = especialAttribute;
+    public void setMeleeAttribute(Map<String, Attribute> meleeAttribute) {
+        this.meleeAttribute = meleeAttribute;
     }
 
-    public Map<String, String> getAttribute() {
-        return attribute;
+    public Map<String, Attribute> getRemoteAttribute() {
+        return remoteAttribute;
     }
 
-    public void setAttribute(Map<String, String> attribute) {
-        this.attribute = attribute;
+    public void setRemoteAttribute(Map<String, Attribute> remoteAttribute) {
+        this.remoteAttribute = remoteAttribute;
+    }
+
+    public Map<String, Attribute> getDefenceAttribute() {
+        return defenceAttribute;
+    }
+
+    public void setDefenceAttribute(Map<String, Attribute> defenceAttribute) {
+        this.defenceAttribute = defenceAttribute;
+    }
+
+    public String getMeleeDamage() {
+        return meleeDamage;
+    }
+
+    public void setMeleeDamage(String meleeDamage) {
+        this.meleeDamage = meleeDamage;
+    }
+
+    public String getRemotelyDamage() {
+        return remotelyDamage;
+    }
+
+    public void setRemotelyDamage(String remotelyDamage) {
+        this.remotelyDamage = remotelyDamage;
+    }
+
+    public String getArmorDefence() {
+        return armorDefence;
+    }
+
+    public void setArmorDefence(String armorDefence) {
+        this.armorDefence = armorDefence;
+    }
+
+    @Override
+    public String toString() {
+        return "StrengthAttribute{" +
+                "title='" + title + '\'' +
+                ", divider='" + divider + '\'' +
+                ", levelIcon='" + levelIcon + '\'' +
+                ", nextLineCount=" + nextLineCount +
+                ", meleeAttribute=" + meleeAttribute +
+                ", remoteAttribute=" + remoteAttribute +
+                ", defenceAttribute=" + defenceAttribute +
+                ", meleeDamage='" + meleeDamage + '\'' +
+                ", remotelyDamage='" + remotelyDamage + '\'' +
+                ", armorDefence='" + armorDefence + '\'' +
+                '}';
     }
 }

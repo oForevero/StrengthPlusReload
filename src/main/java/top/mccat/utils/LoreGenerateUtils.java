@@ -1,13 +1,9 @@
 package top.mccat.utils;
 
 import com.sun.istack.internal.NotNull;
-import top.mccat.pojo.BaseData;
 import top.mccat.pojo.bean.Attribute;
-import top.mccat.pojo.config.BaseConfig;
 import top.mccat.pojo.config.StrengthAttribute;
 import top.mccat.pojo.list.LoreList;
-
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -35,15 +31,15 @@ public class LoreGenerateUtils {
     }
 
     private List<String> generateAttributesLore(int level, List<Attribute> especialAttributes, String baseAttribute){
-
+        return null;
     }
 
     public void reloadBaseConfig() {
-        try {
+        /*try {
             strengthAttribute = (StrengthAttribute) YamlLoadUtils.loadYamlAsObject("config.yml",
-                    BaseData.PLUGIN_PREFIX, "strength-extra", StrengthAttribute.class).get();
+                    BaseData.PLUGIN_PREFIX, "strength-extra", StrengthAttribute.class, null).get();
         } catch (IOException | IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 }

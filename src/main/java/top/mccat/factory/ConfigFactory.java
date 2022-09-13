@@ -21,6 +21,7 @@ public class ConfigFactory {
     }
 
     public void writeConfigFile(){
+
         plugin.saveResource("config.yml",false);
         plugin.saveResource("strength-extra.yml",false);
         plugin.saveResource("strength-item.yml",false);
@@ -29,4 +30,6 @@ public class ConfigFactory {
         plugin.saveResource("strength-msg.yml",false);
         plugin.saveResource("strength-stone.yml",false);
     }
+
+
 }

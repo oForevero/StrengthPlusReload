@@ -9,8 +9,9 @@ import java.lang.annotation.Target;
  * @author Raven
  * @date 2022/09/05 20:37
  */
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD,ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Value {
-    String value();
+    String value() default "";
+    Class<?>[] classType() default Object.class;
 }

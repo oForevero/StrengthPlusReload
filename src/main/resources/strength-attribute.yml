@@ -1,4 +1,4 @@
-strength-lore:
+strength-attribute:
   # 强化lore标题
   title: '&b[强化等级]:'
   # 强化lore分割线长度

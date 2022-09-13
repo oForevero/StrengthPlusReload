@@ -1,38 +1,30 @@
 package top.mccat.pojo.bean;
 
 import top.mccat.anno.Value;
-import top.mccat.pojo.list.LoreList;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Distance
  * @date 2022/9/7
  */
+@Value(classType = Map.class)
 public class StrengthStone {
-    private String stoneMaterials;
     @Value("name")
     private String name;
-    @Value("lore")
+    @Value(value = "lore", classType = List.class)
     private List<String> lore;
-    @Value("isSafe")
+    @Value("safe")
     private boolean safe = false;
-    @Value("isSuccess")
+    @Value("success")
     private boolean success = false;
-    @Value("isAdmin")
+    @Value("admin")
     private boolean admin = false;
     @Value("chanceExtra")
     private int chanceExtra = 0;
 
     public StrengthStone() {
-    }
-
-    public void putStoneMaterials(String stoneMaterials) {
-        this.stoneMaterials = stoneMaterials;
-    }
-
-    public String getStoneMaterials() {
-        return stoneMaterials;
     }
 
     public String getName() {
@@ -43,12 +35,16 @@ public class StrengthStone {
         this.name = String.valueOf(name);
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public List<String> getLore() {
         return lore;
     }
 
-    public void setLore(Object lore) {
-        this.lore = (List<String>) lore;
+    public void setLore(List<String> lore) {
+        this.lore = lore;
     }
 
     public boolean isSafe() {
@@ -79,23 +75,18 @@ public class StrengthStone {
         return chanceExtra;
     }
 
-    public void setChanceExtra(Object chanceExtra) {
-        this.chanceExtra = (int) chanceExtra;
-    }
-
-    public boolean isStrengthStone(String stoneMaterials){
-        return this.stoneMaterials.equals(stoneMaterials);
+    public void setChanceExtra(int chanceExtra) {
+        this.chanceExtra = chanceExtra;
     }
 
     @Override
     public String toString() {
         return "StrengthStone{" +
-                "stoneMaterials='" + stoneMaterials + '\'' +
-                ", name='" + name + '\'' +
+                "  name='" + name + '\'' +
                 ", lore=" + lore +
-                ", isSafe=" + safe +
-                ", isSuccess=" + success +
-                ", isAdmin=" + admin +
+                ", safe=" + safe +
+                ", success=" + success +
+                ", admin=" + admin +
                 ", chanceExtra=" + chanceExtra +
                 '}';
     }

@@ -2,11 +2,14 @@ package top.mccat.pojo.bean;
 
 import top.mccat.anno.Value;
 
+import java.util.Map;
+
 /**
  * @author Kevin Li
  * @date 2022/9/9
  * @description
  */
+@Value(classType = Map.class)
 public class Attribute {
     @Value("name")
     private String name;
@@ -40,5 +43,14 @@ public class Attribute {
 
     public void putLevel(int level) {
         this.level = level;
+    }
+
+    @Override
+    public String toString() {
+        return "Attribute{" +
+                "name='" + name + '\'' +
+                ", enable=" + enable +
+                ", level=" + level +
+                '}';
     }
 }

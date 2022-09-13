@@ -35,7 +35,7 @@ public class MsgUtils {
      * @param player 玩家对象
      */
     public void sendToPlayer(@NotNull String msg, @NotNull Player player){
-        player.sendMessage(ColorParseUtils.parseColorStr(baseConfig.getTitle()+msg));
+        player.sendMessage(ColorParseUtils.parseColorStr(baseConfig.getPluginName()+msg));
     }
 
     /**
@@ -52,7 +52,7 @@ public class MsgUtils {
      * @param msg 消息
      */
     public void sendToConsole(@NotNull String msg){
-        commandSender.sendMessage(ColorParseUtils.parseColorStr(baseConfig.getTitle()+msg));
+        commandSender.sendMessage(ColorParseUtils.parseColorStr(baseConfig.getPluginName()+msg));
     }
 
     /**
@@ -69,7 +69,7 @@ public class MsgUtils {
      * @param msg 消息
      */
     public void sendToBroadcast(@NotNull String msg){
-        Bukkit.broadcastMessage(ColorParseUtils.parseColorStr(baseConfig.getTitle()+msg));
+        Bukkit.broadcastMessage(ColorParseUtils.parseColorStr(baseConfig.getPluginName()+msg));
     }
 
     /**
@@ -85,11 +85,12 @@ public class MsgUtils {
      * 重载配置文件
      */
     public void reloadMsgConfig(){
-        try {
-            Optional<Object> config = YamlLoadUtils.loadYamlAsObject("config.yml", BaseDir.BASE_DIR.getDir(), "strengthPlus", BaseConfig.class);
+        /*try {
+            Optional<Object> config = YamlLoadUtils.loadYamlAsObject("config.yml", BaseDir.BASE_DIR.getDir(),
+                    "strengthPlus", BaseConfig.class, null);
             config.ifPresent(o -> baseConfig = (BaseConfig) o);
         } catch (IOException | IllegalAccessException | InstantiationException e) {
             sendToConsole(BaseData.PLUGIN_PREFIX,"&c错误，io流读取失败或没有权限进行操作！");
-        }
+        }*/
     }
 }
