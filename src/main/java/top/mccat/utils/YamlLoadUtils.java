@@ -52,6 +52,18 @@ public class YamlLoadUtils{
                         invokeBaseMethod(setMethods,objResult,o,field);
                         continue;
                     }
+                    if(annotation.classType().length>1 && annotation.classType()[1] == Map.class){
+                        Optional<Object> optional = readClassAnnotationData(valueAnnotation, configurationSection, objClass, objectMap, setMethods, declaredFields);
+                        Object o = optional.get();
+                        invokeBaseMethod(setMethods,objResult,o,field);
+                        continue;
+                    }
+                    if(annotation.classType().length>1 && annotation.classType()[1] == List.class){
+                        Optional<Object> optional = readClassAnnotationData(valueAnnotation, configurationSection, objClass, objectMap, setMethods, declaredFields);
+                        Object o = optional.get();
+                        invokeBaseMethod(setMethods,objResult,o,field);
+                        continue;
+                    }
                 }
                 String value = annotation.value();
                 Object o = objectMap.get(value);
@@ -126,6 +138,7 @@ public class YamlLoadUtils{
                                                             Field[] declaredFields) throws InstantiationException, IllegalAccessException {
         if (valueAnnotation.classType().length>0){
             Class<?> classType = valueAnnotation.classType()[0];
+            System.out.println(classType.getName());
             //执行map方法
             if(classType == Map.class){
                 Map<String, Object> resultMap = new HashMap<>(64);

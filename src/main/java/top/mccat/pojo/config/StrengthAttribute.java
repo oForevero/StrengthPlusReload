@@ -3,7 +3,6 @@ package top.mccat.pojo.config;
 import top.mccat.anno.Value;
 import top.mccat.pojo.bean.Attribute;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,11 +19,11 @@ public class StrengthAttribute {
     private String levelIcon;
     @Value("nextLineCount")
     private int nextLineCount;
-    @Value(value = "especialAttribute.melee", classType = Attribute.class)
+    @Value(value = "especialAttribute.melee", classType = {Attribute.class,Map.class})
     private Map<String, Attribute> meleeAttribute;
-    @Value(value = "especialAttribute.remote", classType = Attribute.class)
+    @Value(value = "especialAttribute.remote", classType = {Attribute.class,Map.class})
     private Map<String, Attribute> remoteAttribute;
-    @Value(value = "especialAttribute.defence", classType = Attribute.class)
+    @Value(value = "especialAttribute.defence", classType = {Attribute.class,Map.class})
     private Map<String, Attribute> defenceAttribute;
     @Value(value = "attribute.meleeDamage")
     private String meleeDamage;
