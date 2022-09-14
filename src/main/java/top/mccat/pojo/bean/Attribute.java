@@ -9,16 +9,15 @@ import java.util.Map;
  * @date 2022/9/9
  * @description
  */
-@Value(classType = Map.class)
+@Value(value = "especialAttribute",classType = Map.class)
 public class Attribute {
     @Value("name")
     private String name;
     @Value("enable")
     private boolean enable;
     private int level = 0;
-    public Attribute(String name, boolean enable) {
-        this.name = name;
-        this.enable = enable;
+
+    public Attribute() {
     }
 
     public String getName() {
@@ -33,8 +32,8 @@ public class Attribute {
         return enable;
     }
 
-    public void setEnable(boolean enable) {
-        this.enable = enable;
+    public void setEnable(Object enable) {
+        this.enable = (boolean) enable;
     }
 
     public int getLevel() {

@@ -38,6 +38,10 @@ public class YamlLoadUtils{
         List<Method> setMethods = loadSetMethods(objClass);
         Field[] declaredFields = objClass.getDeclaredFields();
         Map<String, Object> objectMap = configurationSection.getValues(true);
+        /*Set<String> keySet = objectMap.keySet();
+        for (String s : keySet) {
+            System.out.println("key :"+s+" value:"+objectMap.get(s));
+        }*/
         if(objClass.getAnnotation(Value.class)==null){
             Object objResult = objClass.newInstance();
             for(Field field : declaredFields) {
@@ -45,25 +49,30 @@ public class YamlLoadUtils{
                 if (annotation == null) {
                     continue;
                 }
-                if(annotation.classType().length>0){
+                if(annotation.classType()[0] != Object.class){
                     if (annotation.classType()[0] == Map.class){
                         Optional<Object> optional = readClassAnnotationData(valueAnnotation, configurationSection, objClass, objectMap, setMethods, declaredFields);
                         Object o = optional.get();
                         invokeBaseMethod(setMethods,objResult,o,field);
-                        continue;
                     }
-                    if(annotation.classType().length>1 && annotation.classType()[1] == Map.class){
-                        Optional<Object> optional = readClassAnnotationData(valueAnnotation, configurationSection, objClass, objectMap, setMethods, declaredFields);
+                    if(annotation.classType()[0].getAnnotation(Value.class).classType()[0] == Map.class){
+                        //Value firstAnnotation = annotation.classType()[0].getAnnotation(Value.class);
+                        if(annotation.value().contains(".")) {
+                            Class<?> firstClass = annotation.classType()[0];
+                            Optional<Object> optional = readClassAnnotationData(annotation, configurationSection.getConfigurationSection(annotation.value()),
+                                    firstClass, objectMap, loadSetMethods(firstClass), firstClass.getDeclaredFields());
+                            Object o = optional.get();
+                            invokeBaseMethod(setMethods, objResult, o, field);
+                        }
+                    }
+                    if(annotation.classType()[0].getAnnotation(Value.class).classType()[0] == List.class){
+                        Value firstAnnotation = annotation.classType()[0].getAnnotation(Value.class);
+                        Optional<Object> optional = readClassAnnotationData(firstAnnotation, configurationSection,
+                                ArrayList.class, objectMap, setMethods, declaredFields);
                         Object o = optional.get();
                         invokeBaseMethod(setMethods,objResult,o,field);
-                        continue;
                     }
-                    if(annotation.classType().length>1 && annotation.classType()[1] == List.class){
-                        Optional<Object> optional = readClassAnnotationData(valueAnnotation, configurationSection, objClass, objectMap, setMethods, declaredFields);
-                        Object o = optional.get();
-                        invokeBaseMethod(setMethods,objResult,o,field);
-                        continue;
-                    }
+                    continue;
                 }
                 String value = annotation.value();
                 Object o = objectMap.get(value);
@@ -136,32 +145,30 @@ public class YamlLoadUtils{
     private static Optional<Object> readClassAnnotationData(Value valueAnnotation, ConfigurationSection configurationSection,
                                                             Class<?> objClass, Map<String,Object> objectMap, List<Method> setMethods,
                                                             Field[] declaredFields) throws InstantiationException, IllegalAccessException {
-        if (valueAnnotation.classType().length>0){
-            Class<?> classType = valueAnnotation.classType()[0];
-            System.out.println(classType.getName());
-            //执行map方法
-            if(classType == Map.class){
-                Map<String, Object> resultMap = new HashMap<>(64);
-                Map<String, Object> keyMap = configurationSection.getValues(false);
-                Set<String> keySet = keyMap.keySet();
-                for (String s : keySet) {
-                    Object valueObj = objClass.newInstance();
-                    readListAndMap(objectMap,valueObj,setMethods,declaredFields,s);
-                    resultMap.put(s,valueObj);
-                }
-                return Optional.of(resultMap);
-            }else if(classType == List.class){
-                //执行list init方法
-                List<Object> resultList = new ArrayList<>();
-                Map<String, Object> keyMap = configurationSection.getValues(false);
-                Set<String> keySet = keyMap.keySet();
-                for (String s : keySet) {
-                    Object valueObj = objClass.newInstance();
-                    readListAndMap(objectMap,valueObj,setMethods,declaredFields,s);
-                    resultList.add(valueObj);
-                }
-                return Optional.of(resultList);
+        //获取子类
+        Class<?> classType = valueAnnotation.classType()[0].getAnnotation(Value.class).classType()[0];
+        //执行map方法
+        if(classType == Map.class){
+            Map<String, Object> resultMap = new HashMap<>(64);
+            Map<String, Object> keyMap = configurationSection.getValues(false);
+            Set<String> keySet = keyMap.keySet();
+            for (String s : keySet) {
+                Object valueObj = objClass.newInstance();
+                readListAndMap(configurationSection.getValues(true),valueObj,loadSetMethods(objClass),objClass.getDeclaredFields(),s);
+                resultMap.put(s,valueObj);
             }
+            return Optional.of(resultMap);
+        }else if(classType == List.class){
+            //执行list init方法，目前list仍需修复问题
+            List<Object> resultList = new ArrayList<>();
+            Map<String, Object> keyMap = configurationSection.getValues(false);
+            Set<String> keySet = keyMap.keySet();
+            for (String s : keySet) {
+                Object valueObj = objClass.newInstance();
+                readListAndMap(objectMap,valueObj,setMethods,declaredFields,s);
+                resultList.add(valueObj);
+            }
+            return Optional.of(resultList);
         }
         return Optional.empty();
     }
@@ -171,10 +178,8 @@ public class YamlLoadUtils{
      * @param objectMap map对象
      * @param valueObj 放入容器的对象参数
      * @param fatherKey 封装入Map或List的字段
-     * @throws InstantiationException 实例化对象一场
-     * @throws IllegalAccessException 无权限异常
      */
-    private static void readListAndMap(Map<String, Object> objectMap, Object valueObj, List<Method> methods, Field[] declaredFields, String fatherKey) throws InstantiationException, IllegalAccessException {
+    private static void readListAndMap(Map<String, Object> objectMap, Object valueObj, List<Method> methods, Field[] declaredFields, String fatherKey) {
         for (Field sonField : declaredFields) {
             Value sonAnnotation = sonField.getAnnotation(Value.class);
             if(sonAnnotation == null){

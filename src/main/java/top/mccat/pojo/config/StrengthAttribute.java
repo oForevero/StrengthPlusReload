@@ -19,11 +19,11 @@ public class StrengthAttribute {
     private String levelIcon;
     @Value("nextLineCount")
     private int nextLineCount;
-    @Value(value = "especialAttribute.melee", classType = {Attribute.class,Map.class})
+    @Value(value = "especialAttribute.melee", classType = Attribute.class)
     private Map<String, Attribute> meleeAttribute;
-    @Value(value = "especialAttribute.remote", classType = {Attribute.class,Map.class})
+    @Value(value = "especialAttribute.remote", classType = Attribute.class)
     private Map<String, Attribute> remoteAttribute;
-    @Value(value = "especialAttribute.defence", classType = {Attribute.class,Map.class})
+    @Value(value = "especialAttribute.defence", classType = Attribute.class)
     private Map<String, Attribute> defenceAttribute;
     @Value(value = "attribute.meleeDamage")
     private String meleeDamage;
@@ -71,24 +71,24 @@ public class StrengthAttribute {
         return meleeAttribute;
     }
 
-    public void setMeleeAttribute(Map<String, Attribute> meleeAttribute) {
-        this.meleeAttribute = meleeAttribute;
+    public void setMeleeAttribute(Object meleeAttribute) {
+        this.meleeAttribute = (Map<String, Attribute>) meleeAttribute;
     }
 
     public Map<String, Attribute> getRemoteAttribute() {
         return remoteAttribute;
     }
 
-    public void setRemoteAttribute(Map<String, Attribute> remoteAttribute) {
-        this.remoteAttribute = remoteAttribute;
+    public void setRemoteAttribute(Object remoteAttribute) {
+        this.remoteAttribute = (Map<String, Attribute>) remoteAttribute;
     }
 
     public Map<String, Attribute> getDefenceAttribute() {
         return defenceAttribute;
     }
 
-    public void setDefenceAttribute(Map<String, Attribute> defenceAttribute) {
-        this.defenceAttribute = defenceAttribute;
+    public void setDefenceAttribute(Object defenceAttribute) {
+        this.defenceAttribute = (Map<String, Attribute>) defenceAttribute;
     }
 
     public String getMeleeDamage() {
