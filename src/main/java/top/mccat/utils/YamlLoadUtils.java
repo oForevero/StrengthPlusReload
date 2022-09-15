@@ -148,6 +148,7 @@ public class YamlLoadUtils{
                                                             Class<?> objClass, Map<String,Object> objectMap, List<Method> setMethods,
                                                             Field[] declaredFields) throws InstantiationException, IllegalAccessException {
         Class<?> valueClassType = valueAnnotation.classType()[0];
+        //需要设置注解
         if (valueClassType==Object.class || valueClassType.getAnnotation(Value.class) == null){
             return Optional.empty();
         }

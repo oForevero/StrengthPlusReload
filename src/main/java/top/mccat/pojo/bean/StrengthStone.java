@@ -9,7 +9,8 @@ import java.util.Map;
  * @author Distance
  * @date 2022/9/7
  */
-@Value(classType = Map.class)
+//之前没有对这个进行修改，明天查看一下修改
+@Value(value = "stones",classType = Map.class)
 public class StrengthStone {
     @Value("name")
     private String name;

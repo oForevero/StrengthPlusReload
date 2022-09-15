@@ -5,7 +5,6 @@ import top.mccat.factory.ConfigFactory;
 import top.mccat.pojo.BaseData;
 import top.mccat.pojo.bean.StrengthStone;
 import top.mccat.pojo.config.StrengthAttribute;
-import top.mccat.pojo.config.StrengthExtra;
 import top.mccat.utils.MsgUtils;
 import top.mccat.utils.YamlLoadUtils;
 
@@ -40,7 +39,7 @@ public class StrengthPlus extends JavaPlugin {
             System.out.println(o.get());*/
             Optional<Object> o = YamlLoadUtils.loadConfigObject("strength-stone.yml", String.valueOf(this.getDataFolder()),
                     "strength-stone", StrengthStone.class);
-            Map<String,StrengthStone> strengthStoneMap = (Map<String, StrengthStone>) o.get();
+            Map<String, StrengthStone> strengthStoneMap = (Map<String, StrengthStone>) o.get();
             Set<String> keySet = strengthStoneMap.keySet();
             for (String s : keySet) {
                 System.out.println(strengthStoneMap.get(s));
@@ -48,13 +47,13 @@ public class StrengthPlus extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        /*try {
-            Object objects = YamlLoadUtils.loadYamlArrayAsObject("strength-stone.yml", String.valueOf(this.getDataFolder()),"putStoneMaterials",
-                    "strength-stone", StrengthStone.class).get();
-            System.out.println(objects);
+        try {
+            /*Optional<Object> o = YamlLoadUtils.loadConfigObject("strength-attribute.yml", String.valueOf(this.getDataFolder()),
+                    "strength-attribute", StrengthAttribute.class);
+            System.out.println(o.get());*/
         } catch (Exception e) {
             e.printStackTrace();
-        }*/
+        }
     }
 
     @Override
