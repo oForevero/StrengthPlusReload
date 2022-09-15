@@ -38,10 +38,6 @@ public class YamlLoadUtils{
         List<Method> setMethods = loadSetMethods(objClass);
         Field[] declaredFields = objClass.getDeclaredFields();
         Map<String, Object> objectMap = configurationSection.getValues(true);
-        /*Set<String> keySet = objectMap.keySet();
-        for (String s : keySet) {
-            System.out.println("key :"+s+" value:"+objectMap.get(s));
-        }*/
         if(objClass.getAnnotation(Value.class)==null){
             Object objResult = objClass.newInstance();
             for(Field field : declaredFields) {
@@ -55,8 +51,13 @@ public class YamlLoadUtils{
                         Object o = optional.get();
                         invokeBaseMethod(setMethods,objResult,o,field);
                     }
+                    if(annotation.classType()[0] == List.class){
+                        //需要更改该方法
+                        Optional<Object> optional = readClassAnnotationData(valueAnnotation, configurationSection, objClass, objectMap, setMethods, declaredFields);
+                        Object o = optional.get();
+                        invokeBaseMethod(setMethods,objResult,o,field);
+                    }
                     if(annotation.classType()[0].getAnnotation(Value.class).classType()[0] == Map.class){
-                        //Value firstAnnotation = annotation.classType()[0].getAnnotation(Value.class);
                         if(annotation.value().contains(".")) {
                             Class<?> firstClass = annotation.classType()[0];
                             Optional<Object> optional = readClassAnnotationData(annotation, configurationSection.getConfigurationSection(annotation.value()),
@@ -66,6 +67,7 @@ public class YamlLoadUtils{
                         }
                     }
                     if(annotation.classType()[0].getAnnotation(Value.class).classType()[0] == List.class){
+                        //该方法有问题，仍需修改
                         Value firstAnnotation = annotation.classType()[0].getAnnotation(Value.class);
                         Optional<Object> optional = readClassAnnotationData(firstAnnotation, configurationSection,
                                 ArrayList.class, objectMap, setMethods, declaredFields);
@@ -145,8 +147,12 @@ public class YamlLoadUtils{
     private static Optional<Object> readClassAnnotationData(Value valueAnnotation, ConfigurationSection configurationSection,
                                                             Class<?> objClass, Map<String,Object> objectMap, List<Method> setMethods,
                                                             Field[] declaredFields) throws InstantiationException, IllegalAccessException {
+        Class<?> valueClassType = valueAnnotation.classType()[0];
+        if (valueClassType==Object.class || valueClassType.getAnnotation(Value.class) == null){
+            return Optional.empty();
+        }
         //获取子类
-        Class<?> classType = valueAnnotation.classType()[0].getAnnotation(Value.class).classType()[0];
+        Class<?> classType = valueClassType.getAnnotation(Value.class).classType()[0];
         //执行map方法
         if(classType == Map.class){
             Map<String, Object> resultMap = new HashMap<>(64);
