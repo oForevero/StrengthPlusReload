@@ -8,6 +8,9 @@ strength-level:
       loseLevel: false
       # 是否会破碎，如果会破碎则一定会进行全服强化广播（如不写该条目默认为false）
       canBreak: false
+      costStone:
+        - '普通强化石'
+        - '保护强化卷'
       # 对应强化几率，对应上面的等级
       chance: 100
     -
@@ -15,10 +18,16 @@ strength-level:
       normalStone: 2
       loseLevel: true
       canBreak: false
+      costStone:
+        - '普通强化石'
+        - '保护强化'
       chance: 90
     -
       # 对应强化石花费个数
       normalStone: 3
       loseLevel: true
       canBreak: false
+      costStone:
+        - '普通强化石'
+        - '保护强化卷'
       chance: 80
