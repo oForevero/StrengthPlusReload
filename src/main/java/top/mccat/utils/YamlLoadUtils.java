@@ -86,63 +86,6 @@ public class YamlLoadUtils{
             //如果类含有attribute
             return readClassAnnotationData(valueAnnotation,configurationSection,objClass,objectMap,setMethods,declaredFields);
         }
-        /*List<Method> setMethods = loadSetMethods(objClass);
-        Field[] declaredFields = objClass.getDeclaredFields();
-        Map<String,Object> objectMap = configurationSection.getValues(true);
-        Object objResult = objClass.newInstance();
-        for(Field field : declaredFields){
-            Value annotation = field.getAnnotation(Value.class);
-            if(annotation == null){
-                continue;
-            }
-            String value = annotation.value();
-            Class<?>[] types = annotation.classType();
-            if(types.length>1){
-                //针对list里内嵌Map的情况
-                for(Class<?> type : types){
-                    if(type == Map.class){
-                        Map<String, Object> resultMap = new HashMap<>(64);
-                        Map<String, Object> keyMap = configurationSection.getValues(false);
-                        Set<String> keySet = keyMap.keySet();
-                        for (String s : keySet) {
-                            //读取子对象方法
-
-                            List<Method> sonMethods = loadSetMethods(sonClass);
-                            Field[] sonFields = sonClass.getDeclaredFields();
-                            for (Field sonField : sonFields) {
-                                Value sonAnnotation = sonField.getAnnotation(Value.class);
-                                if(sonAnnotation == null){
-                                    continue;
-                                }
-                                String sonValue = sonAnnotation.value();
-                                Object o = objectMap.get(s + "." + sonValue);
-                                invokeBaseMethod(sonMethods,valueObj,o,sonField);
-                            }
-                            resultMap.put(s,valueObj);
-                        }
-                        return Optional.of(resultMap);
-                    }else if(type == List.class){
-                        List<?> list = configurationSection.getList(value);
-                        invokeBaseMethod(setMethods,objResult,list,field);
-                    }
-                }
-            }else {
-                //针对map情况
-                if(types[0] == Map.class){
-                    ConfigurationSection section = configurationSection.getConfigurationSection(value);
-                    if(section==null){
-                        continue;
-                    }
-                    invokeBaseMethod(setMethods,objResult,section.getValues(true),field);
-                }else if(types[0] == List.class){
-                    List<?> list = configurationSection.getList(value);
-                    invokeBaseMethod(setMethods,objResult,list,field);
-                }else {
-                    Object o = objectMap.get(value);
-                    invokeBaseMethod(setMethods,objResult,o,field);
-                }
-            }
-        }*/
     }
 
 
@@ -185,7 +128,6 @@ public class YamlLoadUtils{
             }
             return Optional.of(resultMap);
         }else if(classType == List.class){
-            //执行list init方法，目前list仍需修复问题
             List<Object> resultList = new ArrayList<>();
             Map<String, Object> keyMap = configurationSection.getValues(false);
             Set<String> keySet = keyMap.keySet();
