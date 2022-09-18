@@ -11,80 +11,75 @@ import java.util.List;
  * @date 2022/09/05 18:43
  */
 public class StrengthItem {
-    @Value("melee")
-    private List<Material> melee;
+    @Value(value = "melee")
+    private List<String> melee;
 
-    @Value("remote")
-    private List<Material> remote;
+    @Value(value = "remote")
+    private List<String> remote;
 
-    @Value("defence")
-    private List<Material> defence;
+    @Value(value = "defence")
+    private List<String> defence;
 
     public StrengthItem() {
     }
 
-    public List<Material> getStrengthItem() {
-        return melee;
-    }
-
-    public void setStrengthItem(List<Material> strengthItem) {
-        this.melee = strengthItem;
-    }
-
     /**
      * 近战物品是否允许强化方法
-     * @param material material 对象
+     * @param materialName material 对象
      * @return 是否可以强化
      */
-    public boolean meleeCanBeStrength(Material material){
-        return melee.contains(material);
+    public boolean meleeCanBeStrength(String materialName){
+        return melee.contains(materialName);
     }
 
     /**
      * 远程物品是否允许强化方法
-     * @param material material 对象
+     * @param materialName material 对象
      * @return 是否可以强化
      */
-    public boolean remoteCanBeStrength(Material material){
-        return melee.contains(material);
+    public boolean remoteCanBeStrength(String materialName){
+        return melee.contains(materialName);
     }
 
     /**
      * 防御物品是否允许强化方法
-     * @param material material 对象
+     * @param materialName material 对象
      * @return 是否可以强化
      */
-    public boolean defenceCanBeStrength(Material material){
-        return melee.contains(material);
+    public boolean defenceCanBeStrength(String materialName){
+        return melee.contains(materialName);
     }
 
-    public StrengthItem(List<Material> melee, List<Material> remote, List<Material> defence) {
-        this.melee = melee;
-        this.remote = remote;
-        this.defence = defence;
-    }
-
-    public List<Material> getMelee() {
+    public List<String> getMelee() {
         return melee;
     }
 
-    public void setMelee(List<Material> melee) {
+    public void setMelee(List<String> melee) {
         this.melee = melee;
     }
 
-    public List<Material> getRemote() {
+    public List<String> getRemote() {
         return remote;
     }
 
-    public void setRemote(List<Material> remote) {
+    public void setRemote(List<String> remote) {
         this.remote = remote;
     }
 
-    public List<Material> getDefence() {
+    public List<String> getDefence() {
         return defence;
     }
 
-    public void setDefence(List<Material> defence) {
+    public void setDefence(List<String> defence) {
         this.defence = defence;
+    }
+
+    @Override
+    public String toString() {
+        return "StrengthItem{" +
+                "melee=" + melee +
+                ", remote=" + remote +
+                ", defence=" + defence +
+                '}';
     }
 }

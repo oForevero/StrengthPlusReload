@@ -10,6 +10,7 @@ import top.mccat.pojo.BaseData;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -38,7 +39,7 @@ public class YamlLoadUtils{
         List<Method> setMethods = loadSetMethods(objClass);
         Field[] declaredFields = objClass.getDeclaredFields();
         Map<String, Object> objectMap = configurationSection.getValues(true);
-        if(objClass.getAnnotation(Value.class)==null){
+        if(valueAnnotation==null){
             Object objResult = objClass.newInstance();
             for(Field field : declaredFields) {
                 Value annotation = field.getAnnotation(Value.class);
@@ -144,24 +145,42 @@ public class YamlLoadUtils{
         }*/
     }
 
+
     private static Optional<Object> readClassAnnotationData(Value valueAnnotation, ConfigurationSection configurationSection,
                                                             Class<?> objClass, Map<String,Object> objectMap, List<Method> setMethods,
                                                             Field[] declaredFields) throws InstantiationException, IllegalAccessException {
         Class<?> valueClassType = valueAnnotation.classType()[0];
         //需要设置注解
         if (valueClassType==Object.class || valueClassType.getAnnotation(Value.class) == null){
-            return Optional.empty();
+            return readAsOptional(valueClassType,configurationSection,objClass,objectMap,setMethods,declaredFields);
         }
         //获取子类
         Class<?> classType = valueClassType.getAnnotation(Value.class).classType()[0];
-        //执行map方法
+        return readAsOptional(classType,configurationSection,objClass,objectMap,setMethods,declaredFields);
+    }
+
+    /**
+     * 读取map和list对象
+     * @param classType 传入类类型
+     * @param configurationSection 配置文件对象
+     * @param objClass 结果对象
+     * @param objectMap section获取的map参数
+     * @param setMethods set方法群
+     * @param declaredFields 所有属性
+     * @return optional 对象
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
+    private static Optional<Object> readAsOptional(Class<?> classType, ConfigurationSection configurationSection,
+                                                      Class<?> objClass, Map<String,Object> objectMap, List<Method> setMethods,
+                                                      Field[] declaredFields) throws InstantiationException, IllegalAccessException {
         if(classType == Map.class){
             Map<String, Object> resultMap = new HashMap<>(64);
             Map<String, Object> keyMap = configurationSection.getValues(false);
             Set<String> keySet = keyMap.keySet();
             for (String s : keySet) {
                 Object valueObj = objClass.newInstance();
-                readListAndMap(configurationSection.getValues(true),valueObj,loadSetMethods(objClass),objClass.getDeclaredFields(),s);
+                readAsMap(configurationSection.getValues(true),valueObj,loadSetMethods(objClass),objClass.getDeclaredFields(),s);
                 resultMap.put(s,valueObj);
             }
             return Optional.of(resultMap);
@@ -171,9 +190,7 @@ public class YamlLoadUtils{
             Map<String, Object> keyMap = configurationSection.getValues(false);
             Set<String> keySet = keyMap.keySet();
             for (String s : keySet) {
-                Object valueObj = objClass.newInstance();
-                readListAndMap(objectMap,valueObj,setMethods,declaredFields,s);
-                resultList.add(valueObj);
+                readAsList(objectMap,objClass,setMethods,resultList,declaredFields,s);
             }
             return Optional.of(resultList);
         }
@@ -183,10 +200,33 @@ public class YamlLoadUtils{
     /**
      * 读取List和Map对象
      * @param objectMap map对象
+     * @param fatherKey 封装入Map或List的字段
+     */
+    private static void readAsList(Map<String, Object> objectMap, Class<?> objClass, List<Method> methods, List<Object> resultList, Field[] declaredFields, String fatherKey) throws InstantiationException, IllegalAccessException {
+        List<Map<String,?>> objects = (List<Map<String, ?>>) objectMap.get(fatherKey);
+        for (Map<String,?> next : objects) {
+            Object valueObj = objClass.newInstance();
+            for (Field sonField : declaredFields) {
+                Value sonAnnotation = sonField.getAnnotation(Value.class);
+                if(sonAnnotation == null){
+                    continue;
+                }
+                String sonValue = sonAnnotation.value();
+                Object o = next.get(sonValue);
+                invokeBaseMethod(methods, valueObj, o, sonField);
+            }
+            resultList.add(valueObj);
+            //System.out.println("valueObj："+valueObj);
+        }
+    }
+
+    /**
+     * 读取List和Map对象
+     * @param objectMap map对象
      * @param valueObj 放入容器的对象参数
      * @param fatherKey 封装入Map或List的字段
      */
-    private static void readListAndMap(Map<String, Object> objectMap, Object valueObj, List<Method> methods, Field[] declaredFields, String fatherKey) {
+    private static void readAsMap(Map<String, Object> objectMap, Object valueObj, List<Method> methods, Field[] declaredFields, String fatherKey) {
         for (Field sonField : declaredFields) {
             Value sonAnnotation = sonField.getAnnotation(Value.class);
             if(sonAnnotation == null){
@@ -210,6 +250,7 @@ public class YamlLoadUtils{
             if(setMethod.getName().contains("set")){
                 if(setMethod.getName().substring(3).equalsIgnoreCase(field.getName())){
                     try {
+                        //System.out.println("methodName："+setMethod.getName()+" value: "+value);
                         setMethod.invoke(objResult,value);
                     } catch (InvocationTargetException | IllegalAccessException e) {
                         e.printStackTrace();
@@ -274,12 +315,6 @@ public class YamlLoadUtils{
      */
     public static List<Method> loadSetMethods(Class<?> objClass){
         Method[] methods = objClass.getMethods();
-        List<Method> methodList = new ArrayList<>();
-        for(Method method : methods){
-            if (method.getName().contains("set") && method.getParameterCount() == 1){
-                methodList.add(method);
-            }
-        }
-        return methodList;
+        return Arrays.asList(methods);
     }
 }

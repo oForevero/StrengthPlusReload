@@ -1,22 +1,24 @@
 # 对应等级
 strength-level:
-  -
-    # 对应普通强化石花费个数
-    normalStone: 1
-    # 是否会丢失等级，即强化失败默认掉级（如不写该条目默认为false）
-    loseLevel: false
-    # 是否会破碎，如果会破碎则一定会进行全服强化广播（如不写该条目默认为false）
-    break: false
-    # 对应强化几率，对应上面的等级
-    chance: 100
-  -
-    # 对应强化石花费个数
-    normalStone: 2
-    loseLevel: true
-    chance: 90
-  -
-    # 对应强化石花费个数
-    normalStone: 3
-    loseLevel: true
-    break: true
-    chance: 80
+  levels:
+    -
+      # 对应普通强化石花费个数
+      normalStone: 1
+      # 是否会丢失等级，即强化失败默认掉级（如不写该条目默认为false）
+      loseLevel: false
+      # 是否会破碎，如果会破碎则一定会进行全服强化广播（如不写该条目默认为false）
+      canBreak: false
+      # 对应强化几率，对应上面的等级
+      chance: 100
+    -
+      # 对应强化石花费个数
+      normalStone: 2
+      loseLevel: true
+      canBreak: false
+      chance: 90
+    -
+      # 对应强化石花费个数
+      normalStone: 3
+      loseLevel: true
+      canBreak: false
+      chance: 80
