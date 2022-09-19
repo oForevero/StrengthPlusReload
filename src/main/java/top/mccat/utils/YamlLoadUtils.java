@@ -176,6 +176,7 @@ public class YamlLoadUtils{
             }
             String sonValue = sonAnnotation.value();
             Object o = objectMap.get(fatherKey + "." + sonValue);
+            System.out.println(fatherKey+"."+sonValue + " ："+o);
             invokeBaseMethod(methods,valueObj,o,sonField);
         }
     }

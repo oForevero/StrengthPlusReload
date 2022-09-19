@@ -38,23 +38,23 @@ public class StrengthPlus extends JavaPlugin {
             /*Optional<Object> o = YamlLoadUtils.loadConfigObject("strength-attribute.yml", String.valueOf(this.getDataFolder()),
                     "strength-attribute", StrengthAttribute.class);
             System.out.println(o.get());*/
-            /*Optional<Object> o = YamlLoadUtils.loadConfigObject("strength-stone.yml", String.valueOf(this.getDataFolder()),
+            Optional<Object> o1 = YamlLoadUtils.loadConfigObject("strength-stone.yml", String.valueOf(this.getDataFolder()),
                     "strength-stone", StrengthStone.class);
-            Map<String, StrengthStone> strengthStoneMap = (Map<String, StrengthStone>) o.get();
+            Map<String, StrengthStone> strengthStoneMap = (Map<String, StrengthStone>) o1.get();
             Set<String> keySet = strengthStoneMap.keySet();
             for (String s : keySet) {
                 System.out.println(strengthStoneMap.get(s));
-            }*/
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        try {
+        /*try {
             Optional<Object> o = YamlLoadUtils.loadConfigObject("strength-level.yml", String.valueOf(this.getDataFolder()),
                     "strength-level", LevelValue.class);
             System.out.println(o.get());
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     @Override
