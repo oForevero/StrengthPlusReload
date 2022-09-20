@@ -2,7 +2,6 @@ package top.mccat.pojo.bean;
 
 import top.mccat.anno.Value;
 import top.mccat.pojo.BaseData;
-import top.mccat.pojo.config.StrengthAttribute;
 import top.mccat.pojo.dao.YamlConfigObject;
 import top.mccat.utils.YamlLoadUtils;
 
