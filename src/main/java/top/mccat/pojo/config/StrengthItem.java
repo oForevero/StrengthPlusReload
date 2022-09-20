@@ -2,15 +2,19 @@ package top.mccat.pojo.config;
 
 import javafx.scene.paint.Material;
 import top.mccat.anno.Value;
+import top.mccat.pojo.BaseData;
+import top.mccat.pojo.dao.YamlConfigObject;
+import top.mccat.utils.YamlLoadUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Raven
  * @date 2022/09/05 18:43
  */
-public class StrengthItem {
+public class StrengthItem implements YamlConfigObject<StrengthItem> {
     @Value(value = "melee")
     private List<String> melee;
 
@@ -81,5 +85,21 @@ public class StrengthItem {
                 ", remote=" + remote +
                 ", defence=" + defence +
                 '}';
+    }
+
+    public static StrengthItem newInstance() {
+        Optional<Object> o = Optional.empty();
+        try {
+            o = YamlLoadUtils.loadConfigObject("strength-item.yml", BaseData.BASE_DIR,
+                    "strength-item", StrengthItem.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return o.map(value -> (StrengthItem) value).orElseGet(StrengthItem::new);
+    }
+
+    @Override
+    public StrengthItem reloadConfigFile() {
+        return newInstance();
     }
 }

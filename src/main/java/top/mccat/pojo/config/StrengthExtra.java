@@ -1,12 +1,17 @@
 package top.mccat.pojo.config;
 
 import top.mccat.anno.Value;
+import top.mccat.pojo.BaseData;
+import top.mccat.pojo.dao.YamlConfigObject;
+import top.mccat.utils.YamlLoadUtils;
+
+import java.util.Optional;
 
 /**
  * @author Raven
  * @date 2022/09/05 18:43
  */
-public class StrengthExtra {
+public class StrengthExtra implements YamlConfigObject<StrengthExtra> {
     @Value("damage.sword")
     private double swordDamage;
     @Value("damage.bow")
@@ -70,5 +75,21 @@ public class StrengthExtra {
                 ", armorDefence=" + armorDefence +
                 ", minDamage=" + minDamage +
                 '}';
+    }
+
+    public static StrengthExtra newInstance() {
+        Optional<Object> o = Optional.empty();
+        try {
+            o = YamlLoadUtils.loadConfigObject("strength-extra.yml", BaseData.BASE_DIR,
+                    "strength-extra", StrengthItem.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return o.map(value -> (StrengthExtra) value).orElseGet(StrengthExtra::new);
+    }
+
+    @Override
+    public StrengthExtra reloadConfigFile() {
+        return newInstance();
     }
 }

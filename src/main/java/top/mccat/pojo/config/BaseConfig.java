@@ -1,12 +1,19 @@
 package top.mccat.pojo.config;
 
 import top.mccat.anno.Value;
+import top.mccat.pojo.BaseData;
+import top.mccat.pojo.bean.StrengthStone;
+import top.mccat.pojo.dao.YamlConfigObject;
+import top.mccat.utils.YamlLoadUtils;
+
+import java.io.IOException;
+import java.util.Optional;
 
 /**
  * @author Distance
  * @date 2022/9/6
  */
-public class BaseConfig {
+public class BaseConfig implements YamlConfigObject<BaseConfig> {
     @Value("pluginName")
     private String pluginName;
     @Value("debug")
@@ -50,4 +57,21 @@ public class BaseConfig {
                 ", enableMenu=" + enableMenu +
                 '}';
     }
+
+    public static BaseConfig newInstance(){
+        Optional<Object> o = Optional.empty();
+        try {
+            o = YamlLoadUtils.loadConfigObject("config.yml", BaseData.BASE_DIR,
+                    "config", BaseConfig.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return o.map(value -> (BaseConfig) value).orElseGet(BaseConfig::new);
+    }
+
+    @Override
+    public BaseConfig reloadConfigFile(){
+        return newInstance();
+    }
+
 }

@@ -1,8 +1,14 @@
 package top.mccat.pojo.bean;
 
 import top.mccat.anno.Value;
+import top.mccat.pojo.BaseData;
+import top.mccat.pojo.config.StrengthAttribute;
+import top.mccat.pojo.dao.YamlConfigObject;
+import top.mccat.utils.YamlLoadUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Kevin Li
@@ -10,7 +16,7 @@ import java.util.List;
  * @description
  */
 @Value(value = "levels",classType = List.class)
-public class LevelValue {
+public class LevelValue implements YamlConfigObject<List<LevelValue>> {
     @Value("normalStone")
     private int normalStone;
     @Value("loseLevel")
@@ -74,5 +80,21 @@ public class LevelValue {
                 ", chance=" + chance +
                 ", strengthStones=" + strengthStones +
                 '}';
+    }
+
+    public static List<LevelValue> newInstance() {
+        Optional<Object> o = Optional.empty();
+        try {
+            o = YamlLoadUtils.loadConfigObject("strength-level.yml", BaseData.BASE_DIR,
+                    "strength-level", LevelValue.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return o.map(value -> (List<LevelValue>) value).orElseGet(ArrayList::new);
+    }
+
+    @Override
+    public List<LevelValue> reloadConfigFile() {
+        return newInstance();
     }
 }

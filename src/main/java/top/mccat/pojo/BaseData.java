@@ -7,4 +7,5 @@ package top.mccat.pojo;
  */
 public class BaseData {
     public static final String PLUGIN_PREFIX = "&a[&bStrengthPlus&a]";
+    public static final String BASE_DIR = "plugins\\StrengthPlus";
 }

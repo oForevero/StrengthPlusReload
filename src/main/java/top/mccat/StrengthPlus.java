@@ -6,6 +6,7 @@ import top.mccat.pojo.BaseData;
 import top.mccat.pojo.bean.LevelValue;
 import top.mccat.pojo.bean.StrengthStone;
 import top.mccat.pojo.config.*;
+import top.mccat.pojo.dao.YamlConfigObject;
 import top.mccat.utils.MsgUtils;
 import top.mccat.utils.YamlLoadUtils;
 
@@ -33,18 +34,17 @@ public class StrengthPlus extends JavaPlugin {
         sendToConsole("&c 正在注入yaml配置文件对象...");
         MsgUtils msgUtils = MsgUtils.newInstance();
         msgUtils.sendToBroadcast("demo");
-        System.out.println(this.getDataFolder());
         try {
             /*Optional<Object> o = YamlLoadUtils.loadConfigObject("strength-attribute.yml", String.valueOf(this.getDataFolder()),
                     "strength-attribute", StrengthAttribute.class);
             System.out.println(o.get());*/
-            Optional<Object> o1 = YamlLoadUtils.loadConfigObject("strength-stone.yml", String.valueOf(this.getDataFolder()),
+            /*Optional<YamlConfigObject> o1 = YamlLoadUtils.loadConfigObject("strength-stone.yml", String.valueOf(this.getDataFolder()),
                     "strength-stone", StrengthStone.class);
             Map<String, StrengthStone> strengthStoneMap = (Map<String, StrengthStone>) o1.get();
             Set<String> keySet = strengthStoneMap.keySet();
             for (String s : keySet) {
                 System.out.println(strengthStoneMap.get(s));
-            }
+            }*/
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,17 +1,22 @@
 package top.mccat.pojo.bean;
 
 import top.mccat.anno.Value;
+import top.mccat.pojo.BaseData;
+import top.mccat.pojo.config.BaseConfig;
+import top.mccat.pojo.dao.YamlConfigObject;
+import top.mccat.utils.YamlLoadUtils;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Distance
  * @date 2022/9/7
  */
-//之前没有对这个进行修改，明天查看一下修改
 @Value(value = "stones",classType = Map.class)
-public class StrengthStone {
+public class StrengthStone implements YamlConfigObject<Map<String,StrengthStone>> {
     @Value("name")
     private String name;
     @Value(value = "lore", classType = List.class)
@@ -90,5 +95,20 @@ public class StrengthStone {
                 ", admin=" + admin +
                 ", chanceExtra=" + chanceExtra +
                 '}';
+    }
+
+    public static Map<String,StrengthStone> newInstance() {
+        Optional<Object> o = Optional.empty();
+        try {
+            o = YamlLoadUtils.loadConfigObject("strength-stone.yml", BaseData.BASE_DIR,
+                    "strength-stone", StrengthStone.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return o.map(value -> (Map<String,StrengthStone>) value).orElseGet(HashMap::new);
+    }
+    @Override
+    public Map<String, StrengthStone> reloadConfigFile() {
+        return newInstance();
     }
 }

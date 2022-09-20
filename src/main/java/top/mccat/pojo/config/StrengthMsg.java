@@ -1,12 +1,19 @@
 package top.mccat.pojo.config;
 
 import top.mccat.anno.Value;
+import top.mccat.pojo.BaseData;
+import top.mccat.pojo.bean.StrengthStone;
+import top.mccat.pojo.dao.YamlConfigObject;
+import top.mccat.utils.YamlLoadUtils;
+
+import java.io.IOException;
+import java.util.Optional;
 
 /**
  * @author Raven
  * @date 2022/09/05 18:43
  */
-public class StrengthMsg {
+public class StrengthMsg implements YamlConfigObject<StrengthMsg> {
     @Value("notify.success")
     private String notifySuccess;
     @Value("notify.fail")
@@ -70,5 +77,21 @@ public class StrengthMsg {
                 ", broadcastSafe='" + broadcastSafe + '\'' +
                 ", broadcastFail='" + broadcastFail + '\'' +
                 '}';
+    }
+
+    public static StrengthMsg newInstance() {
+        Optional<Object> o = Optional.empty();
+        try {
+            o = YamlLoadUtils.loadConfigObject("strength-msg.yml", BaseData.BASE_DIR,
+                    "strength-msg", StrengthMsg.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return o.map(value -> (StrengthMsg) value).orElseGet(StrengthMsg::new);
+    }
+
+    @Override
+    public StrengthMsg reloadConfigFile(){
+        return newInstance();
     }
 }

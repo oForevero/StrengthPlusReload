@@ -1,16 +1,22 @@
 package top.mccat.pojo.config;
 
 import top.mccat.anno.Value;
+import top.mccat.pojo.BaseData;
 import top.mccat.pojo.bean.Attribute;
+import top.mccat.pojo.bean.StrengthStone;
+import top.mccat.pojo.dao.YamlConfigObject;
+import top.mccat.utils.YamlLoadUtils;
 
+import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Kevin Li
  * @date 2022/9/9
  * @description
  */
-public class StrengthAttribute {
+public class StrengthAttribute implements YamlConfigObject<StrengthAttribute> {
     @Value("title")
     private String title;
     @Value("divider")
@@ -129,5 +135,21 @@ public class StrengthAttribute {
                 ", remotelyDamage='" + remotelyDamage + '\'' +
                 ", armorDefence='" + armorDefence + '\'' +
                 '}';
+    }
+
+    public static StrengthAttribute newInstance(){
+        Optional<Object> o = Optional.empty();
+        try {
+            o = YamlLoadUtils.loadConfigObject("strength-attribute.yml", BaseData.BASE_DIR,
+                    "strength-attribute", StrengthAttribute.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return o.map(value -> (StrengthAttribute) value).orElseGet(StrengthAttribute::new);
+    }
+
+    @Override
+    public StrengthAttribute reloadConfigFile(){
+        return newInstance();
     }
 }
