@@ -85,12 +85,6 @@ public class MsgUtils {
      * 重载配置文件
      */
     public void reloadMsgConfig(){
-        /*try {
-            Optional<Object> config = YamlLoadUtils.loadYamlAsObject("config.yml", BaseDir.BASE_DIR.getDir(),
-                    "strengthPlus", BaseConfig.class, null);
-            config.ifPresent(o -> baseConfig = (BaseConfig) o);
-        } catch (IOException | IllegalAccessException | InstantiationException e) {
-            sendToConsole(BaseData.PLUGIN_PREFIX,"&c错误，io流读取失败或没有权限进行操作！");
-        }*/
+        baseConfig = BaseConfig.newInstance();
     }
 }

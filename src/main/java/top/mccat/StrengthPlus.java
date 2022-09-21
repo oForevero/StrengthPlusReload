@@ -26,18 +26,16 @@ public class StrengthPlus extends JavaPlugin {
         msgUtils = MsgUtils.newInstance();
         factory = ConfigFactory.newInstance(this);
         factory.writeConfigFile();
-        sendToConsole("&c 正在初始化StrengthPlus中，请稍后...");
+        sendToConsole("&c 正在注入yaml配置文件对象...");
     }
 
     @Override
     public void onEnable() {
-        sendToConsole("&c 正在注入yaml配置文件对象...");
-        MsgUtils msgUtils = MsgUtils.newInstance();
+
         msgUtils.sendToBroadcast("demo");
         try {
-            /*Optional<Object> o = YamlLoadUtils.loadConfigObject("strength-attribute.yml", String.valueOf(this.getDataFolder()),
-                    "strength-attribute", StrengthAttribute.class);
-            System.out.println(o.get());*/
+            StrengthMenu strengthMenu = StrengthMenu.newInstance();
+            System.out.println(strengthMenu);
             /*Optional<YamlConfigObject> o1 = YamlLoadUtils.loadConfigObject("strength-stone.yml", String.valueOf(this.getDataFolder()),
                     "strength-stone", StrengthStone.class);
             Map<String, StrengthStone> strengthStoneMap = (Map<String, StrengthStone>) o1.get();

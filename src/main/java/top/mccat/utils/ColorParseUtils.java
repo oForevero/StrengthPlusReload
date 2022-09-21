@@ -14,6 +14,5 @@ public class ColorParseUtils {
      */
     public static String parseColorStr(String strValue){
         return ChatColor.translateAlternateColorCodes('&',strValue);
-
     }
 }

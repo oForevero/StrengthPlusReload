@@ -1,5 +1,6 @@
 package top.mccat.utils;
 
+import com.sun.org.slf4j.internal.Logger;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -10,7 +11,6 @@ import top.mccat.pojo.BaseData;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -176,7 +176,7 @@ public class YamlLoadUtils{
             }
             String sonValue = sonAnnotation.value();
             Object o = objectMap.get(fatherKey + "." + sonValue);
-            System.out.println(fatherKey+"."+sonValue + " ："+o);
+            //System.out.println(fatherKey+"."+sonValue + " ："+o);
             invokeBaseMethod(methods,valueObj,o,sonField);
         }
     }

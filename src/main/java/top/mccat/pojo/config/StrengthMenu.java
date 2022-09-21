@@ -12,22 +12,12 @@ import java.util.Optional;
  * @date 2022/09/05 18:43
  */
 public class StrengthMenu implements YamlConfigObject<StrengthMenu> {
-    @Value("enable")
-    private boolean enable;
     @Value("menuTitle")
     private String menuTitle;
     @Value("chanceDisplay")
     private boolean chanceDisplay;
 
     public StrengthMenu() {
-    }
-
-    public boolean isEnable() {
-        return enable;
-    }
-
-    public void setEnable(boolean enable) {
-        this.enable = enable;
     }
 
     public String getMenuTitle() {
@@ -49,8 +39,7 @@ public class StrengthMenu implements YamlConfigObject<StrengthMenu> {
     @Override
     public String toString() {
         return "StrengthMenu{" +
-                "enable=" + enable +
-                ", menuTitle='" + menuTitle + '\'' +
+                "menuTitle='" + menuTitle + '\'' +
                 ", chanceDisplay=" + chanceDisplay +
                 '}';
     }

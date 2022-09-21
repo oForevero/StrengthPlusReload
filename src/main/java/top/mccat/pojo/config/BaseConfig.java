@@ -62,7 +62,7 @@ public class BaseConfig implements YamlConfigObject<BaseConfig> {
         Optional<Object> o = Optional.empty();
         try {
             o = YamlLoadUtils.loadConfigObject("config.yml", BaseData.BASE_DIR,
-                    "config", BaseConfig.class);
+                    "strengthPlus", BaseConfig.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
