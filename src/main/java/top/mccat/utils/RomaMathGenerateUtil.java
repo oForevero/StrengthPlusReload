@@ -10,51 +10,76 @@ import java.util.Map;
  * @date 2022/09/21 22:22
  */
 public class RomaMathGenerateUtil {
-    private static final Map<Integer,String> ROMA_MAP = new HashMap<Integer,String>(13){{
-        put(1,"I");
-        put(4,"VI");
-        put(5,"V");
-        put(10,"X");
-        put(9,"XI");
-        put(40,"LX");
-        put(50,"L");
-        put(90,"CX");
-        put(100,"C");
-        put(400,"DC");
-        put(500,"D");
-        put(900,"MC");
-        put(1000,"M");
+    private static final Map<Integer, String> ROMA_MAP = new HashMap<Integer, String>(13) {{
+        put(1, "I");
+        put(4, "VI");
+        put(5, "V");
+        put(10, "X");
+        put(9, "XI");
+        put(40, "LX");
+        put(50, "L");
+        put(90, "CX");
+        put(100, "C");
+        put(400, "DC");
+        put(500, "D");
+        put(900, "MC");
+        put(1000, "M");
     }};
 
     public static String intToRomanString(int num) {
         StringBuilder romanDigit = new StringBuilder();
         int level = 1;
-        while(num!=0){
-            int digit = num%10;
+        while (num != 0) {
+            int digit = num % 10;
 
-            if(digit>5){
-                if(digit==9){
+            if (digit > 5) {
+                if (digit == 9) {
                     romanDigit.append(ROMA_MAP.get(9 * level));
-                }else{
-                    digit = digit-5;
-                    while(digit!=0){
+                } else {
+                    digit = digit - 5;
+                    while (digit != 0) {
                         digit--;
                         romanDigit.append(ROMA_MAP.get(level));
                     }
-                    romanDigit.append(ROMA_MAP.get(5 * level));}
-            }else {
-                if(digit==4||digit==5){
+                    romanDigit.append(ROMA_MAP.get(5 * level));
+                }
+            } else {
+                if (digit == 4 || digit == 5) {
                     romanDigit.append(ROMA_MAP.get(digit * level));
-                }else if(digit!=0){
-                    while(digit!=0){
+                } else if (digit != 0) {
+                    while (digit != 0) {
                         digit--;
                         romanDigit.append(ROMA_MAP.get(level));
                     }
                 }
             }
-            level*=10;
-            num/=10;
+            level *= 10;
+            num /= 10;
         }
         return new StringBuilder(romanDigit.toString()).reverse().toString();
+    }
+    private static HashMap<Character, Integer> map = new HashMap<Character, Integer>(){{
+        map.put('I', 1);
+        map.put('V', 5);
+        map.put('X', 10);
+        map.put('L', 50);
+        map.put('C', 100);
+        map.put('D', 500);
+        map.put('M', 1000);
+    }};
+        ;
+    public static int romanToInt(String s) {
+        if (s == null || s.length() == 0) {
+            return -1;
+        }
+        int len = s.length(), result = map.get(s.charAt(len - 1));
+        for (int i = len - 2; i >= 0; i--) {
+            if (map.get(s.charAt(i)) >= map.get(s.charAt(i + 1))) {
+                result += map.get(s.charAt(i));
+            } else {
+                result -= map.get(s.charAt(i));
+            }
+        }
+        return result;
     }
 }

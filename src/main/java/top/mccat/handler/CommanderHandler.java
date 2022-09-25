@@ -38,18 +38,22 @@ public class CommanderHandler implements CommandExecutor {
         if(commandSender instanceof Player){
             if (BaseData.SP_COMMAND.equalsIgnoreCase(mainCommand) || BaseData.QH_COMMAND.equalsIgnoreCase(mainCommand) || BaseData.DEFAULT_COMMAND  .equalsIgnoreCase(mainCommand)){
                 Player player = (Player)commandSender;
-                switch(commandArray[0]){
-                    case "":
-                        //执行菜单提示
-                        break;
-                    case "menu":
-                        if(strengthUi == null){
+                if(commandArray.length > 0){
+                    switch(commandArray[0]){
+                        case "":
+                            //执行菜单提示
                             break;
-                        }
-                        player.openInventory(strengthUi.getStrengthInventory());
-                        break;
-                    default:
-                        break;
+                        case "menu":
+                            if(strengthUi == null){
+                                break;
+                            }
+                            player.openInventory(strengthUi.getStrengthInventory());
+                            break;
+                        default:
+                            break;
+                    }
+                }else{
+
                 }
             }
         }

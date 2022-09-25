@@ -16,7 +16,7 @@ public class ConfigFactory {
     private final FileConfiguration yamlConfiguration = new YamlConfiguration();
     private final JavaPlugin plugin;
     private static final String[] CONFIG_FILES = {"config.yml","strength-extra.yml","strength-item.yml","strength-level.yml"
-            ,"strength-menu.yml","strength-msg.yml","strength-stone.yml"};
+            ,"strength-menu.yml","strength-msg.yml","strength-stone.yml","strength-attribute.yml"};
 
     private ConfigFactory(JavaPlugin plugin){
         this.plugin = plugin;

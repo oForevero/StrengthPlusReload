@@ -16,10 +16,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
+import top.mccat.enums.StrengthType;
 import top.mccat.factory.ThreadPoolFactory;
 import top.mccat.pojo.bean.StrengthStone;
+import top.mccat.pojo.config.StrengthAttribute;
 import top.mccat.pojo.config.StrengthMenu;
 import top.mccat.utils.ColorParseUtils;
+import top.mccat.utils.LoreGenerateUtils;
 import top.mccat.utils.MsgUtils;
 
 import java.util.HashMap;
@@ -186,6 +189,10 @@ public class StrengthUi implements Listener {
      */
     private void strengthAction(Inventory inventory, int level, Player player){
         threadPool.execute(()->{
+            //如果玩家关闭强化菜单则取消事件
+            if(!playerInStrengthActionMap.get(player)){
+                return;
+            }
             //            循环开始和闪烁次数
             int i = 45;
             int time = 0;
@@ -208,10 +215,15 @@ public class StrengthUi implements Listener {
                     break;
                 }
             }
-            //如果玩家关闭强化菜单则取消事件
-            if(!playerInStrengthActionMap.get(player)){
-                return;
-            }
+            //测试用ui强化方法
+            LoreGenerateUtils loreGenerateUtils = LoreGenerateUtils.newInstance();
+            StrengthAttribute strengthAttribute = StrengthAttribute.newInstance();
+            List<String> strings = loreGenerateUtils.generateAttributesLore(level, null, strengthAttribute.getMeleeDamage(), StrengthType.ARMOR_TYPE);
+            ItemStack item = inventory.getItem(19);
+            ItemMeta itemMeta = item.getItemMeta();
+            itemMeta.setLore(strings);
+            item.setItemMeta(itemMeta);
+            //测试结束
             playerInStrengthActionMap.put(player,false);
         });
     }
