@@ -31,7 +31,7 @@ public class ConfigFactory {
             String fileDir = BaseData.BASE_DIR+"/"+fileName;
             File file = new File(fileDir);
             if(!file.exists()){
-                plugin.saveResource(fileDir, false);
+                plugin.saveResource(fileName, false);
             }
         }
     }

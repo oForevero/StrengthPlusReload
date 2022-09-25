@@ -16,6 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
+import top.mccat.factory.ThreadPoolFactory;
 import top.mccat.pojo.bean.StrengthStone;
 import top.mccat.pojo.config.StrengthMenu;
 import top.mccat.utils.ColorParseUtils;
@@ -47,9 +48,10 @@ public class StrengthUi implements Listener {
     private final ItemStack closeMenu = new ItemStack(Material.BARRIER);
     private final JavaPlugin plugin;
     private MsgUtils msgUtils;
+    private final ThreadPoolExecutor threadPool = ThreadPoolFactory.getThreadPool();
     private List<StrengthStone> stoneList;
     private final int inventorySize = 54;
-    private final Map<Player,Boolean> playerInMenuMap = new HashMap<>();
+    private final Map<Player,Boolean> playerInStrengthActionMap = new HashMap<>();
     /**
      * 整体ui数组，特殊按钮等用air itemstack填充，强化物品放置栏用
      */
@@ -105,12 +107,13 @@ public class StrengthUi implements Listener {
         }
 //        0-53为上层物品栏
         int location = clickEvent.getRawSlot();
-        msgUtils.sendToConsole("on click event , location: " + location);
         if (location >= 0 && location < inventorySize){
+            msgUtils.sendToConsole("on click event , location: " + location);
 //            如果存在玩家正在强化则取消强化事件
             Player player = (Player) clickEvent.getWhoClicked();
-            if(playerInMenuMap.containsKey(player) && playerInMenuMap.get(player)){
+            if(playerInStrengthActionMap.containsKey(player) && playerInStrengthActionMap.get(player)){
                 clickEvent.setCancelled(true);
+                msgUtils.sendToPlayer("您正在执行强化操作，禁止再次强化！",player);
                 return;
             }
             switch (clickEvent.getRawSlot()){
@@ -126,7 +129,7 @@ public class StrengthUi implements Listener {
                 //强化点击槽位
                 case 43:
                     clickEvent.setCancelled(true);
-                    playerInMenuMap.put(player,true);
+                    playerInStrengthActionMap.put(player,true);
                     strengthAction(inventory,1, player);
                     break;
                 //按键关闭本菜单
@@ -157,7 +160,7 @@ public class StrengthUi implements Listener {
         }
         Player player = (Player)closeEvent.getPlayer();
 //        如果不存在则直接return
-        if(!playerInMenuMap.getOrDefault(player,false)){
+        if(!playerInStrengthActionMap.getOrDefault(player,false)){
             return;
         }
         PlayerInventory playerInventory = player.getInventory();
@@ -171,7 +174,7 @@ public class StrengthUi implements Listener {
         setPlayerItem(strengthItem,playerInventory);
         ItemStack stoneExtra = inventory.getItem(26);
         setPlayerItem(stoneExtra,playerInventory);
-        msgUtils.sendToPlayer("&b强化强行终止，请等待强化冷却后重新强化",player);
+        msgUtils.sendToPlayer("&c强化强行终止，请等待强化冷却后重新强化！",player);
         //执行子线程强化操作
         strengthAction(inventory,1,player);
     }
@@ -182,38 +185,35 @@ public class StrengthUi implements Listener {
      * @param level 武器等级
      */
     private void strengthAction(Inventory inventory, int level, Player player){
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                //            循环开始和闪烁次数
-                int i = 45;
-                int time = 0;
-                while(i < 52){
-                    try {
-                        inventory.setItem(i,runningBar);
-                        i++;
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        msgUtils.sendToConsole("&c警告，线程阻塞，可能是并发导致的问题！");
-                        break;
-                    }
+        threadPool.execute(()->{
+            //            循环开始和闪烁次数
+            int i = 45;
+            int time = 0;
+            while(i < 52){
+                try {
+                    inventory.setItem(i,runningBar);
+                    i++;
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    msgUtils.sendToConsole("&c警告，线程阻塞，可能是并发导致的问题！");
+                    break;
                 }
-                while(time < 6){
-                    try {
-                        strengthFinishAnimation(inventory,time,true);
-                        time++;
-                    } catch (InterruptedException e) {
-                        msgUtils.sendToConsole("&c警告，线程阻塞，可能是并发导致的问题！");
-                        break;
-                    }
-                }
-                //如果玩家关闭强化菜单则取消事件
-                if(!playerInMenuMap.get(player)){
-                    return;
-                }
-                playerInMenuMap.put(player,false);
             }
-        }.runTask(plugin);
+            while(time < 6){
+                try {
+                    strengthFinishAnimation(inventory,time,true);
+                    time++;
+                } catch (InterruptedException e) {
+                    msgUtils.sendToConsole("&c警告，线程阻塞，可能是并发导致的问题！");
+                    break;
+                }
+            }
+            //如果玩家关闭强化菜单则取消事件
+            if(!playerInStrengthActionMap.get(player)){
+                return;
+            }
+            playerInStrengthActionMap.put(player,false);
+        });
     }
 
     /**

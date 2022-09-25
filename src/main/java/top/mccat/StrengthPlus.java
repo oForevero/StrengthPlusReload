@@ -1,7 +1,10 @@
 package top.mccat;
 
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import top.mccat.factory.ConfigFactory;
+import top.mccat.handler.CommanderHandler;
 import top.mccat.pojo.BaseData;
 import top.mccat.pojo.bean.LevelValue;
 import top.mccat.pojo.bean.StrengthStone;
@@ -11,6 +14,7 @@ import top.mccat.utils.MsgUtils;
 import top.mccat.utils.YamlLoadUtils;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -21,38 +25,20 @@ import java.util.Set;
 public class StrengthPlus extends JavaPlugin {
     private MsgUtils msgUtils;
     private ConfigFactory factory;
+    private CommanderHandler commanderHandler;
     @Override
     public void onLoad() {
         msgUtils = MsgUtils.newInstance();
         factory = ConfigFactory.newInstance(this);
+        sendToConsole("&c 正在检查yaml配置文件对象...");
         factory.writeConfigFile();
-        sendToConsole("&c 正在注入yaml配置文件对象...");
+        sendToConsole("&b 配置文件检验成功！");
     }
 
     @Override
     public void onEnable() {
-
-        msgUtils.sendToBroadcast("demo");
-        try {
-            StrengthMenu strengthMenu = StrengthMenu.newInstance();
-            System.out.println(strengthMenu);
-            /*Optional<YamlConfigObject> o1 = YamlLoadUtils.loadConfigObject("strength-stone.yml", String.valueOf(this.getDataFolder()),
-                    "strength-stone", StrengthStone.class);
-            Map<String, StrengthStone> strengthStoneMap = (Map<String, StrengthStone>) o1.get();
-            Set<String> keySet = strengthStoneMap.keySet();
-            for (String s : keySet) {
-                System.out.println(strengthStoneMap.get(s));
-            }*/
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        /*try {
-            Optional<Object> o = YamlLoadUtils.loadConfigObject("strength-level.yml", String.valueOf(this.getDataFolder()),
-                    "strength-level", LevelValue.class);
-            System.out.println(o.get());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
+        commanderHandler = new CommanderHandler(this);
+        Objects.requireNonNull(Bukkit.getPluginCommand(BaseData.SP_COMMAND)).setExecutor(commanderHandler);
     }
 
     @Override
@@ -63,7 +49,6 @@ public class StrengthPlus extends JavaPlugin {
     @Override
     public void reloadConfig() {
         super.reloadConfig();
-
     }
 
     private void sendToConsole(String msg){
