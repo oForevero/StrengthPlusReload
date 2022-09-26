@@ -8,6 +8,7 @@ import top.mccat.enums.StrengthType;
 import top.mccat.pojo.config.StrengthAttribute;
 import top.mccat.pojo.config.StrengthItem;
 import top.mccat.service.StrengthService;
+import top.mccat.utils.LoreGenerateUtils;
 import top.mccat.utils.RomaMathGenerateUtil;
 
 import java.util.List;
@@ -19,49 +20,60 @@ import java.util.List;
 public class StrengthServiceImpl implements StrengthService {
     private StrengthItem strengthItem;
     private StrengthAttribute strengthAttribute;
+    private LoreGenerateUtils loreGenerateUtils;
     public StrengthServiceImpl() {
         this.strengthItem = StrengthItem.newInstance();
         this.strengthAttribute = StrengthAttribute.newInstance();
+        this.loreGenerateUtils = LoreGenerateUtils.newInstance();
     }
 
     @Override
     public ItemStack strengthItem(ItemStack stack, Player player) {
+        StrengthResult strengthLevel = getLevel(stack);
+        int level = strengthLevel.getLevel();
+        //loreGenerateUtils.generateAttributesLore(level, null,sa)
+
         return null;
     }
 
-    private int getLevel(ItemStack stack) {
+    private StrengthResult getLevel(ItemStack stack) {
         StrengthResult strengthResult = canBeStrength(stack);
         if(!strengthResult.isStrength()){
-            return -1;
+            return strengthResult;
         }
         if(Material.AIR.equals(stack.getType())){
-            return -1;
+            return new StrengthResult(false,-1);
         }
         if(!stack.hasItemMeta()){
-            return -1;
+            return new StrengthResult(false,-1);
         }
         ItemMeta itemMeta = stack.getItemMeta();
         if(itemMeta == null || !itemMeta.hasLore()){
-            return 0;
+            strengthResult.setLevel(0);
+            return strengthResult;
         }
         List<String> lore = itemMeta.getLore();
         if(lore == null || lore.size() == 0){
-            return 0;
+            strengthResult.setLevel(0);
+            return strengthResult;
         }
         //包含title即为有等级
         if(!lore.contains(strengthAttribute.getTitle())){
             switch(strengthResult.getType()){
                 case 0:
-                    return getLevelFromList(lore, strengthAttribute.getArmorDefence());
+                    strengthResult.setLevel(getLevelFromList(lore, strengthAttribute.getArmorDefence()));
+                    break;
                 case 1:
-                    return getLevelFromList(lore, strengthAttribute.getMeleeDamage());
+                    strengthResult.setLevel(getLevelFromList(lore, strengthAttribute.getMeleeDamage()));
+                    break;
                 case 2:
-                    return getLevelFromList(lore, strengthAttribute.getRemotelyDamage());
+                    strengthResult.setLevel(getLevelFromList(lore, strengthAttribute.getRemotelyDamage()));
+                    break;
                 default:
-                    return 0;
+                    break;
             }
         }
-        return -1;
+        return strengthResult;
     }
 
     private int getLevelFromList(List<String> lore, String attribute){
@@ -93,6 +105,7 @@ public class StrengthServiceImpl implements StrengthService {
 class StrengthResult {
     private boolean strength;
     private int type;
+    private int level;
 
     public StrengthResult(boolean strength, int type) {
         this.strength = strength;
@@ -115,11 +128,20 @@ class StrengthResult {
         this.type = type;
     }
 
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
     @Override
     public String toString() {
-        return "StrengthType{" +
+        return "StrengthResult{" +
                 "strength=" + strength +
                 ", type=" + type +
+                ", level=" + level +
                 '}';
     }
 }
