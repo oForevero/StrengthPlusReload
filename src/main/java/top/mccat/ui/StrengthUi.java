@@ -135,10 +135,9 @@ public class StrengthUi implements Listener {
                     playerInStrengthActionMap.put(player,true);
                     //获取强化物品，并进行判断
                     ItemStack strengthItem = inventory.getItem(19);
-                    System.out.println(strengthItem);
                     StrengthServiceImpl.StrengthResult result;
                     try {
-                        result = strengthService.getLevel(strengthItem);
+                        result = strengthService.getLevel(strengthItem, new ItemStack[]{inventory.getItem(13),inventory.getItem(14)},inventory.getItem(26));
                     } catch (ItemCanBeStrengthException e) {
                         msgUtils.sendToPlayer(e.getMessage(),player);
                         playerInStrengthActionMap.remove(player);
@@ -190,7 +189,7 @@ public class StrengthUi implements Listener {
         ItemStack stoneExtra = inventory.getItem(26);
         setPlayerItem(stoneExtra,playerInventory);
         msgUtils.sendToPlayer("&c强化强行终止，请等待强化冷却后重新强化！",player);
-
+        playerInStrengthActionMap.remove(player);
     }
 
     /**

@@ -7,6 +7,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import top.mccat.enums.StrengthType;
 import top.mccat.exception.ItemCanBeStrengthException;
 import top.mccat.pojo.bean.LevelValue;
+import top.mccat.pojo.bean.StrengthStone;
 import top.mccat.pojo.config.BaseConfig;
 import top.mccat.pojo.config.StrengthAttribute;
 import top.mccat.pojo.config.StrengthItem;
@@ -16,7 +17,9 @@ import top.mccat.utils.LoreGenerateUtils;
 import top.mccat.utils.MsgUtils;
 import top.mccat.utils.RomaMathGenerateUtil;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Raven
@@ -28,6 +31,7 @@ public class StrengthServiceImpl implements StrengthService {
     private LoreGenerateUtils loreGenerateUtils;
     private List<LevelValue> levelValues;
     private MsgUtils msgUtils;
+    private Map<String, StrengthStone> strengthStoneMap;
     private final RomaMathGenerateUtil romaMathGenerateUtil;
     public StrengthServiceImpl() {
         this.strengthItem = StrengthItem.newInstance();
@@ -36,6 +40,7 @@ public class StrengthServiceImpl implements StrengthService {
         this.msgUtils = MsgUtils.newInstance();
         this.levelValues = LevelValue.newInstance();
         this.romaMathGenerateUtil = new RomaMathGenerateUtil();
+        this.strengthStoneMap = StrengthStone.newInstance();
     }
 
     @Override
@@ -43,6 +48,9 @@ public class StrengthServiceImpl implements StrengthService {
         int level = strengthResult.getLevel();
         if(level == levelValues.size()){
             msgUtils.sendToPlayer("&c当前强化物品等级已满，无法进行强化操作！",player);
+        }
+        if(level == -1){
+            msgUtils.sendToPlayer("&c当前强化物品无法进行强化操作！",player);
         }
         List<String> lore = null;
         switch (strengthResult.getType()){
@@ -79,7 +87,7 @@ public class StrengthServiceImpl implements StrengthService {
             return strengthResult;
         }
         //包含title即为有等级
-        if(!lore.contains(strengthAttribute.getTitle())){
+        if(lore.contains(strengthAttribute.getTitle())){
             int level = 0;
             switch(strengthResult.getType()){
                 case 0:
@@ -95,15 +103,73 @@ public class StrengthServiceImpl implements StrengthService {
                     break;
             }
             LevelValue levelValue = levelValues.get(level + 1);
+            List<String> strengthStones = levelValue.getStrengthStones();
+            stoneCheck(strengthStones, strengthStone);
             //进行强化操作
         }
         return strengthResult;
     }
 
-    private int getLevelFromList(List<String> lore, String attribute){
-        int i = lore.indexOf(attribute);
-        String romaLevel = lore.get(i).substring(attribute.length() + 2);
-        return romaMathGenerateUtil.romanToInt(romaLevel);
+    /**
+     * 进行强化石检测，当前等级是否能强化
+     * @param stoneKeys 强化石lore
+     * @param strengthStones 强化石
+     * @return 是否能强化
+     */
+    private boolean stoneCheck(List<String> stoneKeys, ItemStack[] strengthStones) throws ItemCanBeStrengthException {
+        List<StrengthStone> stoneList = new ArrayList<>(2);
+        StringBuilder stoneName = new StringBuilder();
+        for (String stoneKey : stoneKeys) {
+            StrengthStone strengthStone = strengthStoneMap.get(stoneKey);
+            if(strengthStone!=null){
+                stoneList.add(strengthStone);
+                stoneName.append(strengthStone.getName()).append(" ");
+            }
+        }
+        int count = 0;
+        //执行强化石校验操作
+        for (ItemStack strengthStone : strengthStones) {
+            if(strengthStone==null){
+                continue;
+            }
+            if(strengthStone.getType().equals(Material.AIR) || !strengthStone.hasItemMeta()){
+                continue;
+            }
+            ItemMeta itemMeta = strengthStone.getItemMeta();
+            for (StrengthStone stone : stoneList) {
+                assert itemMeta != null;
+                if (!strengthStone.getType().name().equals(stone.getName())) {
+                    continue;
+                }
+                if (!stone.getName().equals(itemMeta.getDisplayName())) {
+                    continue;
+                }
+                if (!stone.getLore().equals(itemMeta.getLore())) {
+                    continue;
+                }
+                count++;
+            }
+        }
+        if(count != stoneKeys.size()){
+            throw new ItemCanBeStrengthException("&c 强化失败，您的强化石不匹配，请确保您有："+ stoneName);
+        }
+        return true;
+    }
+
+    private int getLevelFromList(List<String> lore, String attribute) throws ItemCanBeStrengthException {
+        int i = lore.indexOf(strengthAttribute.getTitle());
+        if(i == -1){
+            throw new ItemCanBeStrengthException("&c 强化失败，您的等级lore参数不匹配，无法进行强化操作");
+        }
+        List<String> subLore = lore.subList(i, lore.size());
+        String romaLevel = "";
+        for (String s : subLore) {
+            if (s.contains(attribute)) {
+                romaLevel = s.substring(attribute.length() + 2);
+                return romaMathGenerateUtil.romanToInt(romaLevel);
+            }
+        }
+        throw new ItemCanBeStrengthException("&c 强化失败，查找等级参数失败");
     }
 
     /**

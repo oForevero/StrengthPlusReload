@@ -30,6 +30,8 @@ public class StrengthStone implements YamlConfigObject<Map<String,StrengthStone>
     private int chanceExtra = 0;
     @Value("extraStone")
     private boolean extraStone = false;
+    @Value("item")
+    private String item;
 
     public StrengthStone() {
     }
@@ -82,8 +84,8 @@ public class StrengthStone implements YamlConfigObject<Map<String,StrengthStone>
         return chanceExtra;
     }
 
-    public void setChanceExtra(int chanceExtra) {
-        this.chanceExtra = chanceExtra;
+    public void setChanceExtra(Object chanceExtra) {
+        this.chanceExtra = (int) chanceExtra;
     }
 
     public void setExtraStone(Object extraStone) {
@@ -92,6 +94,14 @@ public class StrengthStone implements YamlConfigObject<Map<String,StrengthStone>
 
     public boolean getExtraStone(){
         return extraStone;
+    }
+
+    public String getItem() {
+        return item;
+    }
+
+    public void setItem(Object item) {
+        this.item = String.valueOf(item);
     }
 
     public static Map<String,StrengthStone> newInstance() {
