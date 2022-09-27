@@ -2,7 +2,6 @@ package top.mccat.pojo.bean;
 
 import top.mccat.anno.Value;
 import top.mccat.pojo.BaseData;
-import top.mccat.pojo.config.BaseConfig;
 import top.mccat.pojo.dao.YamlConfigObject;
 import top.mccat.utils.YamlLoadUtils;
 
@@ -29,6 +28,8 @@ public class StrengthStone implements YamlConfigObject<Map<String,StrengthStone>
     private boolean admin = false;
     @Value("chanceExtra")
     private int chanceExtra = 0;
+    @Value("extraStone")
+    private boolean extraStone = false;
 
     public StrengthStone() {
     }
@@ -85,16 +86,12 @@ public class StrengthStone implements YamlConfigObject<Map<String,StrengthStone>
         this.chanceExtra = chanceExtra;
     }
 
-    @Override
-    public String toString() {
-        return "StrengthStone{" +
-                "  name='" + name + '\'' +
-                ", lore=" + lore +
-                ", safe=" + safe +
-                ", success=" + success +
-                ", admin=" + admin +
-                ", chanceExtra=" + chanceExtra +
-                '}';
+    public void setExtraStone(Object extraStone) {
+        this.extraStone = (boolean) extraStone;
+    }
+
+    public boolean getExtraStone(){
+        return extraStone;
     }
 
     public static Map<String,StrengthStone> newInstance() {

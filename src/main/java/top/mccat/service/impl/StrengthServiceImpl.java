@@ -62,7 +62,7 @@ public class StrengthServiceImpl implements StrengthService {
     }
 
     @Override
-    public StrengthResult getLevel(ItemStack stack) throws ItemCanBeStrengthException {
+    public StrengthResult getLevel(ItemStack stack, ItemStack[] strengthStone, ItemStack strengthExtraStone) throws ItemCanBeStrengthException {
         StrengthResult strengthResult = canBeStrength(stack);
         if(!strengthResult.isStrength() || Material.AIR.equals(stack.getType())){
             throw new ItemCanBeStrengthException("&c 错误，物品无法被强化，请检查当前物品是否为" +
@@ -80,19 +80,22 @@ public class StrengthServiceImpl implements StrengthService {
         }
         //包含title即为有等级
         if(!lore.contains(strengthAttribute.getTitle())){
+            int level = 0;
             switch(strengthResult.getType()){
                 case 0:
-                    strengthResult.setLevel(getLevelFromList(lore, strengthAttribute.getArmorDefence()));
+                    level = getLevelFromList(lore, strengthAttribute.getArmorDefence());
                     break;
                 case 1:
-                    strengthResult.setLevel(getLevelFromList(lore, strengthAttribute.getMeleeDamage()));
+                    level = getLevelFromList(lore, strengthAttribute.getMeleeDamage());
                     break;
                 case 2:
-                    strengthResult.setLevel(getLevelFromList(lore, strengthAttribute.getRemotelyDamage()));
+                    level = getLevelFromList(lore, strengthAttribute.getRemotelyDamage());
                     break;
                 default:
                     break;
             }
+            LevelValue levelValue = levelValues.get(level + 1);
+            //进行强化操作
         }
         return strengthResult;
     }
@@ -120,10 +123,10 @@ public class StrengthServiceImpl implements StrengthService {
         if(strengthItem.remoteCanBeStrength(type.name())){
             return new StrengthResult(true, StrengthType.BOW_TYPE.getType());
         }
-        return new StrengthResult(false,-1);
+        return new StrengthResult(false, -1);
     }
 
-    public class StrengthResult {
+    public static class StrengthResult {
         private boolean strength;
         private int type;
         private int level;

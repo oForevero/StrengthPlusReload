@@ -21,10 +21,12 @@ public interface StrengthService {
     /**
      * 获取等级
      * @param stack 物品堆
+     * @param strengthStone 强化石
+     * @param strengthExtraStone 强化券
      * @return 强化结果集
      * @throws ItemCanBeStrengthException 物品不能被强化异常
      */
-    public StrengthServiceImpl.StrengthResult getLevel(ItemStack stack) throws ItemCanBeStrengthException;
+    public StrengthServiceImpl.StrengthResult getLevel(ItemStack stack, ItemStack[] strengthStone, ItemStack strengthExtraStone) throws ItemCanBeStrengthException;
 
     /**
      * 物品是否可被强化
