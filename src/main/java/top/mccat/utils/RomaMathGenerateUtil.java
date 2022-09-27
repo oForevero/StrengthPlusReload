@@ -10,76 +10,53 @@ import java.util.Map;
  * @date 2022/09/21 22:22
  */
 public class RomaMathGenerateUtil {
-    private static final Map<Integer, String> ROMA_MAP = new HashMap<Integer, String>(13) {{
-        put(1, "I");
-        put(4, "VI");
-        put(5, "V");
-        put(10, "X");
-        put(9, "XI");
-        put(40, "LX");
-        put(50, "L");
-        put(90, "CX");
-        put(100, "C");
-        put(400, "DC");
-        put(500, "D");
-        put(900, "MC");
-        put(1000, "M");
-    }};
+    int[] values = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+    String[] symbols = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
 
-    public static String intToRomanString(int num) {
-        StringBuilder romanDigit = new StringBuilder();
-        int level = 1;
-        while (num != 0) {
-            int digit = num % 10;
-
-            if (digit > 5) {
-                if (digit == 9) {
-                    romanDigit.append(ROMA_MAP.get(9 * level));
-                } else {
-                    digit = digit - 5;
-                    while (digit != 0) {
-                        digit--;
-                        romanDigit.append(ROMA_MAP.get(level));
-                    }
-                    romanDigit.append(ROMA_MAP.get(5 * level));
-                }
-            } else {
-                if (digit == 4 || digit == 5) {
-                    romanDigit.append(ROMA_MAP.get(digit * level));
-                } else if (digit != 0) {
-                    while (digit != 0) {
-                        digit--;
-                        romanDigit.append(ROMA_MAP.get(level));
-                    }
-                }
+    public String intToRoman(int num) {
+        StringBuffer roman = new StringBuffer();
+        for (int i = 0; i < values.length; ++i) {
+            int value = values[i];
+            String symbol = symbols[i];
+            while (num >= value) {
+                num -= value;
+                roman.append(symbol);
             }
-            level *= 10;
-            num /= 10;
+            if (num == 0) {
+                break;
+            }
         }
-        return new StringBuilder(romanDigit.toString()).reverse().toString();
+        return roman.toString();
     }
-    private static HashMap<Character, Integer> map = new HashMap<Character, Integer>(){{
-        map.put('I', 1);
-        map.put('V', 5);
-        map.put('X', 10);
-        map.put('L', 50);
-        map.put('C', 100);
-        map.put('D', 500);
-        map.put('M', 1000);
-    }};
-        ;
-    public static int romanToInt(String s) {
-        if (s == null || s.length() == 0) {
-            return -1;
-        }
-        int len = s.length(), result = map.get(s.charAt(len - 1));
-        for (int i = len - 2; i >= 0; i--) {
-            if (map.get(s.charAt(i)) >= map.get(s.charAt(i + 1))) {
-                result += map.get(s.charAt(i));
-            } else {
-                result -= map.get(s.charAt(i));
+
+    public int romanToInt(String s) {
+        int sum = 0;
+        char[] ch = s.toCharArray();
+
+        for (int i = ch.length-2; i >=0 ; i--) {
+            int j = i+1;
+            if (getValue(ch[j])>getValue(ch[i])){
+                sum = sum - getValue(ch[i]);
             }
+            else if (getValue(ch[j]) <= getValue(ch[i])){
+                sum = sum + getValue(ch[i]);
+            }
+
         }
-        return result;
+        sum = sum + getValue(ch[ch.length-1]);
+        return sum;
+    }
+    private int getValue(char ch){
+        switch(ch){
+            case 'I':return 1;
+            case 'V':return 5;
+            case 'X':return 10;
+            case 'L':return 50;
+            case 'C':return 100;
+            case 'D':return 500;
+            case 'M':return 1000;
+            default: return 0;
+
+        }
     }
 }

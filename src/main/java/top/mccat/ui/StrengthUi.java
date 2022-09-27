@@ -14,15 +14,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitScheduler;
-import top.mccat.enums.StrengthType;
+import top.mccat.exception.ItemCanBeStrengthException;
 import top.mccat.factory.ThreadPoolFactory;
 import top.mccat.pojo.bean.StrengthStone;
-import top.mccat.pojo.config.StrengthAttribute;
 import top.mccat.pojo.config.StrengthMenu;
+import top.mccat.service.StrengthService;
+import top.mccat.service.impl.StrengthServiceImpl;
 import top.mccat.utils.ColorParseUtils;
-import top.mccat.utils.LoreGenerateUtils;
 import top.mccat.utils.MsgUtils;
 
 import java.util.HashMap;
@@ -50,6 +48,7 @@ public class StrengthUi implements Listener {
     private final ItemStack extraTable = new ItemStack(Material.END_PORTAL_FRAME);
     private final ItemStack closeMenu = new ItemStack(Material.BARRIER);
     private final JavaPlugin plugin;
+    private StrengthService strengthService;
     private MsgUtils msgUtils;
     private final ThreadPoolExecutor threadPool = ThreadPoolFactory.getThreadPool();
     private List<StrengthStone> stoneList;
@@ -79,6 +78,7 @@ public class StrengthUi implements Listener {
         setItemName(extraTable,"&b附加物品台");
         setItemName(displayBar, "&a强化信息");
         setItemName(closeMenu, "&c关闭菜单");
+        strengthService = new StrengthServiceImpl();
     }
 
     public Inventory getStrengthInventory(){
@@ -133,7 +133,19 @@ public class StrengthUi implements Listener {
                 case 43:
                     clickEvent.setCancelled(true);
                     playerInStrengthActionMap.put(player,true);
-                    strengthAction(inventory,1, player);
+                    //获取强化物品，并进行判断
+                    ItemStack strengthItem = inventory.getItem(19);
+                    System.out.println(strengthItem);
+                    StrengthServiceImpl.StrengthResult result;
+                    try {
+                        result = strengthService.getLevel(strengthItem);
+                    } catch (ItemCanBeStrengthException e) {
+                        msgUtils.sendToPlayer(e.getMessage(),player);
+                        playerInStrengthActionMap.remove(player);
+                        break;
+                    }
+                    result.setLevel(1);
+                    strengthAction(inventory, strengthItem, player,result);
                     break;
                 //按键关闭本菜单
                 case 53:
@@ -178,16 +190,17 @@ public class StrengthUi implements Listener {
         ItemStack stoneExtra = inventory.getItem(26);
         setPlayerItem(stoneExtra,playerInventory);
         msgUtils.sendToPlayer("&c强化强行终止，请等待强化冷却后重新强化！",player);
-        //执行子线程强化操作
-        strengthAction(inventory,1,player);
+
     }
 
     /**
      * 强化动画及其使用，使用线程池方法
      * @param inventory 背包参数
-     * @param level 武器等级
+     * @param strengthItem 强化物品
+     * @param player 玩家对象
+     * @param strength 强化信息对象
      */
-    private void strengthAction(Inventory inventory, int level, Player player){
+    private void strengthAction(Inventory inventory,ItemStack strengthItem, Player player, StrengthServiceImpl.StrengthResult strength){
         threadPool.execute(()->{
             //如果玩家关闭强化菜单则取消事件
             if(!playerInStrengthActionMap.get(player)){
@@ -216,13 +229,14 @@ public class StrengthUi implements Listener {
                 }
             }
             //测试用ui强化方法
-            LoreGenerateUtils loreGenerateUtils = LoreGenerateUtils.newInstance();
+            /*LoreGenerateUtils loreGenerateUtils = LoreGenerateUtils.newInstance();
             StrengthAttribute strengthAttribute = StrengthAttribute.newInstance();
             List<String> strings = loreGenerateUtils.generateAttributesLore(level, null, strengthAttribute.getMeleeDamage(), StrengthType.ARMOR_TYPE);
             ItemStack item = inventory.getItem(19);
             ItemMeta itemMeta = item.getItemMeta();
             itemMeta.setLore(strings);
-            item.setItemMeta(itemMeta);
+            item.setItemMeta(itemMeta);*/
+            strengthService.strengthItemInUi(strengthItem,player,strength);
             //测试结束
             playerInStrengthActionMap.put(player,false);
         });

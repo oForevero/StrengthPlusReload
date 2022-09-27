@@ -16,7 +16,9 @@ import java.util.List;
 public class LoreGenerateUtils {
     private StrengthAttribute strengthAttribute;
     private final LoreList<String> loreList = new LoreList<>();
+    private final RomaMathGenerateUtil romaMathGenerateUtil;
     private LoreGenerateUtils(){
+        romaMathGenerateUtil = new RomaMathGenerateUtil();
         reloadBaseConfig();
     }
 
@@ -45,17 +47,18 @@ public class LoreGenerateUtils {
      * @return loreList
      */
     public List<String> generateAttributesLore(int level, List<String> itemAttributeLore, String setAttribute, StrengthType strengthType){
-        if(level == 0 || itemAttributeLore == null){
-            List<String> dataList = new ArrayList<String>();
+        loreList.clear();
+        if(level == 1 || itemAttributeLore == null){
+            List<String> dataList = new ArrayList<>();
             switch (strengthType.getType()){
                 case 0:
-                    dataList.add(strengthAttribute.getArmorDefence()+ColorParseUtils.parseColorStr(" &c"+RomaMathGenerateUtil.intToRomanString(level)));
+                    dataList.add(strengthAttribute.getArmorDefence()+ColorParseUtils.parseColorStr(" &c"+romaMathGenerateUtil.intToRoman(level)));
                     break;
                 case 1:
-                    dataList.add(strengthAttribute.getMeleeDamage()+ColorParseUtils.parseColorStr(" &c"+RomaMathGenerateUtil.intToRomanString(level)));
+                    dataList.add(strengthAttribute.getMeleeDamage()+ColorParseUtils.parseColorStr(" &c"+romaMathGenerateUtil.intToRoman(level)));
                     break;
                 case 2:
-                    dataList.add(strengthAttribute.getRemotelyDamage()+ColorParseUtils.parseColorStr(" &c"+RomaMathGenerateUtil.intToRomanString(level)));
+                    dataList.add(strengthAttribute.getRemotelyDamage()+ColorParseUtils.parseColorStr(" &c"+romaMathGenerateUtil.intToRoman(level)));
                     break;
                 default:
                     break;
