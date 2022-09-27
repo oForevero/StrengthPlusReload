@@ -201,6 +201,7 @@ public class StrengthUi implements Listener {
      * @param strength 强化信息对象
      */
     private void strengthAction(Inventory inventory,ItemStack strengthItem, Player player, StrengthServiceImpl.StrengthResult strength){
+        //如果线程池满应当停止强化操作，并进行提示，回头补上
         threadPool.execute(()->{
             //如果玩家关闭强化菜单则取消事件
             if(!playerInStrengthActionMap.get(player)){
@@ -229,13 +230,6 @@ public class StrengthUi implements Listener {
                 }
             }
             //测试用ui强化方法
-            /*LoreGenerateUtils loreGenerateUtils = LoreGenerateUtils.newInstance();
-            StrengthAttribute strengthAttribute = StrengthAttribute.newInstance();
-            List<String> strings = loreGenerateUtils.generateAttributesLore(level, null, strengthAttribute.getMeleeDamage(), StrengthType.ARMOR_TYPE);
-            ItemStack item = inventory.getItem(19);
-            ItemMeta itemMeta = item.getItemMeta();
-            itemMeta.setLore(strings);
-            item.setItemMeta(itemMeta);*/
             strengthService.strengthItemInUi(strengthItem,player,strength);
             //测试结束
             playerInStrengthActionMap.put(player,false);
