@@ -1,6 +1,5 @@
 package top.mccat.utils;
 
-import com.sun.org.slf4j.internal.Logger;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
