@@ -3,6 +3,7 @@ package top.mccat.service.impl;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 import top.mccat.dao.StoneDao;
 import top.mccat.dao.impl.StoneDaoImpl;
 import top.mccat.exception.ItemStrengthException;
@@ -53,6 +54,12 @@ public class StoneServiceImpl implements StoneService {
                 continue;
             }
             for (Integer index : sameItemIndexSet) {
+                //获取到的map必定不为空
+                ItemMeta itemMeta = playerInventory.getItem(index).getItemMeta();
+                //进行非相同lore 和非相同物品名的判断
+                if(!itemMeta.getDisplayName().equals(strengthStone.getName()) || !itemMeta.getLore().equals(strengthStone.getLore())){
+                    continue;
+                }
                 int sameItemAmount = allSameItemMap.get(index).getAmount();
                 if(sameItemAmount == 64){
                     continue;
@@ -69,7 +76,8 @@ public class StoneServiceImpl implements StoneService {
                 break;
             }
             if(amount > 0){
-                throw new ItemStrengthException("&c 强化石给予溢出，您的背包已满，溢出数量&a[&b"+amount+"&a]&c个，请通过截图联系管理员进行补发");
+                throw new ItemStrengthException("&c 强化石给予溢出，您的背包已满，溢出数量&a[&b"+amount+"&a]&c个，强化石类型为："+strengthStone.getName()+" " +
+                        "&c请通过截图联系管理员进行补发，&e请尽量保证背包有足够空余！");
             }
         }
     }
