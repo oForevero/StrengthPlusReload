@@ -143,7 +143,6 @@ public class StrengthUi implements Listener {
                         playerInStrengthActionMap.remove(player);
                         break;
                     }
-                    result.setLevel(1);
                     strengthAction(inventory, strengthItem, player,result);
                     break;
                 //按键关闭本菜单

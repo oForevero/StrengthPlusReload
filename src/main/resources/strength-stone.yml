@@ -19,6 +19,7 @@ strength-stone:
     extraStone: false
   safe-stone:
     name: '保护强化卷'
+    item: 'PAPER'
     lore:
       - '用于使强化物品不破碎的强化'
     # 是否为保护强化，必定成功强化，管理员强化

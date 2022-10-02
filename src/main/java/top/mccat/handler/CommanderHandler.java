@@ -70,19 +70,21 @@ public class CommanderHandler implements CommandExecutor {
                             //当length为3，即没有指定玩家，默认给自己发送
                             if(commandArray.length == 3){
                                 //强化石int值判断
-                                if(isInt(commandArray[2])){
+                                if(!isInt(commandArray[2])){
                                    msgUtils.sendToPlayer("&c 发送强化石失败，请确定您输入的是整型数值！",player);
                                    return true;
                                 }
                                 try {
                                     stoneService.sendStoneToPlayer(commandArray[1], player.getInventory(), Integer.parseInt(commandArray[2]));
+                                    msgUtils.sendToPlayer("&b 已向您发送了&a[&c"+Integer.parseInt(commandArray[2])+"&a]&b个"+
+                                            strengthStoneMap.get(commandArray[1]).getName(),player);
                                 } catch (ItemStrengthException e) {
                                     msgUtils.sendToPlayer(e.getMessage(), player);
                                     return true;
                                 }
                             }else if(commandArray.length == 4){
                                 //为4时即为指定玩家
-                                if(isInt(commandArray[3])){
+                                if(!isInt(commandArray[3])){
                                     msgUtils.sendToPlayer("&c 发送强化石失败，请确定您输入的是整型数值！",player);
                                     return true;
                                 }
@@ -94,6 +96,8 @@ public class CommanderHandler implements CommandExecutor {
                                 }
                                 try {
                                     stoneService.sendStoneToPlayer(commandArray[1], receivePlayer.getInventory(), Integer.parseInt(commandArray[3]));
+                                    msgUtils.sendToPlayer("&b 已向&a[&c"+receivePlayer.getName()+"&a]&b发送了&a[&c"+Integer.parseInt(commandArray[3])+"&a]&b个"
+                                            +strengthStoneMap.get(commandArray[1]).getName(),receivePlayer);
                                 } catch (ItemStrengthException e) {
                                     msgUtils.sendToPlayer(e.getMessage(), player);
                                     return true;

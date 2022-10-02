@@ -1,8 +1,12 @@
 #对应可被强化的物品名
 strength-item:
+  # 近战
   melee:
     - 'WOODEN_SWORD'
+    - 'DIAMOND_SWORD'
+  # 远程
   remote:
     - 'BOW'
+  # 防御
   defence:
     - 'DIAMOND_BOOT'

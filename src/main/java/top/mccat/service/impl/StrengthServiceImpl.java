@@ -102,8 +102,7 @@ public class StrengthServiceImpl implements StrengthService {
             }
             LevelValue levelValue = levelValues.get(level + 1);
             List<String> strengthStones = levelValue.getStrengthStones();
-            stoneCheck(strengthStones, strengthStone);
-            //进行强化操作
+            stoneCheckAndCost(strengthStones, strengthStone);
         }
         return strengthResult;
     }
@@ -112,10 +111,9 @@ public class StrengthServiceImpl implements StrengthService {
      * 进行强化石检测，当前等级是否能强化
      * @param stoneKeys 强化石lore
      * @param strengthStones 强化石
-     * @return 是否能强化
      */
-    private boolean stoneCheck(List<String> stoneKeys, ItemStack[] strengthStones) throws ItemStrengthException {
-        List<StrengthStone> stoneList = new ArrayList<>(2);
+    private void stoneCheckAndCost(List<String> stoneKeys, ItemStack[] strengthStones) throws ItemStrengthException {
+        List<StrengthStone> stoneList = new ArrayList<>();
         StringBuilder stoneName = new StringBuilder();
         for (String stoneKey : stoneKeys) {
             StrengthStone strengthStone = strengthStoneMap.get(stoneKey);
@@ -136,7 +134,7 @@ public class StrengthServiceImpl implements StrengthService {
             ItemMeta itemMeta = strengthStone.getItemMeta();
             for (StrengthStone stone : stoneList) {
                 assert itemMeta != null;
-                if (!strengthStone.getType().name().equals(stone.getName())) {
+                if (!strengthStone.getItemMeta().getDisplayName().equals(stone.getName())) {
                     continue;
                 }
                 if (!stone.getName().equals(itemMeta.getDisplayName())) {
@@ -146,12 +144,19 @@ public class StrengthServiceImpl implements StrengthService {
                     continue;
                 }
                 count++;
+                //进行强化石扣除，如果两个全扣则无问题，扣单个则进行补偿
+                strengthStone.setAmount(strengthStone.getAmount()-1);
+                //如果已经符合单个强化石数量，直接跳出循环
+                if(count == stoneKeys.size()){
+                    break;
+                }
             }
         }
         if(count != stoneKeys.size()){
+            //进行强化石补偿
+            strengthStones[0].setAmount(strengthStones[0].getAmount()+1);
             throw new ItemStrengthException("&c 强化失败，您的强化石不匹配，请确保您有："+ stoneName);
         }
-        return true;
     }
 
     private int getLevelFromList(List<String> lore, String attribute) throws ItemStrengthException {
