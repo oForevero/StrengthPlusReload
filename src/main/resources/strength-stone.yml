@@ -2,11 +2,11 @@
 strength-stone:
   # 普通强化石
   normal-stone:
-    name: '普通强化石'
+    name: '&b普通强化石'
     item: 'SPONGE'
     lore:
-      - '仅用于普通强化的强化石'
-      - 'demo for test'
+      - '&b仅用于普通强化的强化石'
+      - '&bdemo for test'
     # 是否为保护强化，必定成功强化，管理员强化
     safe: false
     # 是否为必定成功强化

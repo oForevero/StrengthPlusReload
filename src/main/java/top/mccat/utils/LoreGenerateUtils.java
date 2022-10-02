@@ -86,6 +86,19 @@ public class LoreGenerateUtils {
         }
     }
 
+    /**
+     * 转换颜色字符list方法
+     * @param loreList 强化loreList
+     * @return 转换lore
+     */
+    public static List<String> parseColorLore(List<String> loreList){
+        List<String> colorLore = new ArrayList<>();
+        for (String s : loreList) {
+            colorLore.add(ColorParseUtils.parseColorStr(s));
+        }
+        return colorLore;
+    }
+
     public void reloadBaseConfig () {
         strengthAttribute = StrengthAttribute.newInstance();
     }

@@ -7,9 +7,9 @@ import top.mccat.utils.ColorParseUtils;
  * @date 2022/9/27
  * @description
  */
-public class ItemCanBeStrengthException extends Exception {
+public class ItemStrengthException extends Exception {
 
-    public ItemCanBeStrengthException(String message) {
+    public ItemStrengthException(String message) {
         super(ColorParseUtils.parseColorStr(message));
     }
 }

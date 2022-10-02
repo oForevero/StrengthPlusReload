@@ -3,6 +3,7 @@ package top.mccat.pojo.bean;
 import top.mccat.anno.Value;
 import top.mccat.pojo.BaseData;
 import top.mccat.pojo.dao.YamlConfigObject;
+import top.mccat.utils.LoreGenerateUtils;
 import top.mccat.utils.YamlLoadUtils;
 
 import java.util.HashMap;
@@ -53,7 +54,7 @@ public class StrengthStone implements YamlConfigObject<Map<String,StrengthStone>
     }
 
     public void setLore(List<String> lore) {
-        this.lore = lore;
+        this.lore = LoreGenerateUtils.parseColorLore(lore);
     }
 
     public boolean isSafe() {
@@ -104,6 +105,7 @@ public class StrengthStone implements YamlConfigObject<Map<String,StrengthStone>
         this.item = String.valueOf(item);
     }
 
+    @SuppressWarnings("unchecked")
     public static Map<String,StrengthStone> newInstance() {
         Optional<Object> o = Optional.empty();
         try {

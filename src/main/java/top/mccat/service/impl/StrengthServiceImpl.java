@@ -5,13 +5,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import top.mccat.enums.StrengthType;
-import top.mccat.exception.ItemCanBeStrengthException;
+import top.mccat.exception.ItemStrengthException;
 import top.mccat.pojo.bean.LevelValue;
 import top.mccat.pojo.bean.StrengthStone;
-import top.mccat.pojo.config.BaseConfig;
 import top.mccat.pojo.config.StrengthAttribute;
 import top.mccat.pojo.config.StrengthItem;
-import top.mccat.pojo.config.StrengthLevel;
 import top.mccat.service.StrengthService;
 import top.mccat.utils.LoreGenerateUtils;
 import top.mccat.utils.MsgUtils;
@@ -70,10 +68,10 @@ public class StrengthServiceImpl implements StrengthService {
     }
 
     @Override
-    public StrengthResult getLevel(ItemStack stack, ItemStack[] strengthStone, ItemStack strengthExtraStone) throws ItemCanBeStrengthException {
+    public StrengthResult getLevel(ItemStack stack, ItemStack[] strengthStone, ItemStack strengthExtraStone) throws ItemStrengthException {
         StrengthResult strengthResult = canBeStrength(stack);
         if(!strengthResult.isStrength() || Material.AIR.equals(stack.getType())){
-            throw new ItemCanBeStrengthException("&c 错误，物品无法被强化，请检查当前物品是否为" +
+            throw new ItemStrengthException("&c 错误，物品无法被强化，请检查当前物品是否为" +
                     "可强化物品，或强化物品为空");
         }
         ItemMeta itemMeta = stack.getItemMeta();
@@ -116,7 +114,7 @@ public class StrengthServiceImpl implements StrengthService {
      * @param strengthStones 强化石
      * @return 是否能强化
      */
-    private boolean stoneCheck(List<String> stoneKeys, ItemStack[] strengthStones) throws ItemCanBeStrengthException {
+    private boolean stoneCheck(List<String> stoneKeys, ItemStack[] strengthStones) throws ItemStrengthException {
         List<StrengthStone> stoneList = new ArrayList<>(2);
         StringBuilder stoneName = new StringBuilder();
         for (String stoneKey : stoneKeys) {
@@ -151,25 +149,25 @@ public class StrengthServiceImpl implements StrengthService {
             }
         }
         if(count != stoneKeys.size()){
-            throw new ItemCanBeStrengthException("&c 强化失败，您的强化石不匹配，请确保您有："+ stoneName);
+            throw new ItemStrengthException("&c 强化失败，您的强化石不匹配，请确保您有："+ stoneName);
         }
         return true;
     }
 
-    private int getLevelFromList(List<String> lore, String attribute) throws ItemCanBeStrengthException {
+    private int getLevelFromList(List<String> lore, String attribute) throws ItemStrengthException {
         int i = lore.indexOf(strengthAttribute.getTitle());
         if(i == -1){
-            throw new ItemCanBeStrengthException("&c 强化失败，您的等级lore参数不匹配，无法进行强化操作");
+            throw new ItemStrengthException("&c 强化失败，您的等级lore参数不匹配，无法进行强化操作");
         }
         List<String> subLore = lore.subList(i, lore.size());
-        String romaLevel = "";
+        String romaLevel;
         for (String s : subLore) {
             if (s.contains(attribute)) {
                 romaLevel = s.substring(attribute.length() + 2);
                 return romaMathGenerateUtil.romanToInt(romaLevel);
             }
         }
-        throw new ItemCanBeStrengthException("&c 强化失败，查找等级参数失败");
+        throw new ItemStrengthException("&c 强化失败，查找等级参数失败");
     }
 
     /**

@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import top.mccat.exception.ItemCanBeStrengthException;
+import top.mccat.exception.ItemStrengthException;
 import top.mccat.factory.ThreadPoolFactory;
 import top.mccat.pojo.bean.StrengthStone;
 import top.mccat.pojo.config.StrengthMenu;
@@ -138,7 +138,7 @@ public class StrengthUi implements Listener {
                     StrengthServiceImpl.StrengthResult result;
                     try {
                         result = strengthService.getLevel(strengthItem, new ItemStack[]{inventory.getItem(13),inventory.getItem(14)},inventory.getItem(26));
-                    } catch (ItemCanBeStrengthException e) {
+                    } catch (ItemStrengthException e) {
                         msgUtils.sendToPlayer(e.getMessage(),player);
                         playerInStrengthActionMap.remove(player);
                         break;

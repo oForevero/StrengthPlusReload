@@ -2,7 +2,7 @@ package top.mccat.service;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import top.mccat.exception.ItemCanBeStrengthException;
+import top.mccat.exception.ItemStrengthException;
 import top.mccat.service.impl.StrengthServiceImpl;
 
 /**
@@ -16,7 +16,7 @@ public interface StrengthService {
      * @param player 玩家对象
      * @param strengthResult 等级参数
      */
-    public void strengthItemInUi(ItemStack stack, Player player, StrengthServiceImpl.StrengthResult strengthResult);
+    void strengthItemInUi(ItemStack stack, Player player, StrengthServiceImpl.StrengthResult strengthResult);
 
     /**
      * 获取等级
@@ -24,14 +24,14 @@ public interface StrengthService {
      * @param strengthStone 强化石
      * @param strengthExtraStone 强化券
      * @return 强化结果集
-     * @throws ItemCanBeStrengthException 物品不能被强化异常
+     * @throws ItemStrengthException 物品不能被强化异常
      */
-    public StrengthServiceImpl.StrengthResult getLevel(ItemStack stack, ItemStack[] strengthStone, ItemStack strengthExtraStone) throws ItemCanBeStrengthException;
+    StrengthServiceImpl.StrengthResult getLevel(ItemStack stack, ItemStack[] strengthStone, ItemStack strengthExtraStone) throws ItemStrengthException;
 
     /**
      * 物品是否可被强化
      * @param stack 物品堆
      * @return 强化结果集
      */
-    public StrengthServiceImpl.StrengthResult canBeStrength(ItemStack stack);
+    StrengthServiceImpl.StrengthResult canBeStrength(ItemStack stack);
 }
