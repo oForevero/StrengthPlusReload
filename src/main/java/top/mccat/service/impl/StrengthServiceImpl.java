@@ -112,7 +112,7 @@ public class StrengthServiceImpl implements StrengthService {
     }
 
     @Override
-    public StrengthResult getLevel(ItemStack stack, ItemStack[] strengthStone, ItemStack strengthExtraStone) throws ItemStrengthException {
+    public StrengthResult getLevel(ItemStack stack, ItemStack[] strengthStone, StrengthStone strengthExtraStone) throws ItemStrengthException {
         StrengthResult strengthResult = canBeStrength(stack);
         if(!strengthResult.isStrength() || Material.AIR.equals(stack.getType())){
             throw new ItemStrengthException("&c 错误，物品无法被强化，请检查当前物品是否为" +

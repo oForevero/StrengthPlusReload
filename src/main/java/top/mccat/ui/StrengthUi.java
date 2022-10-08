@@ -162,17 +162,29 @@ public class StrengthUi implements Listener {
                     }
                     //强化保护券槽位
                     ItemStack stoneExtra = inventory.getItem(26);
+                    StrengthStone strengthExtraStone = null;
                     //进行保护强化卷校验
+                    if(ItemStackCheckUtils.notNullAndAir(stoneExtra)){
+                        ItemMeta itemMeta = stoneExtra.getItemMeta();
+                        //如果强化map中包含该强化券，获取该对象
+                        if(stoneExtraMap.containsKey(itemMeta.getDisplayName())){
+                            StrengthStone strengthStone = stoneExtraMap.get(stoneExtra.getItemMeta().getDisplayName());
+                            //比对lore，物品material
+                            strengthStone.getLore().equals(itemMeta.getLore());
+                            strengthStone.getItem().equals(stoneExtra.getType().toString());
+                            strengthExtraStone = strengthStone;
+                        }
+                    }
                     //在这里进行晚上的开发
                     StrengthServiceImpl.StrengthResult result;
                     try {
-                        result = strengthService.getLevel(strengthItem, new ItemStack[]{leftStone,rightStone},null);
+                        result = strengthService.getLevel(strengthItem, new ItemStack[]{leftStone,rightStone}, strengthExtraStone);
                     } catch (ItemStrengthException e) {
                         msgUtils.sendToPlayer(e.getMessage(),player);
                         playerInStrengthActionMap.remove(player);
                         break;
                     }
-                    strengthAction(inventory, strengthItem, player,result,null);
+                    strengthAction(inventory, strengthItem, player,result,strengthExtraStone);
                     break;
                 //按键关闭本菜单
                 case 53:
