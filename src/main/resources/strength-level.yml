@@ -2,29 +2,72 @@
 strength-level:
   levels:
     -
-      # 对应普通强化石花费个数
-      normalStone: 1
       # 是否会丢失等级，即强化失败默认掉级（如不写该条目默认为false）
       loseLevel: false
       # 是否会破碎，如果会破碎则一定会进行全服强化广播（如不写该条目默认为false）
       canBreak: false
+      #最多指定为两个，ui目前仅支持两个强化石指定
       costStone:
         - 'normal-stone'
       # 对应强化几率，对应上面的等级
       chance: 100
     -
-      # 对应强化石花费个数
-      normalStone: 2
       loseLevel: true
       canBreak: false
       costStone:
         - 'normal-stone'
       chance: 90
     -
-      # 对应强化石花费个数
-      normalStone: 3
       loseLevel: true
       canBreak: false
       costStone:
         - 'normal-stone'
       chance: 80
+    -
+      loseLevel: true
+      canBreak: false
+      costStone:
+        - 'normal-stone'
+      chance: 70
+    -
+      loseLevel: true
+      canBreak: false
+      costStone:
+        - 'normal-stone'
+      chance: 60
+    -
+      loseLevel: true
+      canBreak: false
+      costStone:
+        - 'normal-stone'
+      chance: 50
+    -
+      loseLevel: true
+      canBreak: false
+      costStone:
+        - 'normal-stone'
+      chance: 40
+    -
+      loseLevel: true
+      canBreak: false
+      costStone:
+        - 'normal-stone'
+      chance: 30
+    -
+      loseLevel: true
+      canBreak: true
+      costStone:
+        - 'normal-stone'
+      chance: 20
+    -
+      loseLevel: true
+      canBreak: true
+      costStone:
+        - 'normal-stone'
+      chance: 10
+    -
+      loseLevel: true
+      canBreak: true
+      costStone:
+        - 'normal-stone'
+      chance: 5

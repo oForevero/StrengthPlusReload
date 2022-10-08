@@ -3,6 +3,7 @@ package top.mccat.service;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import top.mccat.exception.ItemStrengthException;
+import top.mccat.pojo.bean.StrengthStone;
 import top.mccat.service.impl.StrengthServiceImpl;
 
 /**
@@ -15,8 +16,9 @@ public interface StrengthService {
      * @param stack 物品堆对象
      * @param player 玩家对象
      * @param strengthResult 等级参数
+     * @param strengthExtraStone 额外强化券
      */
-    void strengthItemInUi(ItemStack stack, Player player, StrengthServiceImpl.StrengthResult strengthResult);
+    boolean strengthItemInUi(ItemStack stack, Player player, StrengthServiceImpl.StrengthResult strengthResult, StrengthStone strengthExtraStone);
 
     /**
      * 获取等级

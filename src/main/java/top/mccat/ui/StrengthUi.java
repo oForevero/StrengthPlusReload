@@ -21,11 +21,13 @@ import top.mccat.pojo.config.StrengthMenu;
 import top.mccat.service.StrengthService;
 import top.mccat.service.impl.StrengthServiceImpl;
 import top.mccat.utils.ColorParseUtils;
+import top.mccat.utils.ItemStackCheckUtils;
 import top.mccat.utils.MsgUtils;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -51,7 +53,7 @@ public class StrengthUi implements Listener {
     private StrengthService strengthService;
     private MsgUtils msgUtils;
     private final ThreadPoolExecutor threadPool = ThreadPoolFactory.getThreadPool();
-    private List<StrengthStone> stoneList;
+    private Map<String ,StrengthStone> stoneExtraMap;
     private final int inventorySize = 54;
     private final Map<Player,Boolean> playerInStrengthActionMap = new HashMap<>();
     /**
@@ -69,6 +71,16 @@ public class StrengthUi implements Listener {
         this.plugin = plugin;
         msgUtils = MsgUtils.newInstance();
         strengthMenu = StrengthMenu.newInstance();
+        //赋值强化券Map代码
+        Map<String, StrengthStone> stoneMap = StrengthStone.newInstance();
+        Set<String> keys = stoneMap.keySet();
+        for(String key : keys) {
+            StrengthStone strengthStone = stoneMap.get(key);
+            if(strengthStone.getExtraStone()){
+                stoneExtraMap.put(strengthStone.getName(), strengthStone);
+            }
+        }
+        //赋值强化卷代码结束
         setItemName(enchantingTable,"&b强化物品台");
         setItemName(fire,"&5灵火锻造");
         setItemName(progressBar,"&a进度条");
@@ -135,15 +147,32 @@ public class StrengthUi implements Listener {
                     playerInStrengthActionMap.put(player,true);
                     //获取强化物品，并进行判断
                     ItemStack strengthItem = inventory.getItem(19);
+                    if(!ItemStackCheckUtils.notNullAndAir(strengthItem)){
+                        msgUtils.sendToPlayer("&c强化栏物品不能为空", player);
+                        playerInStrengthActionMap.remove(player);
+                        return;
+                    }
+                    //左右强化石槽位
+                    ItemStack leftStone = inventory.getItem(13);
+                    ItemStack rightStone = inventory.getItem(14);
+                    if(!ItemStackCheckUtils.notNullAndAir(leftStone) && !ItemStackCheckUtils.notNullAndAir(rightStone)) {
+                        msgUtils.sendToPlayer("&c强化石槽位不能全部为空", player);
+                        playerInStrengthActionMap.remove(player);
+                        return;
+                    }
+                    //强化保护券槽位
+                    ItemStack stoneExtra = inventory.getItem(26);
+                    //进行保护强化卷校验
+                    //在这里进行晚上的开发
                     StrengthServiceImpl.StrengthResult result;
                     try {
-                        result = strengthService.getLevel(strengthItem, new ItemStack[]{inventory.getItem(13),inventory.getItem(14)},inventory.getItem(26));
+                        result = strengthService.getLevel(strengthItem, new ItemStack[]{leftStone,rightStone},null);
                     } catch (ItemStrengthException e) {
                         msgUtils.sendToPlayer(e.getMessage(),player);
                         playerInStrengthActionMap.remove(player);
                         break;
                     }
-                    strengthAction(inventory, strengthItem, player,result);
+                    strengthAction(inventory, strengthItem, player,result,null);
                     break;
                 //按键关闭本菜单
                 case 53:
@@ -173,8 +202,9 @@ public class StrengthUi implements Listener {
         }
         Player player = (Player)closeEvent.getPlayer();
 //        如果不存在则直接return
-        if(!playerInStrengthActionMap.getOrDefault(player,false)){
-            return;
+        if(playerInStrengthActionMap.getOrDefault(player,false)){
+            playerInStrengthActionMap.remove(player);
+            msgUtils.sendToPlayer("&c强化强行终止，请等待强化冷却后重新强化，已扣除强化石并不返还！",player);
         }
         PlayerInventory playerInventory = player.getInventory();
 //        获取左右强化石槽位
@@ -187,8 +217,7 @@ public class StrengthUi implements Listener {
         setPlayerItem(strengthItem,playerInventory);
         ItemStack stoneExtra = inventory.getItem(26);
         setPlayerItem(stoneExtra,playerInventory);
-        msgUtils.sendToPlayer("&c强化强行终止，请等待强化冷却后重新强化！",player);
-        playerInStrengthActionMap.remove(player);
+        msgUtils.sendToPlayer("&c强化ui关闭 ，已返还强化物品",player);
     }
 
     /**
@@ -198,7 +227,7 @@ public class StrengthUi implements Listener {
      * @param player 玩家对象
      * @param strength 强化信息对象
      */
-    private void strengthAction(Inventory inventory,ItemStack strengthItem, Player player, StrengthServiceImpl.StrengthResult strength){
+    private void strengthAction(Inventory inventory,ItemStack strengthItem, Player player, StrengthServiceImpl.StrengthResult strength, StrengthStone strengthExtraStone){
         //如果线程池满应当停止强化操作，并进行提示，回头补上
         threadPool.execute(()->{
             //如果玩家关闭强化菜单则取消事件
@@ -218,18 +247,17 @@ public class StrengthUi implements Listener {
                     break;
                 }
             }
+            //26为额外强化卷
+            boolean result = strengthService.strengthItemInUi(strengthItem, player, strength, strengthExtraStone);
             while(time < 6){
                 try {
-                    strengthFinishAnimation(inventory,time,true);
+                    strengthFinishAnimation(inventory,time,result);
                     time++;
                 } catch (InterruptedException e) {
                     msgUtils.sendToConsole("&c警告，线程阻塞，可能是并发导致的问题！");
                     break;
                 }
             }
-            //测试用ui强化方法
-            strengthService.strengthItemInUi(strengthItem,player,strength);
-            //测试结束
             playerInStrengthActionMap.put(player,false);
         });
     }

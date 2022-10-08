@@ -18,6 +18,7 @@ import top.mccat.utils.RomaMathGenerateUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * @author Raven
@@ -31,6 +32,10 @@ public class StrengthServiceImpl implements StrengthService {
     private MsgUtils msgUtils;
     private Map<String, StrengthStone> strengthStoneMap;
     private final RomaMathGenerateUtil romaMathGenerateUtil;
+    /**
+     * 定义强化随机几率变量
+     */
+    private final Random random = new Random();
     public StrengthServiceImpl() {
         this.strengthItem = StrengthItem.newInstance();
         this.strengthAttribute = StrengthAttribute.newInstance();
@@ -42,13 +47,51 @@ public class StrengthServiceImpl implements StrengthService {
     }
 
     @Override
-    public void strengthItemInUi(ItemStack stack, Player player, StrengthResult strengthResult) {
+    public boolean strengthItemInUi(ItemStack stack, Player player, StrengthResult strengthResult, StrengthStone strengthExtraStone) {
+        boolean result = false;
         int level = strengthResult.getLevel();
-        if(level == levelValues.size()){
-            msgUtils.sendToPlayer("&c当前强化物品等级已满，无法进行强化操作！",player);
-        }
         if(level == -1){
-            msgUtils.sendToPlayer("&c当前强化物品无法进行强化操作！",player);
+            msgUtils.sendToPlayer("&c当前强化物品无法进行强化操作！", player);
+            return false;
+        }
+        LevelValue levelValue = levelValues.get(level);
+        //如果是admin直接升级到满级
+        if(strengthExtraStone.isAdmin()){
+            level = levelValues.size();
+        }else {
+            //如果不是必定成功则进行强化判断
+            if(strengthExtraStone.isSuccess()){
+                level += 1;
+            }else {
+                if(strengthResult(levelValue)){
+                    level += 1;
+                    result = true;
+                }else{
+                    //如果设置允许丢失等级，则使其丢失等级，如果默认为0则清除lore
+                    if(levelValue.isLoseLevel()){
+                        if(level > 0){
+                            level -= 1;
+                        }else{
+                            ItemMeta itemMeta = stack.getItemMeta();
+                            itemMeta.setLore(null);
+                            stack.setItemMeta(itemMeta);
+                        }
+                    }
+                    //如果允许破坏则设置为空气
+                    if(levelValue.isCanBreak()) {
+                        //如果为不安全，则设置其为空气
+                        if(!strengthExtraStone.isSafe()){
+                            stack.setType(Material.AIR);
+                            player.getOpenInventory().setItem(19,stack);
+                            msgUtils.sendToPlayer("&c很遗憾，您的强化失败了，并且没有保护石的保护，您的武器被摧毁了！",player);
+                            return false;
+                        }
+                        //允许广播通知
+                        msgUtils.sendToConsole("&a[&b"+player.getName()+"&a]&c 在强化Ta的武器时，强化炉发生了爆炸，所幸有强化保护卷的存在装备并没有损坏");
+                    }
+                    msgUtils.sendToPlayer("&c很遗憾，您的强化失败了！",player);
+                }
+            }
         }
         List<String> lore = null;
         switch (strengthResult.getType()){
@@ -65,6 +108,7 @@ public class StrengthServiceImpl implements StrengthService {
         assert itemMeta != null;
         itemMeta.setLore(lore);
         stack.setItemMeta(itemMeta);
+        return result;
     }
 
     @Override
@@ -77,6 +121,9 @@ public class StrengthServiceImpl implements StrengthService {
         ItemMeta itemMeta = stack.getItemMeta();
         if(itemMeta == null || !itemMeta.hasLore()){
             strengthResult.setLevel(0);
+            LevelValue levelValue = levelValues.get(0);
+            List<String> strengthStones = levelValue.getStrengthStones();
+            stoneCheckAndCost(strengthStones, strengthStone);
             return strengthResult;
         }
         List<String> lore = itemMeta.getLore();
@@ -100,11 +147,26 @@ public class StrengthServiceImpl implements StrengthService {
                 default:
                     break;
             }
-            LevelValue levelValue = levelValues.get(level + 1);
+            if(level == levelValues.size()){
+                throw new ItemStrengthException("&c当前强化物品等级已满，无法进行强化操作！");
+            }
+            strengthResult.setLevel(level);
+            LevelValue levelValue = levelValues.get(level);
             List<String> strengthStones = levelValue.getStrengthStones();
             stoneCheckAndCost(strengthStones, strengthStone);
         }
         return strengthResult;
+    }
+
+    /**
+     * 进行强化几率返回的方法
+     * @param levelValue 强化等级对象
+     * @return 是否强化成功
+     */
+    private boolean strengthResult(LevelValue levelValue){
+        int chance = levelValue.getChance();
+        int randomChance = random.nextInt(100);
+        return randomChance < chance;
     }
 
     /**
@@ -123,6 +185,7 @@ public class StrengthServiceImpl implements StrengthService {
             }
         }
         int count = 0;
+        ItemStack bufferStack = null;
         //执行强化石校验操作
         for (ItemStack strengthStone : strengthStones) {
             if(strengthStone==null){
@@ -144,7 +207,8 @@ public class StrengthServiceImpl implements StrengthService {
                     continue;
                 }
                 count++;
-                //进行强化石扣除，如果两个全扣则无问题，扣单个则进行补偿
+                //进行强化石扣除，如果两个全扣则无问题，扣单个则进行补偿,这里将可能被补偿的强化石进行buffer缓冲存储
+                bufferStack = strengthStone;
                 strengthStone.setAmount(strengthStone.getAmount()-1);
                 //如果已经符合单个强化石数量，直接跳出循环
                 if(count == stoneKeys.size()){
@@ -154,7 +218,9 @@ public class StrengthServiceImpl implements StrengthService {
         }
         if(count != stoneKeys.size()){
             //进行强化石补偿
-            strengthStones[0].setAmount(strengthStones[0].getAmount()+1);
+            if(bufferStack != null){
+                strengthStones[0].setAmount(strengthStones[0].getAmount()+1);
+            }
             throw new ItemStrengthException("&c 强化失败，您的强化石不匹配，请确保您有："+ stoneName);
         }
     }
