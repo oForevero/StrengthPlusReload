@@ -64,7 +64,7 @@ public class StrengthServiceImpl implements StrengthService {
                 level += 1;
                 result = true;
             }else {
-                if(strengthResult(levelValue)){
+                if(strengthResult(levelValue, strengthResult)){
                     level += 1;
                     result = true;
                 }else{
@@ -126,7 +126,7 @@ public class StrengthServiceImpl implements StrengthService {
             strengthResult.setLevel(0);
             LevelValue levelValue = levelValues.get(0);
             List<String> strengthStones = levelValue.getStrengthStones();
-            stoneCheckAndCost(strengthStones, strengthStone, strengthExtraStone, stoneExtra);
+            stoneCheckAndCost(strengthStones, strengthStone, strengthExtraStone, stoneExtra, strengthResult);
             return strengthResult;
         }
         List<String> lore = itemMeta.getLore();
@@ -156,7 +156,7 @@ public class StrengthServiceImpl implements StrengthService {
             strengthResult.setLevel(level);
             LevelValue levelValue = levelValues.get(level);
             List<String> strengthStones = levelValue.getStrengthStones();
-            stoneCheckAndCost(strengthStones, strengthStone, strengthExtraStone, stoneExtra);
+            stoneCheckAndCost(strengthStones, strengthStone, strengthExtraStone, stoneExtra, strengthResult);
         }
         return strengthResult;
     }
@@ -186,10 +186,15 @@ public class StrengthServiceImpl implements StrengthService {
     /**
      * 进行强化几率返回的方法
      * @param levelValue 强化等级对象
+     * @param strengthResult 强化结果对象
      * @return 是否强化成功
      */
-    private boolean strengthResult(LevelValue levelValue){
+    private boolean strengthResult(LevelValue levelValue, StrengthResult strengthResult){
         int chance = levelValue.getChance();
+        //如果有额外机率，进行增加
+        if(strengthResult.getChanceExtra() > 0) {
+            chance += strengthResult.getChanceExtra();
+        }
         int randomChance = random.nextInt(100);
         return randomChance < chance;
     }
@@ -199,7 +204,7 @@ public class StrengthServiceImpl implements StrengthService {
      * @param stoneKeys 强化石lore
      * @param strengthStones 强化石
      */
-    private void stoneCheckAndCost(List<String> stoneKeys, ItemStack[] strengthStones, StrengthStone strengthExtraStone, ItemStack stoneExtra) throws ItemStrengthException {
+    private void stoneCheckAndCost(List<String> stoneKeys, ItemStack[] strengthStones, StrengthStone strengthExtraStone, ItemStack stoneExtra, StrengthResult strengthResult) throws ItemStrengthException {
         List<StrengthStone> stoneList = new ArrayList<>();
         StringBuilder stoneName = new StringBuilder();
         for (String stoneKey : stoneKeys) {
@@ -231,7 +236,11 @@ public class StrengthServiceImpl implements StrengthService {
                 if (!stone.getLore().equals(itemMeta.getLore())) {
                     continue;
                 }
+                //执行count++即存在符合强化石，执行相对应逻辑代码
                 count++;
+                if(stone.getChanceExtra() > 0){
+                    strengthResult.setChanceExtra(stone.getChanceExtra());
+                }
                 //进行强化石扣除，这里将可能被补偿的强化石进行buffer缓冲存储
                 bufferStack = strengthStone;
                 strengthStone.setAmount(strengthStone.getAmount()-1);
@@ -246,6 +255,7 @@ public class StrengthServiceImpl implements StrengthService {
             //进行强化石补偿
             if(bufferStack != null){
                 strengthStones[0].setAmount(strengthStones[0].getAmount()+1);
+                //strengthResult.setChanceExtra(0);
                 //只有执行强化石退回才会退回保护券，不然是不会消耗保护券的
                 if(strengthExtraStone!=null){
                     stoneExtra.setAmount(stoneExtra.getAmount()+1);
@@ -301,6 +311,7 @@ public class StrengthServiceImpl implements StrengthService {
         private boolean isAdmin = false;
         private boolean isSuccess = false;
         private boolean isSafe = false;
+        private int chanceExtra = 0;
 
         public StrengthResult(boolean strength, int type) {
             this.strength = strength;
@@ -331,16 +342,12 @@ public class StrengthServiceImpl implements StrengthService {
             this.level = level;
         }
 
-        @Override
-        public String toString() {
-            return "StrengthResult{" +
-                    "strength=" + strength +
-                    ", type=" + type +
-                    ", level=" + level +
-                    ", isAdmin=" + isAdmin +
-                    ", isSuccess=" + isSuccess +
-                    ", isSafe=" + isSafe +
-                    '}';
+        public int getChanceExtra() {
+            return chanceExtra;
+        }
+
+        public void setChanceExtra(int chanceExtra) {
+            this.chanceExtra = chanceExtra;
         }
 
         public boolean isAdmin() {
@@ -365,6 +372,19 @@ public class StrengthServiceImpl implements StrengthService {
 
         public void setSafe(boolean safe) {
             isSafe = safe;
+        }
+
+        @Override
+        public String toString() {
+            return "StrengthResult{" +
+                    "strength=" + strength +
+                    ", type=" + type +
+                    ", level=" + level +
+                    ", isAdmin=" + isAdmin +
+                    ", isSuccess=" + isSuccess +
+                    ", isSafe=" + isSafe +
+                    ", chanceExtra=" + chanceExtra +
+                    '}';
         }
     }
 }
