@@ -53,7 +53,7 @@ public class StrengthUi implements Listener {
     private StrengthService strengthService;
     private MsgUtils msgUtils;
     private final ThreadPoolExecutor threadPool = ThreadPoolFactory.getThreadPool();
-    private Map<String ,StrengthStone> stoneExtraMap;
+    private Map<String ,StrengthStone> stoneExtraMap = new HashMap<>();
     private final int inventorySize = 54;
     private final Map<Player,Boolean> playerInStrengthActionMap = new HashMap<>();
     /**
@@ -141,6 +141,9 @@ public class StrengthUi implements Listener {
                 //强化武器放置槽位
                 case 19:
                     break;
+                //强化券放置槽位
+                case 26:
+                    break;
                 //强化点击槽位
                 case 43:
                     clickEvent.setCancelled(true);
@@ -175,16 +178,15 @@ public class StrengthUi implements Listener {
                             strengthExtraStone = strengthStone;
                         }
                     }
-                    //在这里进行晚上的开发
                     StrengthServiceImpl.StrengthResult result;
                     try {
-                        result = strengthService.getLevel(strengthItem, new ItemStack[]{leftStone,rightStone}, strengthExtraStone);
+                        result = strengthService.getLevel(strengthItem, new ItemStack[]{leftStone,rightStone}, strengthExtraStone, stoneExtra);
                     } catch (ItemStrengthException e) {
                         msgUtils.sendToPlayer(e.getMessage(),player);
                         playerInStrengthActionMap.remove(player);
                         break;
                     }
-                    strengthAction(inventory, strengthItem, player,result,strengthExtraStone);
+                    strengthAction(inventory, strengthItem, player,result);
                     break;
                 //按键关闭本菜单
                 case 53:
@@ -239,7 +241,7 @@ public class StrengthUi implements Listener {
      * @param player 玩家对象
      * @param strength 强化信息对象
      */
-    private void strengthAction(Inventory inventory,ItemStack strengthItem, Player player, StrengthServiceImpl.StrengthResult strength, StrengthStone strengthExtraStone){
+    private void strengthAction(Inventory inventory,ItemStack strengthItem, Player player, StrengthServiceImpl.StrengthResult strength){
         //如果线程池满应当停止强化操作，并进行提示，回头补上
         threadPool.execute(()->{
             //如果玩家关闭强化菜单则取消事件
@@ -260,7 +262,7 @@ public class StrengthUi implements Listener {
                 }
             }
             //26为额外强化卷
-            boolean result = strengthService.strengthItemInUi(strengthItem, player, strength, strengthExtraStone);
+            boolean result = strengthService.strengthItemInUi(strengthItem, player, strength);
             while(time < 6){
                 try {
                     strengthFinishAnimation(inventory,time,result);

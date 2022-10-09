@@ -47,7 +47,7 @@ public class StrengthServiceImpl implements StrengthService {
     }
 
     @Override
-    public boolean strengthItemInUi(ItemStack stack, Player player, StrengthResult strengthResult, StrengthStone strengthExtraStone) {
+    public boolean strengthItemInUi(ItemStack stack, Player player, StrengthResult strengthResult) {
         boolean result = false;
         int level = strengthResult.getLevel();
         if(level == -1){
@@ -56,12 +56,13 @@ public class StrengthServiceImpl implements StrengthService {
         }
         LevelValue levelValue = levelValues.get(level);
         //如果是admin直接升级到满级
-        if(strengthExtraStone.isAdmin()){
+        if(strengthResult.isAdmin()){
             level = levelValues.size();
         }else {
             //如果不是必定成功则进行强化判断
-            if(strengthExtraStone.isSuccess()){
+            if(strengthResult.isSuccess()){
                 level += 1;
+                result = true;
             }else {
                 if(strengthResult(levelValue)){
                     level += 1;
@@ -80,7 +81,7 @@ public class StrengthServiceImpl implements StrengthService {
                     //如果允许破坏则设置为空气
                     if(levelValue.isCanBreak()) {
                         //如果为不安全，则设置其为空气
-                        if(!strengthExtraStone.isSafe()){
+                        if(!strengthResult.isSafe()){
                             stack.setType(Material.AIR);
                             player.getOpenInventory().setItem(19,stack);
                             msgUtils.sendToPlayer("&c很遗憾，您的强化失败了，并且没有保护石的保护，您的武器被摧毁了！",player);
@@ -112,18 +113,20 @@ public class StrengthServiceImpl implements StrengthService {
     }
 
     @Override
-    public StrengthResult getLevel(ItemStack stack, ItemStack[] strengthStone, StrengthStone strengthExtraStone) throws ItemStrengthException {
+    public StrengthResult getLevel(ItemStack stack, ItemStack[] strengthStone, StrengthStone strengthExtraStone, ItemStack stoneExtra) throws ItemStrengthException {
         StrengthResult strengthResult = canBeStrength(stack);
         if(!strengthResult.isStrength() || Material.AIR.equals(stack.getType())){
             throw new ItemStrengthException("&c 错误，物品无法被强化，请检查当前物品是否为" +
                     "可强化物品，或强化物品为空");
         }
         ItemMeta itemMeta = stack.getItemMeta();
+        //进行额外强化几率设置
+        parseStrengthExtraStone(strengthExtraStone,strengthResult);
         if(itemMeta == null || !itemMeta.hasLore()){
             strengthResult.setLevel(0);
             LevelValue levelValue = levelValues.get(0);
             List<String> strengthStones = levelValue.getStrengthStones();
-            stoneCheckAndCost(strengthStones, strengthStone);
+            stoneCheckAndCost(strengthStones, strengthStone, strengthExtraStone, stoneExtra);
             return strengthResult;
         }
         List<String> lore = itemMeta.getLore();
@@ -153,9 +156,31 @@ public class StrengthServiceImpl implements StrengthService {
             strengthResult.setLevel(level);
             LevelValue levelValue = levelValues.get(level);
             List<String> strengthStones = levelValue.getStrengthStones();
-            stoneCheckAndCost(strengthStones, strengthStone);
+            stoneCheckAndCost(strengthStones, strengthStone, strengthExtraStone, stoneExtra);
         }
         return strengthResult;
+    }
+
+    /**
+     * 将额外强化石/强化券参数传递给强化方法
+     *
+     * @param strengthStone  强化石
+     * @param strengthResult 强化结果对象
+     */
+    private void parseStrengthExtraStone(StrengthStone strengthStone, StrengthResult strengthResult){
+        //如果上级map取出为空则直接return
+        if(strengthStone == null){
+            return;
+        }
+        if(strengthStone.isAdmin()){
+            strengthResult.setAdmin(true);
+        }
+        if(strengthStone.isSuccess()){
+            strengthResult.setSuccess(true);
+        }
+        if(strengthStone.isSafe()){
+            strengthResult.setSafe(true);
+        }
     }
 
     /**
@@ -174,7 +199,7 @@ public class StrengthServiceImpl implements StrengthService {
      * @param stoneKeys 强化石lore
      * @param strengthStones 强化石
      */
-    private void stoneCheckAndCost(List<String> stoneKeys, ItemStack[] strengthStones) throws ItemStrengthException {
+    private void stoneCheckAndCost(List<String> stoneKeys, ItemStack[] strengthStones, StrengthStone strengthExtraStone, ItemStack stoneExtra) throws ItemStrengthException {
         List<StrengthStone> stoneList = new ArrayList<>();
         StringBuilder stoneName = new StringBuilder();
         for (String stoneKey : stoneKeys) {
@@ -207,21 +232,29 @@ public class StrengthServiceImpl implements StrengthService {
                     continue;
                 }
                 count++;
-                //进行强化石扣除，如果两个全扣则无问题，扣单个则进行补偿,这里将可能被补偿的强化石进行buffer缓冲存储
+                //进行强化石扣除，这里将可能被补偿的强化石进行buffer缓冲存储
                 bufferStack = strengthStone;
                 strengthStone.setAmount(strengthStone.getAmount()-1);
-                //如果已经符合单个强化石数量，直接跳出循环
-                if(count == stoneKeys.size()){
-                    break;
-                }
+                break;
+            }
+            //如果已经符合单个强化石数量，直接跳出循环
+            if(count == stoneKeys.size()){
+                break;
             }
         }
-        if(count != stoneKeys.size()){
+        if(count < stoneKeys.size()){
             //进行强化石补偿
             if(bufferStack != null){
                 strengthStones[0].setAmount(strengthStones[0].getAmount()+1);
+                //只有执行强化石退回才会退回保护券，不然是不会消耗保护券的
+                if(strengthExtraStone!=null){
+                    stoneExtra.setAmount(stoneExtra.getAmount()+1);
+                }
             }
             throw new ItemStrengthException("&c 强化失败，您的强化石不匹配，请确保您有："+ stoneName);
+        }
+        if(strengthExtraStone!=null){
+            stoneExtra.setAmount(stoneExtra.getAmount()-1);
         }
     }
 
@@ -265,6 +298,9 @@ public class StrengthServiceImpl implements StrengthService {
         private boolean strength;
         private int type;
         private int level;
+        private boolean isAdmin = false;
+        private boolean isSuccess = false;
+        private boolean isSafe = false;
 
         public StrengthResult(boolean strength, int type) {
             this.strength = strength;
@@ -301,7 +337,34 @@ public class StrengthServiceImpl implements StrengthService {
                     "strength=" + strength +
                     ", type=" + type +
                     ", level=" + level +
+                    ", isAdmin=" + isAdmin +
+                    ", isSuccess=" + isSuccess +
+                    ", isSafe=" + isSafe +
                     '}';
+        }
+
+        public boolean isAdmin() {
+            return isAdmin;
+        }
+
+        public void setAdmin(boolean admin) {
+            isAdmin = admin;
+        }
+
+        public boolean isSuccess() {
+            return isSuccess;
+        }
+
+        public void setSuccess(boolean success) {
+            isSuccess = success;
+        }
+
+        public boolean isSafe() {
+            return isSafe;
+        }
+
+        public void setSafe(boolean safe) {
+            isSafe = safe;
         }
     }
 }

@@ -16,19 +16,19 @@ public interface StrengthService {
      * @param stack 物品堆对象
      * @param player 玩家对象
      * @param strengthResult 等级参数
-     * @param strengthExtraStone 额外强化券
      */
-    boolean strengthItemInUi(ItemStack stack, Player player, StrengthServiceImpl.StrengthResult strengthResult, StrengthStone strengthExtraStone);
+    boolean strengthItemInUi(ItemStack stack, Player player, StrengthServiceImpl.StrengthResult strengthResult);
 
     /**
      * 获取等级
      * @param stack 物品堆
      * @param strengthStone 强化石
      * @param strengthExtraStone 强化石物品堆
+     * @param stoneExtra 强化券物品堆
      * @return 强化结果集
      * @throws ItemStrengthException 物品不能被强化异常
      */
-    StrengthServiceImpl.StrengthResult getLevel(ItemStack stack, ItemStack[] strengthStone, StrengthStone strengthExtraStone) throws ItemStrengthException;
+    StrengthServiceImpl.StrengthResult getLevel(ItemStack stack, ItemStack[] strengthStone, StrengthStone strengthExtraStone, ItemStack stoneExtra) throws ItemStrengthException;
 
     /**
      * 物品是否可被强化

@@ -52,22 +52,19 @@ strength-level:
       canBreak: false
       costStone:
         - 'normal-stone'
+        - 'rare-stone'
       chance: 30
     -
       loseLevel: true
       canBreak: true
       costStone:
         - 'normal-stone'
+        - 'rare-stone'
       chance: 20
     -
       loseLevel: true
       canBreak: true
       costStone:
         - 'normal-stone'
+        - 'rare-stone'
       chance: 10
-    -
-      loseLevel: true
-      canBreak: true
-      costStone:
-        - 'normal-stone'
-      chance: 5
