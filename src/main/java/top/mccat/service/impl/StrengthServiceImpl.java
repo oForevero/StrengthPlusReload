@@ -256,7 +256,7 @@ public class StrengthServiceImpl implements StrengthService {
             if(bufferStack != null){
                 strengthStones[0].setAmount(strengthStones[0].getAmount()+1);
                 //strengthResult.setChanceExtra(0);
-                //只有执行强化石退回才会退回保护券，不然是不会消耗保护券的
+                //只有执行强化石退回才会退回保护券，不然是不会消耗保护券的1
                 if(strengthExtraStone!=null){
                     stoneExtra.setAmount(stoneExtra.getAmount()+1);
                 }
