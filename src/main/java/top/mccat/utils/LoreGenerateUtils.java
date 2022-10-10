@@ -73,6 +73,13 @@ public class LoreGenerateUtils {
         return itemAttributeLore;
     }
 
+    /**
+     * 获取当前属性index地址
+     * @param strengthAttributes 强化属性
+     * @param strengthType 强化类型
+     * @param level 等级参数
+     * @return 当前属性地址
+     */
     private int getIndexOfAttribute(List<String> strengthAttributes, StrengthType strengthType, int level) {
         switch (strengthType.getType()) {
             case 0:

@@ -24,7 +24,8 @@ public class LevelValue implements YamlConfigObject<List<LevelValue>> {
     private int chance;
     @Value("costStone")
     private List<String> strengthStones;
-
+    @Value("especialAttribute")
+    private boolean especialAttribute = false;
     public LevelValue() {
     }
 
@@ -60,6 +61,14 @@ public class LevelValue implements YamlConfigObject<List<LevelValue>> {
         this.strengthStones = strengthStones;
     }
 
+    public boolean isEspecialAttribute() {
+        return especialAttribute;
+    }
+
+    public void setEspecialAttribute(boolean especialAttribute) {
+        this.especialAttribute = especialAttribute;
+    }
+
     @Override
     public String toString() {
         return "LevelValue{" +
@@ -67,6 +76,7 @@ public class LevelValue implements YamlConfigObject<List<LevelValue>> {
                 ", canBreak=" + canBreak +
                 ", chance=" + chance +
                 ", strengthStones=" + strengthStones +
+                ", especialAttribute=" + especialAttribute +
                 '}';
     }
 

@@ -15,6 +15,7 @@ import top.mccat.utils.LoreGenerateUtils;
 import top.mccat.utils.MsgUtils;
 import top.mccat.utils.RomaMathGenerateUtil;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,9 @@ public class StrengthServiceImpl implements StrengthService {
 
     @Override
     public boolean strengthItemInUi(ItemStack stack, Player player, StrengthResult strengthResult) {
+        // 明天进行如下开发，首先取出额外lore参数，定义为基础属性下，如果当前等级拥有额外属性，在强化失败时删除最下面的额外属性lore，即最后获得的属性即新额外属性。
+        // 强化成功后从额外属性中随机抽取出一个属性进行lore赋值。当属性已包含则进行深拷贝，删除已包含的属性，随机出其他属性
+        // 当全部参数都已包含额外属性，则进行普通属性强化，并提示额外强化属性已满
         boolean result = false;
         int level = strengthResult.getLevel();
         if(level == -1){
@@ -159,6 +163,30 @@ public class StrengthServiceImpl implements StrengthService {
             stoneCheckAndCost(strengthStones, strengthStone, strengthExtraStone, stoneExtra, strengthResult);
         }
         return strengthResult;
+    }
+
+    /**
+     * 进行额外强化lore的解析
+     * @param strengthAttributes 强化lore列表
+     * @return
+     */
+    @Nullable
+    private List<String> parseEspecialStoneLore(List<String> strengthAttributes){
+        /**
+         * 默认以第三位往后的地址为额外强化地址，范例如下：
+         * [强化信息]  index 0
+         * --------------------- index 1
+         * 基础强化信息：等级 index 2
+         * 额外强化信息1：等级 index 3
+         * 额外强化等级2：等级 index 4
+         * .....
+         * ---------------------
+         */
+        //如果不存在额外属性
+        if(strengthAttributes.size() < 4){
+            return null;
+        }
+        return strengthAttributes.subList(3,strengthAttributes.size()-1);
     }
 
     /**
