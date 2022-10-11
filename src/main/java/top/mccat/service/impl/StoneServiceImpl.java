@@ -41,7 +41,7 @@ public class StoneServiceImpl implements StoneService {
         while(amount > 0){
             //第一个空的物品
             int firstEmptyIndex = playerInventory.firstEmpty();
-            if(firstEmptyIndex > 0 ){
+            if(firstEmptyIndex >= 0 ){
                 if(amount > 64){
                     stoneStack.setAmount(64);
                     playerInventory.setItem(firstEmptyIndex, stoneStack);

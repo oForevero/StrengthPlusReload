@@ -70,6 +70,7 @@ public class LoreGenerateUtils {
             return itemAttributeLore;
         }
         itemAttributeLore.set(indexOfAttribute, setAttribute+"&c " + level);
+        itemAttributeLore.add(indexOfAttribute+1 ,setAttribute);
         //itemAttributeLore.add(setAttribute);
         return itemAttributeLore;
     }
