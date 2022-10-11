@@ -40,7 +40,7 @@ strength-level:
       costStone:
         - 'normal-stone'
       chance: 60
-      especialAttribute: false
+      especialAttribute: true
     -
       loseLevel: true
       canBreak: false
