@@ -15,7 +15,7 @@ public class Attribute {
     private String name;
     @Value("enable")
     private boolean enable;
-    private int level = 0;
+    private int level = 1;
 
     public Attribute() {
     }

@@ -72,10 +72,11 @@ public class StrengthServiceImpl implements StrengthService {
         int level = strengthResult.getLevel();
         //获取额外强化lore
         assert stack.getItemMeta() != null;
-        List<String> especialLore = null;
-        if(stack.getItemMeta().hasLore()) {
-            especialLore = parseEspecialStoneLore(stack.getItemMeta().getLore());
-        }
+        //<String> especialLore = null;
+        List<String> itemLore = stack.getItemMeta().getLore();
+        /*if(stack.getItemMeta().hasLore()) {
+            especialLore = parseEspecialStoneLore(itemLore);
+        }*/
         if(level == -1){
             msgUtils.sendToPlayer("&c当前强化物品无法进行强化操作！", player);
             return false;
@@ -100,8 +101,21 @@ public class StrengthServiceImpl implements StrengthService {
                             level -= 1;
                             if(levelValues.get(level).isEspecialAttribute()){
                                 //如果当前等级-1有额外属性，则删除额外属性lore
-                                if(especialLore!=null && especialLore.size() > 0){
-                                    especialLore.remove(especialLore.size()-1);
+                                /**
+                                 * 默认以第三位往后的地址为额外强化地址，范例如下：
+                                 * [强化信息]  index 0
+                                 * --------------------- index 1
+                                 * 基础强化信息：等级 index 2
+                                 * 额外强化信息1：等级 index 3
+                                 * 额外强化等级2：等级 index 4
+                                 * .....
+                                 * ---------------------
+                                 */
+                                //如果不存在额外属性
+                                if(itemLore!=null){
+                                    if(itemLore.size() >= 5){
+                                        itemLore.remove(itemLore.size() - 2);
+                                    }
                                 }
                             }
                         }else{
@@ -129,29 +143,16 @@ public class StrengthServiceImpl implements StrengthService {
         List<String> lore = null;
         switch (strengthResult.getType()){
             case 0:
-                lore = setStrengthLoreUtils(strengthAttribute.getDefenceAttribute(), enableDefenceAttribute, result, level, stack.getItemMeta().getLore(), StrengthType.ARMOR_TYPE);
-                /*//进行近战数据随机
-                if(result){
-                    Map<String, Attribute> meleeAttribute = strengthAttribute.getMeleeAttribute();
-                    Object[] objects = meleeAttribute.keySet().toArray();
-                    int i = random.nextInt(meleeAttribute.size());
-                    meleeAttribute.get(objects[i-1]);
-                }
-                lore = loreGenerateUtils.generateAttributesLore(level, especialLore, strengthAttribute.getArmorDefence(), StrengthType.ARMOR_TYPE);*/
+                lore = setStrengthLoreUtils(strengthAttribute.getDefenceAttribute(), enableDefenceAttribute,
+                        result, level, itemLore, strengthAttribute.getArmorDefence(), StrengthType.ARMOR_TYPE);
                 break;
             case 1:
-                lore = setStrengthLoreUtils(strengthAttribute.getMeleeAttribute(), enableMeleeAttribute, result, level, stack.getItemMeta().getLore(), StrengthType.WEAPON_TYPE);
-                //进行近战数据随机
-                /*if(result){
-                    Map<String, Attribute> meleeAttribute = strengthAttribute.getMeleeAttribute();
-                    Object[] objects = meleeAttribute.keySet().toArray();
-                    int i = random.nextInt(meleeAttribute.size());
-                    meleeAttribute.get(objects[i-1]);
-                }
-                lore = loreGenerateUtils.generateAttributesLore(level, especialLore, strengthAttribute.getMeleeDamage(), StrengthType.WEAPON_TYPE);*/
+                lore = setStrengthLoreUtils(strengthAttribute.getMeleeAttribute(), enableMeleeAttribute,
+                        result, level, itemLore, strengthAttribute.getMeleeDamage(), StrengthType.WEAPON_TYPE);
                 break;
             case 2:
-                lore = setStrengthLoreUtils(strengthAttribute.getRemoteAttribute(), enableRemoteAttribute, result, level, stack.getItemMeta().getLore(), StrengthType.BOW_TYPE);
+                lore = setStrengthLoreUtils(strengthAttribute.getRemoteAttribute(), enableRemoteAttribute,
+                        result, level, itemLore, strengthAttribute.getRemotelyDamage(), StrengthType.BOW_TYPE);
                 break;
             default:
                 break;
@@ -173,17 +174,26 @@ public class StrengthServiceImpl implements StrengthService {
      * @return
      */
     private List<String> setStrengthLoreUtils(Map<String, Attribute> attributeMap, List<Attribute> attributeList, boolean result, int level,
-                                              List<String> itemlore, StrengthType type){
+                                              List<String> itemlore, String baseAttribute,StrengthType type){
         //晚上加上levelvalue进行，等级判断是否有额外强化数据则增加lore
-        //进行近战数据随机
-        Attribute attribute = null;
+        //进行数据随机
+        String especialAttribute = null;
         if(result){
             if(levelValues.get(level-1).isEspecialAttribute()){
                 int i = random.nextInt(attributeMap.size());
-                attribute = attributeList.get(i);
+                for(Attribute attribute : attributeList){
+                    if(itemlore.contains(attribute.getName())) {
+                        attributeList.remove(attribute);
+                        if(i > 0){
+                            i -= 1;
+                        }
+                    }
+                }
+                Attribute attribute = attributeList.get(i);
+                especialAttribute = attribute.getName();
             }
         }
-        return loreGenerateUtils.generateAttributesLore(level, itemlore, attribute.getName() + attribute.getLevel(), type);
+        return loreGenerateUtils.generateAttributesLore(level, itemlore, baseAttribute, especialAttribute, type);
     }
 
     @Override
@@ -233,30 +243,6 @@ public class StrengthServiceImpl implements StrengthService {
             stoneCheckAndCost(strengthStones, strengthStone, strengthExtraStone, stoneExtra, strengthResult);
         }
         return strengthResult;
-    }
-
-    /**
-     * 进行额外强化lore的解析
-     * @param strengthAttributes 强化lore列表
-     * @return
-     */
-    @Nullable
-    private List<String> parseEspecialStoneLore(List<String> strengthAttributes){
-        /**
-         * 默认以第三位往后的地址为额外强化地址，范例如下：
-         * [强化信息]  index 0
-         * --------------------- index 1
-         * 基础强化信息：等级 index 2
-         * 额外强化信息1：等级 index 3
-         * 额外强化等级2：等级 index 4
-         * .....
-         * ---------------------
-         */
-        //如果不存在额外属性
-        if(strengthAttributes.size() < 5){
-            return null;
-        }
-        return strengthAttributes.subList(4,strengthAttributes.size()-1);
     }
 
     /**
@@ -355,9 +341,9 @@ public class StrengthServiceImpl implements StrengthService {
                 strengthStones[0].setAmount(strengthStones[0].getAmount()+1);
                 //strengthResult.setChanceExtra(0);
                 //只有执行强化石退回才会退回保护券，不然是不会消耗保护券的
-                if(strengthExtraStone!=null){
+                /*if(strengthExtraStone!=null){
                     stoneExtra.setAmount(stoneExtra.getAmount()+1);
-                }
+                }*/
             }
             throw new ItemStrengthException("&c 强化失败，您的强化石不匹配，请确保您有："+ stoneName);
         }

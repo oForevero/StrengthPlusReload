@@ -46,19 +46,19 @@ public class LoreGenerateUtils {
      * @param strengthType 强化类型
      * @return loreList
      */
-    public List<String> generateAttributesLore(int level, List<String> itemAttributeLore, String setAttribute, StrengthType strengthType){
+    public List<String> generateAttributesLore(int level, List<String> itemAttributeLore, String baseAttribute, String especialAttribute, StrengthType strengthType){
         loreList.clear();
         if(level == 1 || itemAttributeLore == null){
-            List<String> dataList = new ArrayList<>();
+            LoreList<String> dataList = new LoreList<>();
             switch (strengthType.getType()){
                 case 0:
-                    dataList.add(strengthAttribute.getArmorDefence()+ColorParseUtils.parseColorStr(" &c"+romaMathGenerateUtil.intToRoman(level)));
+                    dataList.add(strengthAttribute.getArmorDefence()+" &c"+romaMathGenerateUtil.intToRoman(level));
                     break;
                 case 1:
-                    dataList.add(strengthAttribute.getMeleeDamage()+ColorParseUtils.parseColorStr(" &c"+romaMathGenerateUtil.intToRoman(level)));
+                    dataList.add(strengthAttribute.getMeleeDamage()+" &c"+romaMathGenerateUtil.intToRoman(level));
                     break;
                 case 2:
-                    dataList.add(strengthAttribute.getRemotelyDamage()+ColorParseUtils.parseColorStr(" &c"+romaMathGenerateUtil.intToRoman(level)));
+                    dataList.add(strengthAttribute.getRemotelyDamage()+" &c"+romaMathGenerateUtil.intToRoman(level));
                     break;
                 default:
                     break;
@@ -69,8 +69,10 @@ public class LoreGenerateUtils {
         if(indexOfAttribute == -1){
             return itemAttributeLore;
         }
-        itemAttributeLore.set(indexOfAttribute, setAttribute+"&c " + level);
-        itemAttributeLore.add(indexOfAttribute+1 ,setAttribute);
+        itemAttributeLore.set(indexOfAttribute, baseAttribute+" §c" + romaMathGenerateUtil.intToRoman(level));
+        if(especialAttribute!=null && !"".equals(especialAttribute)){
+            itemAttributeLore.add(indexOfAttribute+1 ,especialAttribute + " §e" + romaMathGenerateUtil.intToRoman(1));
+        }
         //itemAttributeLore.add(setAttribute);
         return itemAttributeLore;
     }
@@ -83,13 +85,29 @@ public class LoreGenerateUtils {
      * @return 当前属性地址
      */
     private int getIndexOfAttribute(List<String> strengthAttributes, StrengthType strengthType, int level) {
+        //降级参数有问题，应当使用类似contains的方法获取地址，后面的等级参数不匹配
         switch (strengthType.getType()) {
             case 0:
-                return strengthAttributes.indexOf(strengthAttribute.getDefenceAttribute() + "&c" + level);
+                for(int i = 0; i < strengthAttributes.size(); i++) {
+                    if(strengthAttributes.get(i).equals(strengthAttribute.getArmorDefence())){
+                        return i;
+                    }
+                }
+                //return strengthAttributes.indexOf(strengthAttribute.getArmorDefence() + " §c" + romaMathGenerateUtil.intToRoman(level-1));
             case 1:
-                return strengthAttributes.indexOf(strengthAttribute.getMeleeDamage() + "&c" + level);
+                for(int i = 0; i < strengthAttributes.size(); i++) {
+                    if(strengthAttributes.get(i).equals(strengthAttribute.getMeleeDamage())){
+                        return i;
+                    }
+                }
+                //return strengthAttributes.indexOf(strengthAttribute.getMeleeDamage() + " §c" + romaMathGenerateUtil.intToRoman(level-1));
             case 2:
-                return strengthAttributes.indexOf(strengthAttribute.getRemotelyDamage() + "&c" + level);
+                for(int i = 0; i < strengthAttributes.size(); i++) {
+                    if(strengthAttributes.get(i).equals(strengthAttribute.getRemotelyDamage())){
+                        return i;
+                    }
+                }
+                //return strengthAttributes.indexOf(strengthAttribute.getRemotelyDamage() + " §c" + romaMathGenerateUtil.intToRoman(level-1));
             default:
                 return -1;
         }
