@@ -2,7 +2,6 @@ package top.mccat.utils;
 
 import com.sun.istack.internal.NotNull;
 import top.mccat.enums.StrengthType;
-import top.mccat.pojo.bean.Attribute;
 import top.mccat.pojo.config.StrengthAttribute;
 import top.mccat.pojo.list.LoreList;
 
@@ -85,29 +84,26 @@ public class LoreGenerateUtils {
      * @return 当前属性地址
      */
     private int getIndexOfAttribute(List<String> strengthAttributes, StrengthType strengthType, int level) {
-        //降级参数有问题，应当使用类似contains的方法获取地址，后面的等级参数不匹配
         switch (strengthType.getType()) {
             case 0:
                 for(int i = 0; i < strengthAttributes.size(); i++) {
-                    if(strengthAttributes.get(i).equals(strengthAttribute.getArmorDefence())){
+                    if(strengthAttributes.get(i).contains(strengthAttribute.getArmorDefence())){
                         return i;
                     }
                 }
-                //return strengthAttributes.indexOf(strengthAttribute.getArmorDefence() + " §c" + romaMathGenerateUtil.intToRoman(level-1));
             case 1:
                 for(int i = 0; i < strengthAttributes.size(); i++) {
-                    if(strengthAttributes.get(i).equals(strengthAttribute.getMeleeDamage())){
+                    if(strengthAttributes.get(i).contains(strengthAttribute.getMeleeDamage())){
                         return i;
                     }
                 }
-                //return strengthAttributes.indexOf(strengthAttribute.getMeleeDamage() + " §c" + romaMathGenerateUtil.intToRoman(level-1));
+
             case 2:
                 for(int i = 0; i < strengthAttributes.size(); i++) {
-                    if(strengthAttributes.get(i).equals(strengthAttribute.getRemotelyDamage())){
+                    if(strengthAttributes.get(i).contains(strengthAttribute.getRemotelyDamage())){
                         return i;
                     }
                 }
-                //return strengthAttributes.indexOf(strengthAttribute.getRemotelyDamage() + " §c" + romaMathGenerateUtil.intToRoman(level-1));
             default:
                 return -1;
         }

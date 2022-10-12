@@ -180,15 +180,16 @@ public class StrengthServiceImpl implements StrengthService {
         String especialAttribute = null;
         if(result){
             if(levelValues.get(level-1).isEspecialAttribute()){
-                int i = random.nextInt(attributeMap.size());
+                //进行已经随即过后的参数删除，有并发问题，明天借鉴该地址进行修复该bug
+                //https://blog.csdn.net/qq_35056292/article/details/79751233#:~:text=java.%20util.%20ConcurrentModificationException%20is%20a%20very%20common%20exception,whi...%20Caused%20by%3A%20java.%20util.%20ConcurrentModificationException%20%E5%B9%B6%E5%8F%91%E4%BF%AE%E6%94%B9%20%E5%BC%82%E5%B8%B8.
                 for(Attribute attribute : attributeList){
-                    if(itemlore.contains(attribute.getName())) {
-                        attributeList.remove(attribute);
-                        if(i > 0){
-                            i -= 1;
+                    for(String lore : itemlore){
+                        if(lore.contains(attribute.getName())) {
+                            attributeList.remove(attribute);
                         }
                     }
                 }
+                int i = random.nextInt(attributeList.size());
                 Attribute attribute = attributeList.get(i);
                 especialAttribute = attribute.getName();
             }
@@ -339,7 +340,7 @@ public class StrengthServiceImpl implements StrengthService {
             //进行强化石补偿
             if(bufferStack != null){
                 strengthStones[0].setAmount(strengthStones[0].getAmount()+1);
-                //strengthResult.setChanceExtra(0);
+                strengthResult.setChanceExtra(0);
                 //只有执行强化石退回才会退回保护券，不然是不会消耗保护券的
                 /*if(strengthExtraStone!=null){
                     stoneExtra.setAmount(stoneExtra.getAmount()+1);
