@@ -2,6 +2,7 @@ package top.mccat.pojo.bean;
 
 import top.mccat.anno.Value;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -10,7 +11,7 @@ import java.util.Map;
  * @description
  */
 @Value(value = "especialAttribute",classType = Map.class)
-public class Attribute {
+public class Attribute implements Serializable {
     @Value("name")
     private String name;
     @Value("enable")

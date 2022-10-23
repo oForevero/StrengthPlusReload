@@ -4,7 +4,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.checkerframework.checker.units.qual.A;
 import top.mccat.enums.StrengthType;
 import top.mccat.exception.ItemStrengthException;
 import top.mccat.pojo.bean.Attribute;
@@ -13,11 +12,12 @@ import top.mccat.pojo.bean.StrengthStone;
 import top.mccat.pojo.config.StrengthAttribute;
 import top.mccat.pojo.config.StrengthItem;
 import top.mccat.service.StrengthService;
+import top.mccat.utils.CollectionCopyUtils;
 import top.mccat.utils.LoreGenerateUtils;
 import top.mccat.utils.MsgUtils;
 import top.mccat.utils.RomaMathGenerateUtil;
 
-import javax.annotation.Nullable;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -182,16 +182,27 @@ public class StrengthServiceImpl implements StrengthService {
             if(levelValues.get(level-1).isEspecialAttribute()){
                 //进行已经随即过后的参数删除，有并发问题，明天借鉴该地址进行修复该bug
                 //https://blog.csdn.net/qq_35056292/article/details/79751233#:~:text=java.%20util.%20ConcurrentModificationException%20is%20a%20very%20common%20exception,whi...%20Caused%20by%3A%20java.%20util.%20ConcurrentModificationException%20%E5%B9%B6%E5%8F%91%E4%BF%AE%E6%94%B9%20%E5%BC%82%E5%B8%B8.
-                for(Attribute attribute : attributeList){
-                    for(String lore : itemlore){
-                        if(lore.contains(attribute.getName())) {
-                            attributeList.remove(attribute);
+                List<Attribute> copyAttributes;
+                try {
+                    copyAttributes = CollectionCopyUtils.deepCopy(attributeList);
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+                Iterator<Attribute> iterator = copyAttributes.iterator();
+                while(iterator.hasNext()){
+                    String attrName = iterator.next().getName();
+                    for(String subLore : itemlore){
+                        if(subLore.contains(attrName)){
+                            iterator.remove();
                         }
                     }
                 }
-                int i = random.nextInt(attributeList.size());
-                Attribute attribute = attributeList.get(i);
-                especialAttribute = attribute.getName();
+                if(copyAttributes.size()>0){
+                    int i = random.nextInt(copyAttributes.size());
+                    Attribute attribute = copyAttributes.get(i);
+                    especialAttribute = attribute.getName();
+                }
             }
         }
         return loreGenerateUtils.generateAttributesLore(level, itemlore, baseAttribute, especialAttribute, type);
@@ -323,6 +334,7 @@ public class StrengthServiceImpl implements StrengthService {
                 }
                 //执行count++即存在符合强化石，执行相对应逻辑代码
                 count++;
+                stoneList.remove(stone);
                 if(stone.getChanceExtra() > 0){
                     strengthResult.setChanceExtra(stone.getChanceExtra());
                 }
