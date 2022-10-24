@@ -1,8 +1,13 @@
 package top.mccat.listener;
 
+import javafx.scene.layout.Priority;
+import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -42,10 +47,18 @@ public class AttackEventListener implements Listener {
      * @return
      */
     @EventHandler(priority = EventPriority.HIGH)
-    public void damageEventListeners(PlayerItemDamageEvent event){
-        ItemStack weapon = event.getItem();
-        ItemMeta itemMeta = weapon.getItemMeta();
+    public void damageEvent(EntityDamageByEntityEvent event){
+        Entity damager = event.getDamager();
         //判断物品
+        if(!(damager instanceof Player)){
+            return;
+        }
+        Player player = (Player)damager;
+        ItemStack weapon = player.getItemInUse();
+        if(weapon == null || weapon.getType() == Material.AIR ){
+            return;
+        }
+        ItemMeta itemMeta = weapon.getItemMeta();
         if(itemMeta == null){
             return;
         }
@@ -72,7 +85,11 @@ public class AttackEventListener implements Listener {
                 event.setDamage(levelDamage);
             }
         }
-        return;
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void defenceEvent(EntityDamageByEntityEvent event) {
+        Entity defencer = event.getEntity();
     }
 
 }
