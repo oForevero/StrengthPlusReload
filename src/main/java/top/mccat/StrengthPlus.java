@@ -5,6 +5,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import top.mccat.factory.ConfigFactory;
 import top.mccat.handler.CommanderHandler;
+import top.mccat.listener.AttackEventListener;
 import top.mccat.pojo.BaseData;
 import top.mccat.pojo.bean.LevelValue;
 import top.mccat.pojo.bean.StrengthStone;
@@ -39,6 +40,7 @@ public class StrengthPlus extends JavaPlugin {
     public void onEnable() {
         commanderHandler = new CommanderHandler(this);
         Objects.requireNonNull(Bukkit.getPluginCommand(BaseData.SP_COMMAND)).setExecutor(commanderHandler);
+        getServer().getPluginManager().registerEvents(new AttackEventListener(),this);
     }
 
     @Override
