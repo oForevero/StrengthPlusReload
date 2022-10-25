@@ -81,7 +81,7 @@ public class StrengthExtra implements YamlConfigObject<StrengthExtra> {
         Optional<Object> o = Optional.empty();
         try {
             o = YamlLoadUtils.loadConfigObject("strength-extra.yml", BaseData.BASE_DIR,
-                    "strength-extra", StrengthItem.class);
+                    "strength-extra", StrengthExtra.class);
         } catch (Exception e) {
             e.printStackTrace();
         }

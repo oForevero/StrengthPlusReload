@@ -85,6 +85,7 @@ public class StrengthServiceImpl implements StrengthService {
         //如果是admin直接升级到满级
         if(strengthResult.isAdmin()){
             level = levelValues.size();
+            result = true;
         }else {
             //如果不是必定成功则进行强化判断
             if(strengthResult.isSuccess()){

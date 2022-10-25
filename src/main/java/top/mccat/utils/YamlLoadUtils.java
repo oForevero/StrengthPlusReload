@@ -192,7 +192,6 @@ public class YamlLoadUtils{
             if(setMethod.getName().contains("set")){
                 if(setMethod.getName().substring(3).equalsIgnoreCase(field.getName())){
                     try {
-                        //System.out.println("methodName："+setMethod.getName()+" value: "+value);
                         if(value instanceof String){
                             setMethod.invoke(objResult,ColorParseUtils.parseColorStr((String) value));
                             return;

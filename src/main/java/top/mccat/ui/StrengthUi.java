@@ -1,7 +1,7 @@
 package top.mccat.ui;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import org.bukkit.*;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -12,6 +12,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import top.mccat.exception.ItemStrengthException;
@@ -242,12 +243,18 @@ public class StrengthUi implements Listener {
      * @param strength 强化信息对象
      */
     private void strengthAction(Inventory inventory,ItemStack strengthItem, Player player, StrengthServiceImpl.StrengthResult strength){
+        /*Firework firework = player.getWorld().spawn(player.getLocation(), Firework.class);
+        FireworkMeta fireworkMeta = firework.getFireworkMeta();
+        fireworkMeta.addEffect(FireworkEffect.builder().withColor(Color.RED).with(FireworkEffect.Type.STAR).withFlicker().build());
+        fireworkMeta.setPower(1);*/
         //如果线程池满应当停止强化操作，并进行提示，回头补上
         threadPool.execute(()->{
             //如果玩家关闭强化菜单则取消事件
             if(!playerInStrengthActionMap.get(player)){
                 return;
             }
+            //铁砧维修声音
+            player.playSound(player, Sound.BLOCK_ANVIL_USE,1F,0F);
             //            循环开始和闪烁次数
             int i = 45;
             int time = 0;
@@ -263,9 +270,18 @@ public class StrengthUi implements Listener {
             }
             //26为额外强化卷
             boolean result = strengthService.strengthItemInUi(strengthItem, player, strength);
+            if(result){
+                //成功声音
+                player.playSound(player, Sound.ENTITY_PLAYER_LEVELUP,1F,0F);
+                //发射烟花
+                //firework.setFireworkMeta(fireworkMeta);
+            }else {
+                //失败声音，需要进行变更
+                player.playSound(player, Sound.BLOCK_POINTED_DRIPSTONE_DRIP_LAVA_INTO_CAULDRON,1F,0F);
+            }
             while(time < 6){
                 try {
-                    strengthFinishAnimation(inventory,time,result);
+                    strengthFinishAnimation(inventory, time, result);
                     time++;
                 } catch (InterruptedException e) {
                     msgUtils.sendToConsole("&c警告，线程阻塞，可能是并发导致的问题！");

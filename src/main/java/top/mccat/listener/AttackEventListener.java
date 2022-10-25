@@ -1,6 +1,5 @@
 package top.mccat.listener;
 
-import javafx.scene.layout.Priority;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -8,7 +7,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import top.mccat.pojo.config.StrengthAttribute;
@@ -33,9 +31,9 @@ public class AttackEventListener implements Listener {
     private final String remotelyDamage;
     private final String armorDefence;
     public AttackEventListener() {
-        strengthAttribute = StrengthAttribute.newInstance();
         romaMathGenerateUtil = new RomaMathGenerateUtil();
         strengthExtra = StrengthExtra.newInstance();
+        strengthAttribute = StrengthAttribute.newInstance();
         meleeDamage = strengthAttribute.getMeleeDamage();
         remotelyDamage = strengthAttribute.getRemotelyDamage();
         armorDefence = strengthAttribute.getArmorDefence();
@@ -54,8 +52,8 @@ public class AttackEventListener implements Listener {
             return;
         }
         Player player = (Player)damager;
-        ItemStack weapon = player.getItemInUse();
-        if(weapon == null || weapon.getType() == Material.AIR ){
+        ItemStack weapon = player.getInventory().getItemInMainHand();
+        if(weapon.getType() == Material.AIR){
             return;
         }
         ItemMeta itemMeta = weapon.getItemMeta();
@@ -74,15 +72,18 @@ public class AttackEventListener implements Listener {
             if(subLore.contains(remotelyDamage)){
                 int levelDamage = romaMathGenerateUtil.romanToInt(subLore.substring(remotelyDamage.length()));
                 levelDamage *= strengthExtra.getBowDamage();
-                System.out.println("bowDamage:"+levelDamage);
-                event.setDamage(levelDamage);
+                double damage = levelDamage + event.getDamage();
+                System.out.println("swordDamage:"+damage);
+                event.setDamage(damage);
             }
             //近战伤害
             if(subLore.contains(meleeDamage)){
                 int levelDamage = romaMathGenerateUtil.romanToInt(subLore.substring(meleeDamage.length()));
                 levelDamage *= strengthExtra.getSwordDamage();
-                System.out.println("swordDamage:"+levelDamage);
-                event.setDamage(levelDamage);
+                double damage = levelDamage + event.getDamage();
+                event.setDamage(damage);
+                System.out.println("swordDamage:"+damage);
+                event.setDamage(levelDamage + event.getDamage());
             }
         }
     }
