@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import top.mccat.enums.BaseDir;
+import top.mccat.perm.StrengthPlusPermission;
 import top.mccat.pojo.BaseData;
 import top.mccat.pojo.config.BaseConfig;
 
@@ -48,6 +49,21 @@ public class MsgUtils {
     }
 
     /**
+     * 向管理员发送信息
+     * @param msg 消息
+     * @param admin 管理员
+     */
+    public void sendToAdmin(@NotNull String msg, @NotNull Player admin){
+        if(!admin.isOp() || !admin.hasPermission(StrengthPlusPermission.ADMIN_PERMISSIONS)){
+            return;
+        }
+        if(!baseConfig.isDebug()){
+            return;
+        }
+        admin.sendMessage(ColorParseUtils.parseColorStr("&b[&cStrengthPlus Logger&b]"+msg));
+    }
+
+    /**
      * 发送到控制台
      * @param msg 消息
      */
@@ -62,6 +78,17 @@ public class MsgUtils {
      */
     public void sendToConsole(@NotNull String title, @NotNull String msg){
         commandSender.sendMessage(ColorParseUtils.parseColorStr(title+msg));
+    }
+
+    /**
+     * 向管理员发送信息
+     * @param msg 消息
+     */
+    public void sendDebugMsgToConsole(@NotNull String msg){
+        if(!baseConfig.isDebug()){
+            return;
+        }
+        commandSender.sendMessage(ColorParseUtils.parseColorStr("&b[&cStrengthPlus Logger&b]"+msg));
     }
 
     /**

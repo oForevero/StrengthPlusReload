@@ -1,6 +1,7 @@
 package top.mccat.service.impl;
 
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -12,10 +13,7 @@ import top.mccat.pojo.bean.StrengthStone;
 import top.mccat.pojo.config.StrengthAttribute;
 import top.mccat.pojo.config.StrengthItem;
 import top.mccat.service.StrengthService;
-import top.mccat.utils.CollectionCopyUtils;
-import top.mccat.utils.LoreGenerateUtils;
-import top.mccat.utils.MsgUtils;
-import top.mccat.utils.RomaMathGenerateUtil;
+import top.mccat.utils.*;
 
 import java.io.IOException;
 import java.util.*;
@@ -74,9 +72,6 @@ public class StrengthServiceImpl implements StrengthService {
         assert stack.getItemMeta() != null;
         //<String> especialLore = null;
         List<String> itemLore = stack.getItemMeta().getLore();
-        /*if(stack.getItemMeta().hasLore()) {
-            especialLore = parseEspecialStoneLore(itemLore);
-        }*/
         if(level == -1){
             msgUtils.sendToPlayer("&c当前强化物品无法进行强化操作！", player);
             return false;
@@ -129,6 +124,7 @@ public class StrengthServiceImpl implements StrengthService {
                     if(levelValue.isCanBreak()) {
                         //如果为不安全，则设置其为空气
                         if(!strengthResult.isSafe()){
+                            player.playSound(player, Sound.ENTITY_WARDEN_SONIC_BOOM,1F,0F);
                             stack.setType(Material.AIR);
                             player.getOpenInventory().setItem(19,stack);
                             msgUtils.sendToPlayer("&c很遗憾，您的强化失败了，并且没有保护石的保护，您的武器被摧毁了！",player);
@@ -315,10 +311,8 @@ public class StrengthServiceImpl implements StrengthService {
         ItemStack bufferStack = null;
         //执行强化石校验操作
         for (ItemStack strengthStone : strengthStones) {
-            if(strengthStone==null){
-                continue;
-            }
-            if(strengthStone.getType().equals(Material.AIR) || !strengthStone.hasItemMeta()){
+            //管理员强化有问题，需要修复
+            if(!ItemStackCheckUtils.notNullMeta(strengthStone)){
                 continue;
             }
             ItemMeta itemMeta = strengthStone.getItemMeta();

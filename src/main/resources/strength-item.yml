@@ -7,6 +7,10 @@ strength-item:
   # 远程
   remote:
     - 'BOW'
+    - 'CROSS_BOW'
   # 防御
   defence:
-    - 'DIAMOND_BOOT'
+    - 'DIAMOND_BOOTS'
+    - 'DIAMOND_CHESTPLATE'
+    - 'DIAMOND_LEGGINGS'
+    - 'DIAMOND_HELMET'

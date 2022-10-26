@@ -277,7 +277,7 @@ public class StrengthUi implements Listener {
                 //firework.setFireworkMeta(fireworkMeta);
             }else {
                 //失败声音，需要进行变更
-                player.playSound(player, Sound.BLOCK_POINTED_DRIPSTONE_DRIP_LAVA_INTO_CAULDRON,1F,0F);
+                player.playSound(player, Sound.BLOCK_POINTED_DRIPSTONE_DRIP_LAVA,1F,0F);
             }
             while(time < 6){
                 try {
@@ -370,10 +370,7 @@ public class StrengthUi implements Listener {
      * @param playerInventory 玩家菜单
      */
     private void setPlayerItem(ItemStack stack, PlayerInventory playerInventory){
-        if(stack == null){
-            return;
-        }
-        if(Material.AIR.equals(stack.getType())){
+        if(ItemStackCheckUtils.notNullAndAir(stack)){
             return;
         }
         int emptyIndex = playerInventory.firstEmpty();
