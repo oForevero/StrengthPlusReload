@@ -6,6 +6,7 @@ import top.mccat.pojo.bean.Attribute;
 import top.mccat.pojo.dao.YamlConfigObject;
 import top.mccat.utils.YamlLoadUtils;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 

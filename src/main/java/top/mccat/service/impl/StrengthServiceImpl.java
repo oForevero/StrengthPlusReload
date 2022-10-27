@@ -12,6 +12,7 @@ import top.mccat.pojo.bean.LevelValue;
 import top.mccat.pojo.bean.StrengthStone;
 import top.mccat.pojo.config.StrengthAttribute;
 import top.mccat.pojo.config.StrengthItem;
+import top.mccat.pojo.list.LoreList;
 import top.mccat.service.StrengthService;
 import top.mccat.utils.*;
 
@@ -141,15 +142,15 @@ public class StrengthServiceImpl implements StrengthService {
         switch (strengthResult.getType()){
             case 0:
                 lore = setStrengthLoreUtils(strengthAttribute.getDefenceAttribute(), enableDefenceAttribute,
-                        result, level, itemLore, strengthAttribute.getArmorDefence(), StrengthType.ARMOR_TYPE);
+                        result, level, itemLore, strengthAttribute.getArmorDefence(), StrengthType.ARMOR_TYPE, strengthResult.isAdmin());
                 break;
             case 1:
                 lore = setStrengthLoreUtils(strengthAttribute.getMeleeAttribute(), enableMeleeAttribute,
-                        result, level, itemLore, strengthAttribute.getMeleeDamage(), StrengthType.WEAPON_TYPE);
+                        result, level, itemLore, strengthAttribute.getMeleeDamage(), StrengthType.WEAPON_TYPE, strengthResult.isAdmin());
                 break;
             case 2:
                 lore = setStrengthLoreUtils(strengthAttribute.getRemoteAttribute(), enableRemoteAttribute,
-                        result, level, itemLore, strengthAttribute.getRemotelyDamage(), StrengthType.BOW_TYPE);
+                        result, level, itemLore, strengthAttribute.getRemotelyDamage(), StrengthType.BOW_TYPE, strengthResult.isAdmin());
                 break;
             default:
                 break;
@@ -161,24 +162,24 @@ public class StrengthServiceImpl implements StrengthService {
         return result;
     }
 
+    private final List<String> especialAttribute = new ArrayList<>();
     /**
      * 设置随机lore
-     * @param attributeMap
-     * @param attributeList
-     * @param result
-     * @param level
-     * @param type
+     * @param attributeMap map数据
+     * @param attributeList 列表数据
+     * @param result 强化结果
+     * @param level 等级
+     * @param type 强化类型
+     * @param baseAttribute 基础attribute
+     * @param itemLore 物品lore
+     * @param isAdmin 是否为管理员
      * @return
      */
     private List<String> setStrengthLoreUtils(Map<String, Attribute> attributeMap, List<Attribute> attributeList, boolean result, int level,
-                                              List<String> itemlore, String baseAttribute,StrengthType type){
-        //晚上加上levelvalue进行，等级判断是否有额外强化数据则增加lore
-        //进行数据随机
-        String especialAttribute = null;
+                                              List<String> itemLore, String baseAttribute, StrengthType type, boolean isAdmin){
+        especialAttribute.clear();
         if(result){
             if(levelValues.get(level-1).isEspecialAttribute()){
-                //进行已经随即过后的参数删除，有并发问题，明天借鉴该地址进行修复该bug
-                //https://blog.csdn.net/qq_35056292/article/details/79751233#:~:text=java.%20util.%20ConcurrentModificationException%20is%20a%20very%20common%20exception,whi...%20Caused%20by%3A%20java.%20util.%20ConcurrentModificationException%20%E5%B9%B6%E5%8F%91%E4%BF%AE%E6%94%B9%20%E5%BC%82%E5%B8%B8.
                 List<Attribute> copyAttributes;
                 try {
                     copyAttributes = CollectionCopyUtils.deepCopy(attributeList);
@@ -187,22 +188,29 @@ public class StrengthServiceImpl implements StrengthService {
                     return null;
                 }
                 Iterator<Attribute> iterator = copyAttributes.iterator();
-                while(iterator.hasNext()){
-                    String attrName = iterator.next().getName();
-                    for(String subLore : itemlore){
-                        if(subLore.contains(attrName)){
-                            iterator.remove();
+                if(itemLore != null) {
+                    while(iterator.hasNext()){
+                        String attrName = iterator.next().getName();
+                        for(String subLore : itemLore){
+                            if(subLore.contains(attrName)){
+                                iterator.remove();
+                            }
                         }
                     }
                 }
-                if(copyAttributes.size()>0){
+                if(isAdmin){
+                    while(iterator.hasNext()){
+                        especialAttribute.add(iterator.next().getName());
+                    }
+                }
+                if(!isAdmin && copyAttributes.size()>0){
                     int i = random.nextInt(copyAttributes.size());
                     Attribute attribute = copyAttributes.get(i);
-                    especialAttribute = attribute.getName();
+                    especialAttribute.add(attribute.getName());
                 }
             }
         }
-        return loreGenerateUtils.generateAttributesLore(level, itemlore, baseAttribute, especialAttribute, type);
+        return loreGenerateUtils.generateAttributesLore(level, itemLore, baseAttribute, especialAttribute, type);
     }
 
     @Override

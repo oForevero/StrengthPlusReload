@@ -45,7 +45,7 @@ public class LoreGenerateUtils {
      * @param strengthType 强化类型
      * @return loreList
      */
-    public List<String> generateAttributesLore(int level, List<String> itemAttributeLore, String baseAttribute, String especialAttribute, StrengthType strengthType){
+    public List<String> generateAttributesLore(int level, List<String> itemAttributeLore, String baseAttribute, List<String> especialAttribute, StrengthType strengthType){
         loreList.clear();
         if(level == 1 || itemAttributeLore == null){
             LoreList<String> dataList = new LoreList<>();
@@ -62,6 +62,11 @@ public class LoreGenerateUtils {
                 default:
                     break;
             }
+            if(especialAttribute!=null && especialAttribute.size()>0){
+                for (String subAttribute : especialAttribute) {
+                    dataList.add(subAttribute + " §e" + romaMathGenerateUtil.intToRoman(1));
+                }
+            }
             return generateStrengthLore(dataList);
         }
         int indexOfAttribute = getIndexOfAttribute(itemAttributeLore , strengthType, level);
@@ -69,8 +74,10 @@ public class LoreGenerateUtils {
             return itemAttributeLore;
         }
         itemAttributeLore.set(indexOfAttribute, baseAttribute+" §c" + romaMathGenerateUtil.intToRoman(level));
-        if(especialAttribute!=null && !"".equals(especialAttribute)){
-            itemAttributeLore.add(indexOfAttribute+1 ,especialAttribute + " §e" + romaMathGenerateUtil.intToRoman(1));
+        if(especialAttribute!=null && especialAttribute.size()>0){
+            for (String subAttribute : especialAttribute) {
+                itemAttributeLore.add(indexOfAttribute+1 ,subAttribute + " §e" + romaMathGenerateUtil.intToRoman(1));
+            }
         }
         //itemAttributeLore.add(setAttribute);
         return itemAttributeLore;

@@ -370,7 +370,7 @@ public class StrengthUi implements Listener {
      * @param playerInventory 玩家菜单
      */
     private void setPlayerItem(ItemStack stack, PlayerInventory playerInventory){
-        if(ItemStackCheckUtils.notNullAndAir(stack)){
+        if(!ItemStackCheckUtils.notNullAndAir(stack)){
             return;
         }
         int emptyIndex = playerInventory.firstEmpty();
