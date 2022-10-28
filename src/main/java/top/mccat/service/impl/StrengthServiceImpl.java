@@ -88,20 +88,26 @@ public class StrengthServiceImpl implements StrengthService {
         }else {
             //如果不是必定成功则进行强化判断
             if(strengthResult.isSuccess()){
-                msgUtils.sendToPlayer(strengthMsg.getNotifySuccess(),player);
+                msgUtils.sendToPlayer(variableTranslation(strengthMsg.getNotifySuccess(),player,level), player);
                 level += 1;
                 result = true;
                 if(levelValue.isCanBreak()){
-                    msgUtils.sendToBroadcast(strengthMsg.getBroadcastSuccess());
+                    msgUtils.sendToBroadcast(variableTranslation(strengthMsg.getBroadcastSuccess(),player,level));
+                }
+                if(level == levelValues.size()){
+                    msgUtils.sendToBroadcast(variableTranslation(strengthMsg.getBroadcastMaxLevel(),player,level));
                 }
             }else {
                 if(strengthResult(levelValue, strengthResult)){
                     level += 1;
                     result = true;
                     if(levelValue.isCanBreak()){
-                        msgUtils.sendToBroadcast(strengthMsg.getBroadcastSuccess());
+                        msgUtils.sendToBroadcast(variableTranslation(strengthMsg.getBroadcastSuccess(),player,level));
                     }
-                    msgUtils.sendToPlayer(strengthMsg.getNotifySuccess(),player);
+                    if(level == levelValues.size()){
+                        msgUtils.sendToBroadcast(variableTranslation(strengthMsg.getBroadcastMaxLevel(),player,level));
+                    }
+                    msgUtils.sendToPlayer(variableTranslation(strengthMsg.getNotifySuccess(),player,level), player);
                 }else{
                     //如果设置允许丢失等级，则使其丢失等级，如果默认为0则清除lore
                     if(levelValue.isLoseLevel()){
@@ -133,18 +139,19 @@ public class StrengthServiceImpl implements StrengthService {
                         }
                     }
                     //如果允许破坏则设置为空气
+                    //所有失败的消息广播应当设置等级+2，因为level是强化结束后的等级，并且额外-1，故+2
                     if(levelValue.isCanBreak()) {
                         //如果为不安全，则设置其为空气
                         if(!strengthResult.isSafe()){
                             stack.setType(Material.AIR);
                             player.getOpenInventory().setItem(19,stack);
-                            msgUtils.sendToBroadcast(strengthMsg.getBroadcastFail());
+                            msgUtils.sendToBroadcast(variableTranslation(strengthMsg.getBroadcastFail(),player,level+2));
                             return false;
                         }
                         //允许广播通知
-                        msgUtils.sendToBroadcast(strengthMsg.getBroadcastSafe());
+                        msgUtils.sendToBroadcast(variableTranslation(strengthMsg.getBroadcastSafe(),player,level+2));
                     }
-                    msgUtils.sendToPlayer(strengthMsg.getNotifyFail(),player);
+                    msgUtils.sendToPlayer(variableTranslation(strengthMsg.getNotifyFail(),player,level+1), player);
                 }
             }
         }
@@ -380,6 +387,29 @@ public class StrengthServiceImpl implements StrengthService {
         if(strengthExtraStone!=null){
             stoneExtra.setAmount(stoneExtra.getAmount()-1);
         }
+    }
+
+    public static final String PLAYER_VARIABLE = "%player%";
+    public static final String LEVEL_VARIABLE = "%level%";
+
+    /**
+     * 进行变量转换
+     * @param translateText 转换文本
+     * @param player 玩家变量
+     * @param level 等级变量
+     * @return 转换后字符串
+     */
+    private String variableTranslation(String translateText, Player player, int level){
+        String msg = "";
+        if(translateText.contains(PLAYER_VARIABLE)){
+            msg = translateText.replace(PLAYER_VARIABLE, player.getName());
+        }
+        if("".equals(msg)){
+            msg = translateText.replace(LEVEL_VARIABLE, ""+level);
+        }else{
+            msg = msg.replace(LEVEL_VARIABLE, ""+level);
+        }
+        return msg;
     }
 
     private int getLevelFromList(List<String> lore, String attribute) throws ItemStrengthException {

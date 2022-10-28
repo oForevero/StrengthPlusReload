@@ -24,6 +24,8 @@ public class StrengthMsg implements YamlConfigObject<StrengthMsg> {
     private String broadcastSafe;
     @Value("broadcast.fail")
     private String broadcastFail;
+    @Value("broadcast.maxLevel")
+    private String broadcastMaxLevel;
 
     public StrengthMsg() {
     }
@@ -68,14 +70,23 @@ public class StrengthMsg implements YamlConfigObject<StrengthMsg> {
         this.broadcastFail = broadcastFail;
     }
 
+    public String getBroadcastMaxLevel() {
+        return broadcastMaxLevel;
+    }
+
+    public void setBroadcastMaxLevel(String broadcastMaxLevel) {
+        this.broadcastMaxLevel = broadcastMaxLevel;
+    }
+
     @Override
     public String toString() {
-        return "StrengthLevel{" +
+        return "StrengthMsg{" +
                 "notifySuccess='" + notifySuccess + '\'' +
                 ", notifyFail='" + notifyFail + '\'' +
                 ", broadcastSuccess='" + broadcastSuccess + '\'' +
                 ", broadcastSafe='" + broadcastSafe + '\'' +
                 ", broadcastFail='" + broadcastFail + '\'' +
+                ", broadcastMaxLevel='" + broadcastMaxLevel + '\'' +
                 '}';
     }
 
