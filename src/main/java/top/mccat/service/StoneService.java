@@ -18,4 +18,9 @@ public interface StoneService {
      * @throws ItemStrengthException 物品未找到异常
      */
     void sendStoneToPlayer(String stoneName, PlayerInventory playerInventory, int amount) throws ItemStrengthException;
+
+    /**
+     * 重载配置
+     */
+    void reloadConfig();
 }

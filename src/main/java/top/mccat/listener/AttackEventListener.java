@@ -27,10 +27,10 @@ import java.util.stream.Collectors;
  */
 public class AttackEventListener implements Listener {
 
-    private final StrengthAttribute strengthAttribute;
+    private StrengthAttribute strengthAttribute;
     private final RomaMathGenerateUtil romaMathGenerateUtil;
-    private final StrengthExtra strengthExtra;
-    private final MsgUtils msgUtils;
+    private StrengthExtra strengthExtra;
+    private MsgUtils msgUtils;
     /**
      * 三属性伤害参数
      */
@@ -158,4 +158,9 @@ public class AttackEventListener implements Listener {
         }
     }
 
+    public void reloadConfig() {
+        msgUtils.reloadMsgConfig();
+        strengthExtra = strengthExtra.reloadConfigFile();
+        strengthAttribute = strengthAttribute.reloadConfigFile();
+    }
 }

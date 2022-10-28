@@ -1,5 +1,5 @@
 strength-menu:
   # 强化菜单的title
   menuTitle: '&c&l[&6&lStrengthPlus&c&l]&b&l强化菜单'
-  # 是否显示强化几率
+  # 是否显示强化几率，目前暂未支持
   chanceDisplay: false

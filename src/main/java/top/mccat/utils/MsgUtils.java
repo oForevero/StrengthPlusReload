@@ -112,6 +112,6 @@ public class MsgUtils {
      * 重载配置文件
      */
     public void reloadMsgConfig(){
-        baseConfig = BaseConfig.newInstance();
+        baseConfig = baseConfig.reloadConfigFile();
     }
 }

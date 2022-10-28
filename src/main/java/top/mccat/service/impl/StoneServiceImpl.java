@@ -81,4 +81,9 @@ public class StoneServiceImpl implements StoneService {
             }
         }
     }
+
+    @Override
+    public void reloadConfig(){
+        strengthStoneMap = StrengthStone.newInstance();
+    }
 }

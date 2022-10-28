@@ -12,6 +12,7 @@ import top.mccat.pojo.bean.LevelValue;
 import top.mccat.pojo.bean.StrengthStone;
 import top.mccat.pojo.config.StrengthAttribute;
 import top.mccat.pojo.config.StrengthItem;
+import top.mccat.pojo.config.StrengthMsg;
 import top.mccat.pojo.list.LoreList;
 import top.mccat.service.StrengthService;
 import top.mccat.utils.*;
@@ -29,6 +30,7 @@ public class StrengthServiceImpl implements StrengthService {
     private LoreGenerateUtils loreGenerateUtils;
     private List<LevelValue> levelValues;
     private MsgUtils msgUtils;
+    private StrengthMsg strengthMsg;
     private Map<String, StrengthStone> strengthStoneMap;
     private final RomaMathGenerateUtil romaMathGenerateUtil;
     private final List<Attribute> enableMeleeAttribute = new ArrayList<>();
@@ -46,6 +48,7 @@ public class StrengthServiceImpl implements StrengthService {
         this.levelValues = LevelValue.newInstance();
         this.romaMathGenerateUtil = new RomaMathGenerateUtil();
         this.strengthStoneMap = StrengthStone.newInstance();
+        this.strengthMsg = StrengthMsg.newInstance();
         //获取允许特殊强化的list数据
         initEnableAttributeList(strengthAttribute.getDefenceAttribute(),enableDefenceAttribute);
         initEnableAttributeList(strengthAttribute.getMeleeAttribute(),enableMeleeAttribute);
@@ -85,12 +88,20 @@ public class StrengthServiceImpl implements StrengthService {
         }else {
             //如果不是必定成功则进行强化判断
             if(strengthResult.isSuccess()){
+                msgUtils.sendToPlayer(strengthMsg.getNotifySuccess(),player);
                 level += 1;
                 result = true;
+                if(levelValue.isCanBreak()){
+                    msgUtils.sendToBroadcast(strengthMsg.getBroadcastSuccess());
+                }
             }else {
                 if(strengthResult(levelValue, strengthResult)){
                     level += 1;
                     result = true;
+                    if(levelValue.isCanBreak()){
+                        msgUtils.sendToBroadcast(strengthMsg.getBroadcastSuccess());
+                    }
+                    msgUtils.sendToPlayer(strengthMsg.getNotifySuccess(),player);
                 }else{
                     //如果设置允许丢失等级，则使其丢失等级，如果默认为0则清除lore
                     if(levelValue.isLoseLevel()){
@@ -125,16 +136,15 @@ public class StrengthServiceImpl implements StrengthService {
                     if(levelValue.isCanBreak()) {
                         //如果为不安全，则设置其为空气
                         if(!strengthResult.isSafe()){
-                            player.playSound(player, Sound.ENTITY_WARDEN_SONIC_BOOM,1F,0F);
                             stack.setType(Material.AIR);
                             player.getOpenInventory().setItem(19,stack);
-                            msgUtils.sendToPlayer("&c很遗憾，您的强化失败了，并且没有保护石的保护，您的武器被摧毁了！",player);
+                            msgUtils.sendToBroadcast(strengthMsg.getBroadcastFail());
                             return false;
                         }
                         //允许广播通知
-                        msgUtils.sendToConsole("&a[&b"+player.getName()+"&a]&c 在强化Ta的武器时，强化炉发生了爆炸，所幸有强化保护卷的存在装备并没有损坏");
+                        msgUtils.sendToBroadcast(strengthMsg.getBroadcastSafe());
                     }
-                    msgUtils.sendToPlayer("&c很遗憾，您的强化失败了！",player);
+                    msgUtils.sendToPlayer(strengthMsg.getNotifyFail(),player);
                 }
             }
         }
@@ -354,7 +364,11 @@ public class StrengthServiceImpl implements StrengthService {
         if(count < stoneKeys.size()){
             //进行强化石补偿
             if(bufferStack != null){
-                strengthStones[0].setAmount(strengthStones[0].getAmount()+1);
+                if(strengthStones[0]!=null){
+                    strengthStones[0].setAmount(strengthStones[0].getAmount()+1);
+                }else{
+                    strengthStones[1].setAmount(strengthStones[1].getAmount()+1);
+                }
                 strengthResult.setChanceExtra(0);
                 //只有执行强化石退回才会退回保护券，不然是不会消耗保护券的
                 /*if(strengthExtraStone!=null){

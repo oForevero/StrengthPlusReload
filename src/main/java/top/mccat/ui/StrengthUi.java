@@ -124,7 +124,7 @@ public class StrengthUi implements Listener {
 //        0-53为上层物品栏
         int location = clickEvent.getRawSlot();
         if (location >= 0 && location < inventorySize){
-            msgUtils.sendToConsole("on click event , location: " + location);
+            //msgUtils.sendToConsole("on click event , location: " + location);
 //            如果存在玩家正在强化则取消强化事件
             Player player = (Player) clickEvent.getWhoClicked();
             if(playerInStrengthActionMap.containsKey(player) && playerInStrengthActionMap.get(player)){
@@ -277,7 +277,7 @@ public class StrengthUi implements Listener {
                 //firework.setFireworkMeta(fireworkMeta);
             }else {
                 //失败声音，需要进行变更
-                player.playSound(player, Sound.BLOCK_POINTED_DRIPSTONE_DRIP_LAVA,1F,0F);
+                player.playSound(player, Sound.BLOCK_LAVA_EXTINGUISH,1F,0F);
             }
             while(time < 6){
                 try {
@@ -375,5 +375,20 @@ public class StrengthUi implements Listener {
         }
         int emptyIndex = playerInventory.firstEmpty();
         playerInventory.setItem(emptyIndex,stack);
+    }
+
+    public void reloadConfig(){
+        msgUtils = MsgUtils.newInstance();
+        strengthMenu = StrengthMenu.newInstance();
+        //赋值强化券Map代码
+        Map<String, StrengthStone> stoneMap = StrengthStone.newInstance();
+        Set<String> keys = stoneMap.keySet();
+        for(String key : keys) {
+            StrengthStone strengthStone = stoneMap.get(key);
+            if(strengthStone.getExtraStone()){
+                stoneExtraMap.put(strengthStone.getName(), strengthStone);
+            }
+        }
+        strengthService = new StrengthServiceImpl();
     }
 }
