@@ -17,6 +17,7 @@ import top.mccat.utils.ItemStackCheckUtils;
 import top.mccat.utils.MsgUtils;
 import top.mccat.utils.RomaMathGenerateUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,6 +35,9 @@ public class AttackEventListener implements Listener {
     private Map<String,Attribute> especialMeleeAttribute;
     private Map<String,Attribute> especialRemoteAttribute;
     private Map<String,Attribute> especialDefenceAttribute;
+    private List<Attribute> enableMeleeList;
+    private List<Attribute> enableRemoteList;
+    private List<Attribute> enableDefenceList;
     /**
      * 三属性伤害参数
      */
@@ -43,6 +47,7 @@ public class AttackEventListener implements Listener {
         msgUtils = MsgUtils.newInstance();
         strengthExtra = StrengthExtra.newInstance();
         strengthAttribute = StrengthAttribute.newInstance();
+        initEspecialAttributes();
     }
 
     /**
@@ -91,7 +96,30 @@ public class AttackEventListener implements Listener {
         if(lore.size() == 0){
             return;
         }
+        //进行近战额外参数判定
         for(String subLore : lore){
+            //当长度大于4则有额外属性
+            if(lore.size() > 4){
+                String subStr = subLore.substring(0, subLore.length() - 2);
+                List<Attribute> collect = enableMeleeList.stream().filter(attr -> attr.getName().equals(subStr)).collect(Collectors.toList());
+                for(Attribute attr : collect){
+                    switch(attr.getTag()){
+                        case "bloodSuck":
+                            //执行吸血
+                            if(especialMeleeAttribute.containsKey("bloodSuck")){
+
+                            }
+                            break;
+                        case "absoluteDamage":
+                            //绝对伤害
+                            if(especialMeleeAttribute.containsKey("absoluteDamage")){
+
+                            }
+                        default:
+                            break;
+                    }
+                }
+            }
             //远程伤害
             if(subLore.contains(strengthAttribute.getRemotelyDamage())){
                 int levelDamage = romaMathGenerateUtil.romanToInt(subLore.substring(strengthAttribute.getRemotelyDamage().length()));
@@ -113,8 +141,6 @@ public class AttackEventListener implements Listener {
                 return;
             }
         }
-        //进行近战额外参数判定
-        //especialMeleeAttribute.values().stream().filter(melee -> lore.stream().allMatch(subLore -> subLore.contains(melee.getName()))).
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -166,6 +192,9 @@ public class AttackEventListener implements Listener {
                 collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k1, k2) -> k2));
         this.especialRemoteAttribute = strengthAttribute.getRemoteAttribute().entrySet().stream().filter(entry -> entry.getValue().isEnable()).
                 collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k1, k2) -> k2));
+        this.enableDefenceList = new ArrayList<>(especialDefenceAttribute.values());
+        this.enableMeleeList = new ArrayList<>(especialDefenceAttribute.values());
+        this.enableRemoteList = new ArrayList<>(especialDefenceAttribute.values());
     }
 
     public void reloadConfig() {
