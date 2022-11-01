@@ -390,5 +390,6 @@ public class StrengthUi implements Listener {
             }
         }
         strengthService = new StrengthServiceImpl();
+        strengthService.reloadConfig();
     }
 }

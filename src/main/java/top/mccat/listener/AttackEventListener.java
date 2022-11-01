@@ -30,7 +30,10 @@ public class AttackEventListener implements Listener {
     private StrengthAttribute strengthAttribute;
     private final RomaMathGenerateUtil romaMathGenerateUtil;
     private StrengthExtra strengthExtra;
-    private MsgUtils msgUtils;
+    private final MsgUtils msgUtils;
+    private Map<String,Attribute> especialMeleeAttribute;
+    private Map<String,Attribute> especialRemoteAttribute;
+    private Map<String,Attribute> especialDefenceAttribute;
     /**
      * 三属性伤害参数
      */
@@ -88,9 +91,6 @@ public class AttackEventListener implements Listener {
         if(lore.size() == 0){
             return;
         }
-        Map<String, Attribute> meleeAttribute = strengthAttribute.getMeleeAttribute();
-        Map<String, Attribute> remoteAttribute = strengthAttribute.getRemoteAttribute();
-        Map<String, Attribute> defenceAttribute = strengthAttribute.getDefenceAttribute();
         for(String subLore : lore){
             //远程伤害
             if(subLore.contains(strengthAttribute.getRemotelyDamage())){
@@ -100,10 +100,6 @@ public class AttackEventListener implements Listener {
                 msgUtils.sendDebugMsgToConsole("&b远程伤害参数：&a[&c"+damage+"&a]"+" &a基础伤害："+"&b[&c"+ levelDamage +"&b]"+ "&e 等级附加伤害："+"&b[&c"+ levelDamage +"&b]");
                 damageByEntityEvent.setDamage(damage);
                 return;
-            }
-            //进行近战额外参数判定
-            if(meleeAttribute.containsKey(subLore.substring(0,subLore.length()-2))){
-                //meleeAttribute.get
             }
             //近战伤害
             if(subLore.contains(strengthAttribute.getMeleeDamage())){
@@ -117,6 +113,8 @@ public class AttackEventListener implements Listener {
                 return;
             }
         }
+        //进行近战额外参数判定
+        //especialMeleeAttribute.values().stream().filter(melee -> lore.stream().allMatch(subLore -> subLore.contains(melee.getName()))).
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -158,9 +156,22 @@ public class AttackEventListener implements Listener {
         }
     }
 
+    /**
+     * 初始化允许的map参数
+     */
+    private void initEspecialAttributes() {
+        this.especialMeleeAttribute = strengthAttribute.getMeleeAttribute().entrySet().stream().filter(entry -> entry.getValue().isEnable()).
+                collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k1, k2) -> k2));
+        this.especialDefenceAttribute = strengthAttribute.getDefenceAttribute().entrySet().stream().filter(entry -> entry.getValue().isEnable()).
+                collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k1, k2) -> k2));
+        this.especialRemoteAttribute = strengthAttribute.getRemoteAttribute().entrySet().stream().filter(entry -> entry.getValue().isEnable()).
+                collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k1, k2) -> k2));
+    }
+
     public void reloadConfig() {
         msgUtils.reloadMsgConfig();
         strengthExtra = strengthExtra.reloadConfigFile();
         strengthAttribute = strengthAttribute.reloadConfigFile();
+        initEspecialAttributes();
     }
 }

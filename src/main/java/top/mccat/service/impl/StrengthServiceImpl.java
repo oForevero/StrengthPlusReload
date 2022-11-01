@@ -1,7 +1,6 @@
 package top.mccat.service.impl;
 
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -13,29 +12,29 @@ import top.mccat.pojo.bean.StrengthStone;
 import top.mccat.pojo.config.StrengthAttribute;
 import top.mccat.pojo.config.StrengthItem;
 import top.mccat.pojo.config.StrengthMsg;
-import top.mccat.pojo.list.LoreList;
 import top.mccat.service.StrengthService;
 import top.mccat.utils.*;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Raven
  * @date 2022/09/25 21:38
  */
 public class StrengthServiceImpl implements StrengthService {
-    private StrengthItem strengthItem;
+    private final StrengthItem strengthItem;
     private StrengthAttribute strengthAttribute;
-    private LoreGenerateUtils loreGenerateUtils;
+    private final LoreGenerateUtils loreGenerateUtils;
     private List<LevelValue> levelValues;
-    private MsgUtils msgUtils;
+    private final MsgUtils msgUtils;
     private StrengthMsg strengthMsg;
-    private Map<String, StrengthStone> strengthStoneMap;
+    private final Map<String, StrengthStone> strengthStoneMap;
     private final RomaMathGenerateUtil romaMathGenerateUtil;
-    private final List<Attribute> enableMeleeAttribute = new ArrayList<>();
-    private final List<Attribute> enableDefenceAttribute= new ArrayList<>();
-    private final List<Attribute> enableRemoteAttribute= new ArrayList<>();
+    private List<Attribute> enableMeleeAttribute = new ArrayList<>();
+    private List<Attribute> enableDefenceAttribute= new ArrayList<>();
+    private List<Attribute> enableRemoteAttribute= new ArrayList<>();
     /**
      * 定义强化随机几率变量
      */
@@ -50,12 +49,15 @@ public class StrengthServiceImpl implements StrengthService {
         this.strengthStoneMap = StrengthStone.newInstance();
         this.strengthMsg = StrengthMsg.newInstance();
         //获取允许特殊强化的list数据
-        initEnableAttributeList(strengthAttribute.getDefenceAttribute(),enableDefenceAttribute);
+        enableMeleeAttribute = strengthAttribute.getDefenceAttribute().values().stream().filter(Attribute::isEnable).collect(Collectors.toList());
+        enableDefenceAttribute = strengthAttribute.getDefenceAttribute().values().stream().filter(Attribute::isEnable).collect(Collectors.toList());
+        enableRemoteAttribute = strengthAttribute.getRemoteAttribute().values().stream().filter(Attribute::isEnable).collect(Collectors.toList());
+        /*initEnableAttributeList(strengthAttribute.getDefenceAttribute(),enableDefenceAttribute);
         initEnableAttributeList(strengthAttribute.getMeleeAttribute(),enableMeleeAttribute);
-        initEnableAttributeList(strengthAttribute.getRemoteAttribute(),enableRemoteAttribute);
+        initEnableAttributeList(strengthAttribute.getRemoteAttribute(),enableRemoteAttribute);*/
     }
 
-    private void initEnableAttributeList(Map<String, Attribute> attributeMap, List<Attribute> attributeList){
+    /*private void initEnableAttributeList(Map<String, Attribute> attributeMap, List<Attribute> attributeList){
         Set<String> keySet = attributeMap.keySet();
         for(String key : keySet) {
             Attribute attribute = attributeMap.get(key);
@@ -63,18 +65,14 @@ public class StrengthServiceImpl implements StrengthService {
                 attributeList.add(attribute);
             }
         }
-    }
+    }*/
 
     @Override
     public boolean strengthItemInUi(ItemStack stack, Player player, StrengthResult strengthResult) {
-        // 明天进行如下开发，首先取出额外lore参数，定义为基础属性下，如果当前等级拥有额外属性，在强化失败时删除最下面的额外属性lore，即最后获得的属性即新额外属性。
-        // 强化成功后从额外属性中随机抽取出一个属性进行lore赋值。当属性已包含则进行深拷贝，删除已包含的属性，随机出其他属性
-        // 当全部参数都已包含额外属性，则进行普通属性强化，并提示额外强化属性已满
         boolean result = false;
         int level = strengthResult.getLevel();
         //获取额外强化lore
         assert stack.getItemMeta() != null;
-        //<String> especialLore = null;
         List<String> itemLore = stack.getItemMeta().getLore();
         if(level == -1){
             msgUtils.sendToPlayer("&c当前强化物品无法进行强化操作！", player);
@@ -115,16 +113,6 @@ public class StrengthServiceImpl implements StrengthService {
                             level -= 1;
                             if(levelValues.get(level).isEspecialAttribute()){
                                 //如果当前等级-1有额外属性，则删除额外属性lore
-                                /**
-                                 * 默认以第三位往后的地址为额外强化地址，范例如下：
-                                 * [强化信息]  index 0
-                                 * --------------------- index 1
-                                 * 基础强化信息：等级 index 2
-                                 * 额外强化信息1：等级 index 3
-                                 * 额外强化等级2：等级 index 4
-                                 * .....
-                                 * ---------------------
-                                 */
                                 //如果不存在额外属性
                                 if(itemLore!=null){
                                     if(itemLore.size() >= 5){
@@ -530,5 +518,13 @@ public class StrengthServiceImpl implements StrengthService {
                     ", chanceExtra=" + chanceExtra +
                     '}';
         }
+    }
+
+    @Override
+    public void reloadConfig() {
+        msgUtils.reloadMsgConfig();
+        strengthMsg = strengthMsg.reloadConfigFile();
+        levelValues = LevelValue.newInstance();
+        strengthAttribute = strengthAttribute.reloadConfigFile();
     }
 }

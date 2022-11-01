@@ -36,4 +36,9 @@ public interface StrengthService {
      * @return 强化结果集
      */
     StrengthServiceImpl.StrengthResult canBeStrength(ItemStack stack);
+
+    /**
+     * 重载配置
+     */
+    void reloadConfig();
 }

@@ -2,11 +2,9 @@ package top.mccat.pojo.config;
 
 import top.mccat.anno.Value;
 import top.mccat.pojo.BaseData;
-import top.mccat.pojo.bean.StrengthStone;
 import top.mccat.pojo.dao.YamlConfigObject;
 import top.mccat.utils.YamlLoadUtils;
 
-import java.io.IOException;
 import java.util.Optional;
 
 /**
