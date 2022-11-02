@@ -42,7 +42,7 @@ public class StrengthItem implements YamlConfigObject<StrengthItem> {
      * @return 是否可以强化
      */
     public boolean remoteCanBeStrength(String materialName){
-        return melee.contains(materialName);
+        return remote.contains(materialName);
     }
 
     /**
@@ -51,7 +51,7 @@ public class StrengthItem implements YamlConfigObject<StrengthItem> {
      * @return 是否可以强化
      */
     public boolean defenceCanBeStrength(String materialName){
-        return melee.contains(materialName);
+        return defence.contains(materialName);
     }
 
     public List<String> getMelee() {

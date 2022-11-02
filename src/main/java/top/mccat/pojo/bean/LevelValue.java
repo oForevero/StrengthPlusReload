@@ -16,8 +16,6 @@ import java.util.Optional;
  */
 @Value(value = "levels",classType = List.class)
 public class LevelValue implements YamlConfigObject<List<LevelValue>> {
-    @Value("normalStone")
-    private int normalStone;
     @Value("loseLevel")
     private boolean loseLevel;
     @Value("canBreak")
@@ -26,16 +24,9 @@ public class LevelValue implements YamlConfigObject<List<LevelValue>> {
     private int chance;
     @Value("costStone")
     private List<String> strengthStones;
-
+    @Value("especialAttribute")
+    private boolean especialAttribute = false;
     public LevelValue() {
-    }
-
-    public int getNormalStone() {
-        return normalStone;
-    }
-
-    public void setNormalStone(int normalStone) {
-        this.normalStone = normalStone;
     }
 
     public boolean isLoseLevel() {
@@ -70,14 +61,22 @@ public class LevelValue implements YamlConfigObject<List<LevelValue>> {
         this.strengthStones = strengthStones;
     }
 
+    public boolean isEspecialAttribute() {
+        return especialAttribute;
+    }
+
+    public void setEspecialAttribute(boolean especialAttribute) {
+        this.especialAttribute = especialAttribute;
+    }
+
     @Override
     public String toString() {
         return "LevelValue{" +
-                "normalStone=" + normalStone +
-                ", loseLevel=" + loseLevel +
+                "loseLevel=" + loseLevel +
                 ", canBreak=" + canBreak +
                 ", chance=" + chance +
                 ", strengthStones=" + strengthStones +
+                ", especialAttribute=" + especialAttribute +
                 '}';
     }
 

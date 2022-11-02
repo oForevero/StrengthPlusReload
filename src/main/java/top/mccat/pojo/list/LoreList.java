@@ -18,4 +18,8 @@ public class LoreList<T> extends ArrayList<String> {
         return super.add(ColorParseUtils.parseColorStr(string));
     }
 
+    @Override
+    public String set(int index, String element) {
+        return super.set(index, ColorParseUtils.parseColorStr(element));
+    }
 }

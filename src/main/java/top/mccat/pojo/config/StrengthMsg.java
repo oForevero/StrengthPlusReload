@@ -2,11 +2,9 @@ package top.mccat.pojo.config;
 
 import top.mccat.anno.Value;
 import top.mccat.pojo.BaseData;
-import top.mccat.pojo.bean.StrengthStone;
 import top.mccat.pojo.dao.YamlConfigObject;
 import top.mccat.utils.YamlLoadUtils;
 
-import java.io.IOException;
 import java.util.Optional;
 
 /**
@@ -24,6 +22,8 @@ public class StrengthMsg implements YamlConfigObject<StrengthMsg> {
     private String broadcastSafe;
     @Value("broadcast.fail")
     private String broadcastFail;
+    @Value("broadcast.maxLevel")
+    private String broadcastMaxLevel;
 
     public StrengthMsg() {
     }
@@ -68,14 +68,23 @@ public class StrengthMsg implements YamlConfigObject<StrengthMsg> {
         this.broadcastFail = broadcastFail;
     }
 
+    public String getBroadcastMaxLevel() {
+        return broadcastMaxLevel;
+    }
+
+    public void setBroadcastMaxLevel(String broadcastMaxLevel) {
+        this.broadcastMaxLevel = broadcastMaxLevel;
+    }
+
     @Override
     public String toString() {
-        return "StrengthLevel{" +
+        return "StrengthMsg{" +
                 "notifySuccess='" + notifySuccess + '\'' +
                 ", notifyFail='" + notifyFail + '\'' +
                 ", broadcastSuccess='" + broadcastSuccess + '\'' +
                 ", broadcastSafe='" + broadcastSafe + '\'' +
                 ", broadcastFail='" + broadcastFail + '\'' +
+                ", broadcastMaxLevel='" + broadcastMaxLevel + '\'' +
                 '}';
     }
 

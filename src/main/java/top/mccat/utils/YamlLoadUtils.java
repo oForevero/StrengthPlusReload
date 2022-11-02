@@ -1,6 +1,5 @@
 package top.mccat.utils;
 
-import com.sun.org.slf4j.internal.Logger;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -193,7 +192,10 @@ public class YamlLoadUtils{
             if(setMethod.getName().contains("set")){
                 if(setMethod.getName().substring(3).equalsIgnoreCase(field.getName())){
                     try {
-                        //System.out.println("methodName："+setMethod.getName()+" value: "+value);
+                        if(value instanceof String){
+                            setMethod.invoke(objResult,ColorParseUtils.parseColorStr((String) value));
+                            return;
+                        }
                         setMethod.invoke(objResult,value);
                     } catch (InvocationTargetException | IllegalAccessException e) {
                         e.printStackTrace();
@@ -220,7 +222,7 @@ public class YamlLoadUtils{
         try {
             ESSENTIALS_CONFIG.load(file);
         } catch (InvalidConfigurationException e) {
-            MSG_UTILS.sendToConsole(BaseData.PLUGIN_PREFIX, "&c错误");
+            MSG_UTILS.sendToConsole(BaseData.PLUGIN_PREFIX, "&c错误,Io读取失败");
         }
         return ESSENTIALS_CONFIG.getConfigurationSection(sectionAddress);
     }

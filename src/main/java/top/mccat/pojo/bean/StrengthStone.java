@@ -2,8 +2,8 @@ package top.mccat.pojo.bean;
 
 import top.mccat.anno.Value;
 import top.mccat.pojo.BaseData;
-import top.mccat.pojo.config.BaseConfig;
 import top.mccat.pojo.dao.YamlConfigObject;
+import top.mccat.utils.LoreGenerateUtils;
 import top.mccat.utils.YamlLoadUtils;
 
 import java.util.HashMap;
@@ -29,6 +29,10 @@ public class StrengthStone implements YamlConfigObject<Map<String,StrengthStone>
     private boolean admin = false;
     @Value("chanceExtra")
     private int chanceExtra = 0;
+    @Value("extraStone")
+    private boolean extraStone = false;
+    @Value("item")
+    private String item;
 
     public StrengthStone() {
     }
@@ -50,7 +54,7 @@ public class StrengthStone implements YamlConfigObject<Map<String,StrengthStone>
     }
 
     public void setLore(List<String> lore) {
-        this.lore = lore;
+        this.lore = LoreGenerateUtils.parseColorLore(lore);
     }
 
     public boolean isSafe() {
@@ -81,22 +85,27 @@ public class StrengthStone implements YamlConfigObject<Map<String,StrengthStone>
         return chanceExtra;
     }
 
-    public void setChanceExtra(int chanceExtra) {
-        this.chanceExtra = chanceExtra;
+    public void setChanceExtra(Object chanceExtra) {
+        this.chanceExtra = (int) chanceExtra;
     }
 
-    @Override
-    public String toString() {
-        return "StrengthStone{" +
-                "  name='" + name + '\'' +
-                ", lore=" + lore +
-                ", safe=" + safe +
-                ", success=" + success +
-                ", admin=" + admin +
-                ", chanceExtra=" + chanceExtra +
-                '}';
+    public void setExtraStone(Object extraStone) {
+        this.extraStone = (boolean) extraStone;
     }
 
+    public boolean getExtraStone(){
+        return extraStone;
+    }
+
+    public String getItem() {
+        return item;
+    }
+
+    public void setItem(Object item) {
+        this.item = String.valueOf(item);
+    }
+
+    @SuppressWarnings("unchecked")
     public static Map<String,StrengthStone> newInstance() {
         Optional<Object> o = Optional.empty();
         try {
