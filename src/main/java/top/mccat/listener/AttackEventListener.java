@@ -38,10 +38,8 @@ public class AttackEventListener implements Listener {
     private List<Attribute> enableMeleeList;
     private List<Attribute> enableRemoteList;
     private List<Attribute> enableDefenceList;
-    /**
-     * 三属性伤害参数
-     */
     private ItemStack bowWeapon = null;
+    private Player bowDamager = null;
     public AttackEventListener() {
         romaMathGenerateUtil = new RomaMathGenerateUtil();
         msgUtils = MsgUtils.newInstance();
@@ -59,6 +57,7 @@ public class AttackEventListener implements Listener {
         if(!(event.getEntity() instanceof Player)){
             return;
         }
+        bowDamager = (Player) event.getEntity();
         bowWeapon = event.getBow();
     }
 
@@ -70,16 +69,19 @@ public class AttackEventListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void damageEvent(EntityDamageByEntityEvent damageByEntityEvent){
         Entity damager = damageByEntityEvent.getDamager();
-        ItemStack weapon;
+        Player player = null;
+        ItemStack weapon = null;
         if(damager.getType() == EntityType.ARROW){
             if(bowWeapon == null){
                 return;
             }
+            player = bowDamager;
             weapon = bowWeapon;
         }else if(!(damager instanceof Player)){
             return;
-        }else {
-            Player player = (Player) damager;
+        }
+        if(bowWeapon == null && bowDamager == null){
+            player = (Player) damager;
             weapon = player.getInventory().getItemInMainHand();
         }
         if(!ItemStackCheckUtils.notNullAndAir(weapon)){
@@ -100,21 +102,28 @@ public class AttackEventListener implements Listener {
         for(String subLore : lore){
             //当长度大于4则有额外属性
             if(lore.size() > 4){
-                String subStr = subLore.substring(0, subLore.length() - 2);
+                String subStr = subLore.substring(0, subLore.length() - 4);
                 List<Attribute> collect = enableMeleeList.stream().filter(attr -> attr.getName().equals(subStr)).collect(Collectors.toList());
                 for(Attribute attr : collect){
                     switch(attr.getTag()){
                         case "bloodSuck":
                             //执行吸血
                             if(especialMeleeAttribute.containsKey("bloodSuck")){
-
+                                double health = player.getHealth();
+                                double maxHealth = player.getMaxHealth();
+                                if(maxHealth - health < 2){
+                                    player.setHealth(player.getMaxHealth());
+                                }else {
+                                    player.setHealth(player.getHealth() + 2);
+                                }
+                                msgUtils.sendDebugMsgToConsole("&b吸血玩家为：&a[&b"+player.getName()+"&a] 吸血血量为："+2);
                             }
                             break;
-                        case "absoluteDamage":
+                        /*case "absoluteDamage":
                             //绝对伤害
                             if(especialMeleeAttribute.containsKey("absoluteDamage")){
-
-                            }
+                                damageByEntityEvent.getEntity().set
+                            }*/
                         default:
                             break;
                     }
@@ -127,7 +136,7 @@ public class AttackEventListener implements Listener {
                 double damage = levelDamage + damageByEntityEvent.getDamage();
                 msgUtils.sendDebugMsgToConsole("&b远程伤害参数：&a[&c"+damage+"&a]"+" &a基础伤害："+"&b[&c"+ levelDamage +"&b]"+ "&e 等级附加伤害："+"&b[&c"+ levelDamage +"&b]");
                 damageByEntityEvent.setDamage(damage);
-                return;
+                //return;
             }
             //近战伤害
             if(subLore.contains(strengthAttribute.getMeleeDamage())){
@@ -138,7 +147,7 @@ public class AttackEventListener implements Listener {
                 damageByEntityEvent.setDamage(damage);
                 msgUtils.sendDebugMsgToConsole("&b近战伤害参数：&a[&c"+damage+"&a]"+" &a基础伤害："+"&b[&c"+ baseDamage +"&b]"+ "&e 等级附加伤害："+"&b[&c"+ levelDamage +"&b]");
                 damageByEntityEvent.setDamage(levelDamage + baseDamage);
-                return;
+                //return;
             }
         }
     }
@@ -193,8 +202,8 @@ public class AttackEventListener implements Listener {
         this.especialRemoteAttribute = strengthAttribute.getRemoteAttribute().entrySet().stream().filter(entry -> entry.getValue().isEnable()).
                 collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k1, k2) -> k2));
         this.enableDefenceList = new ArrayList<>(especialDefenceAttribute.values());
-        this.enableMeleeList = new ArrayList<>(especialDefenceAttribute.values());
-        this.enableRemoteList = new ArrayList<>(especialDefenceAttribute.values());
+        this.enableMeleeList = new ArrayList<>(especialMeleeAttribute.values());
+        this.enableRemoteList = new ArrayList<>(especialRemoteAttribute.values());
     }
 
     public void reloadConfig() {

@@ -222,7 +222,7 @@ public class YamlLoadUtils{
         try {
             ESSENTIALS_CONFIG.load(file);
         } catch (InvalidConfigurationException e) {
-            MSG_UTILS.sendToConsole(BaseData.PLUGIN_PREFIX, "&c错误");
+            MSG_UTILS.sendToConsole(BaseData.PLUGIN_PREFIX, "&c错误,Io读取失败");
         }
         return ESSENTIALS_CONFIG.getConfigurationSection(sectionAddress);
     }

@@ -12,42 +12,42 @@ strength-attribute:
     # 近战类型允许的特殊附魔
     melee:
       bloodSuck: {
-        tag: 'bloodSuck'
+        tag: 'bloodSuck',
         name: '&a[&c生命偷取&a]',
         enable: true,
       }
       absoluteDamage: {
-        tag: 'absoluteDamage'
+        tag: 'absoluteDamage',
         name: '&a[&6绝对伤害&a]',
-        enable: true
+        enable: false
       }
       # 给持有玩家赋予力量2属性，持续时间五秒，手握就一直持续
       powerBlessing: {
-        tag: 'powerBlessing'
+        tag: 'powerBlessing',
         name: '&a[&b力量祝福&a]',
-        enable: true
+        enable: false
       }
     remote:
       bloodSuck: {
-        tag: 'bloodSuck'
+        tag: 'bloodSuck',
         name: '&a[&c生命偷取&a]',
         enable: true
       }
       absoluteDamage: {
-        tag: 'absoluteDamage'
+        tag: 'absoluteDamage',
         name: '&a[&6穿甲伤害&a]',
-        enable: true
+        enable: false
       }
     defence:
       protectBlessing: {
-        tag: 'protectBlessing'
+        tag: 'protectBlessing',
         name: '&a[&b保护祝福&a]',
-        enable: true
+        enable: false
       }
       slowReply: {
-        tag: 'slowReply'
+        tag: 'slowReply',
         name: '&a[&6缓慢恢复&a]',
-        enable: true
+        enable: false
       }
   attribute:
     # 基础属性
