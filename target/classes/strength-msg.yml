@@ -1,0 +1,12 @@
+strength-msg:
+  # 通知
+  notify:
+    #成功时通知
+    success: '强化成功'
+    #失败时通知
+    fail: '强化失败'
+  broadcast:
+    success: '&2恭喜%player%将他的装备强化到%level%级'
+    safe: '&5很遗憾，%player%在将他的装备强化到%level%级的时候强化炉发生了爆炸，好在装备保护强化券保护了装备没有被摧毁！'
+    fail: '&4很遗憾，%player%在将他的装备强化到%level%级的时候强化炉发生了爆炸，装备被摧毁了！'
+    maxLevel: '&e只见强化器中一抹金光闪烁，%player%在将他的装备强化到了%level%级！真是让人惊叹！'
