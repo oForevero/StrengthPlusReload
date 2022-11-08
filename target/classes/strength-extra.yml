@@ -1,0 +1,15 @@
+strength-extra:
+  # 伤害参数
+  damage:
+    # 单手剑伤害强化倍率
+    sword: 1.5
+    # 弓箭伤害强化倍率
+    bow: 1.5
+    # 弩箭伤害强化倍率
+    crossbow: 1.2
+  # 防御参数
+  defence:
+    # 一级护甲带来的伤害减免
+    armorDefence: 0.5
+    # 最小造成伤害
+    minDamage: 1

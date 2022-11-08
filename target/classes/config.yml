@@ -1,0 +1,9 @@
+strengthPlus:
+  pluginName: '&e[&b&lStrengthPlus&e]'
+  # 是否允许调试模式
+  debug: true
+  # 是否允许强化menu（目前不支持指令强化，请无视）
+  enableMenu: true
+
+
+
