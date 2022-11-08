@@ -1,6 +1,7 @@
 package top.mccat;
 
 import com.sun.istack.internal.NotNull;
+import com.sun.istack.internal.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -14,7 +15,6 @@ import top.mccat.pojo.BaseData;
 import top.mccat.pojo.bean.StrengthStone;
 import top.mccat.utils.MsgUtils;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 

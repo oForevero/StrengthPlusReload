@@ -254,7 +254,7 @@ public class StrengthUi implements Listener {
                 return;
             }
             //铁砧维修声音
-            player.playSound(player, Sound.BLOCK_ANVIL_USE,1F,0F);
+            player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE,1F,0F);
             //            循环开始和闪烁次数
             int i = 45;
             int time = 0;
@@ -272,12 +272,12 @@ public class StrengthUi implements Listener {
             boolean result = strengthService.strengthItemInUi(strengthItem, player, strength);
             if(result){
                 //成功声音
-                player.playSound(player, Sound.ENTITY_PLAYER_LEVELUP,1F,0F);
+                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP,1F,0F);
                 //发射烟花
                 //firework.setFireworkMeta(fireworkMeta);
             }else {
                 //失败声音，需要进行变更
-                player.playSound(player, Sound.BLOCK_LAVA_EXTINGUISH,1F,0F);
+                player.playSound(player.getLocation(), Sound.BLOCK_LAVA_EXTINGUISH,1F,0F);
             }
             while(time < 6){
                 try {

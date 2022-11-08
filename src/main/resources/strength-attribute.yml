@@ -3,7 +3,7 @@ strength-attribute:
   title: '&b[强化等级]:'
   # 强化lore分割线长度
   divider: '----------------'
-  # 强化lore等级标识（单一等级标签）
+  # 强化lore等级标识（未使用）
   levelIcon: '✡'
   # 每几个等级标识一换行
   nextLineCount: 10
@@ -11,11 +11,13 @@ strength-attribute:
   especialAttribute:
     # 近战类型允许的特殊附魔
     melee:
+      # 支持吸血属性
       bloodSuck: {
         tag: 'bloodSuck',
         name: '&a[&c生命偷取&a]',
         enable: true,
       }
+      # false的所有属性均暂未支持进行使用
       absoluteDamage: {
         tag: 'absoluteDamage',
         name: '&a[&6绝对伤害&a]',

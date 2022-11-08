@@ -4,7 +4,7 @@ author: raven
 # 插件版本
 version: 2.1.0-Alpha
 # api版本
-api-version: 1.18
+api-version: 1.16
 
 #softdepend:
 commands:
