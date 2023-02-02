@@ -182,6 +182,7 @@ strength.admin 管理员权限，用于给强化石，重载插件配置
 ### 操作详情：
 <img src="https://attachment.mcbbs.net/data/myattachment/forum/202210/02/200952kd8a2kkk572b6yzm.png">
 左边附魔台对应强化武器，篝火对应强化石（最多两种），强化信息下对应强化券（即配置文件中的extraStone配置），最后，点击水晶进行强化，结果为黄色玻璃闪烁且播放等级提升声音为强化成功，反之为失败。
+
 ### 指令详情：
 - /sp menu 或 /qh menu 进入强化菜单
 - /sp help 进入指令帮助界面
