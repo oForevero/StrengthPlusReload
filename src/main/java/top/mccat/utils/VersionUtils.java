@@ -122,7 +122,9 @@ public class VersionUtils {
         if (glassPane != null) {
             return glassPane;
         }
-        return getMaterialSafe("GLASS");
+        Material glass = getMaterialSafe("GLASS");
+        // 如果GLASS也为null（不太可能），返回STONE作为最终备用
+        return glass != null ? glass : Material.STONE;
     }
     
     /**
