@@ -26,7 +26,7 @@ public class VersionUtils {
             minor = parts.length > 1 ? Integer.parseInt(parts[1]) : 0;
         } catch (Exception e) {
             // 版本解析失败，使用默认值
-            MsgUtils.newInstance().sendToConsole("&c[StrengthPlus] 版本解析失败，使用默认兼容模式 (1.13)");
+            // 不在静态块中输出日志以避免循环依赖
         }
         MAJOR_VERSION = major;
         MINOR_VERSION = minor;
@@ -98,16 +98,49 @@ public class VersionUtils {
     
     /**
      * 获取染色玻璃板材质
+     * 注意：1.12.2及以下版本使用STAINED_GLASS_PANE需要配合data value设置颜色
+     * 此方法在1.12.2及以下版本仅返回基础材质，颜色将默认为白色
+     * 建议在1.12.2服务器上使用此插件时升级到1.13+以获得完整的颜色支持
      * @param color 颜色名称（如WHITE, LIME, YELLOW, PINK, BLACK）
      * @return Material对象
      */
     public static Material getStainedGlassPane(String color) {
         // 1.13+ 使用 COLOR_STAINED_GLASS_PANE
-        // 1.12.2及以下使用 STAINED_GLASS_PANE (带数据值)
         if (isVersionAtLeast(1, 13)) {
             return getMaterialSafe(color + "_STAINED_GLASS_PANE");
-        } else {
-            return getMaterialSafe("STAINED_GLASS_PANE");
+        }
+        // 1.12.2及以下使用 STAINED_GLASS_PANE (需要data value设置颜色，这里仅返回材质)
+        return getMaterialSafe("STAINED_GLASS_PANE");
+    }
+    
+    /**
+     * 获取染色玻璃板的data value（仅1.12.2及以下版本需要）
+     * @param color 颜色名称
+     * @return data value (0-15)，如果是1.13+版本返回0
+     */
+    public static short getStainedGlassPaneData(String color) {
+        if (isVersionAtLeast(1, 13)) {
+            return 0; // 1.13+不需要data value
+        }
+        // 1.12.2及以下的颜色data值
+        switch (color.toUpperCase()) {
+            case "WHITE": return 0;
+            case "ORANGE": return 1;
+            case "MAGENTA": return 2;
+            case "LIGHT_BLUE": return 3;
+            case "YELLOW": return 4;
+            case "LIME": return 5;
+            case "PINK": return 6;
+            case "GRAY": return 7;
+            case "LIGHT_GRAY": return 8;
+            case "CYAN": return 9;
+            case "PURPLE": return 10;
+            case "BLUE": return 11;
+            case "BROWN": return 12;
+            case "GREEN": return 13;
+            case "RED": return 14;
+            case "BLACK": return 15;
+            default: return 0;
         }
     }
     

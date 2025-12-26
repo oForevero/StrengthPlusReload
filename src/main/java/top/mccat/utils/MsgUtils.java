@@ -2,16 +2,9 @@ package top.mccat.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
-import top.mccat.enums.BaseDir;
 import top.mccat.perm.StrengthPlusPermission;
-import top.mccat.pojo.BaseData;
 import top.mccat.pojo.config.BaseConfig;
-
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Optional;
 
 /**
  * @author Raven

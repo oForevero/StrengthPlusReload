@@ -79,11 +79,12 @@ public class StrengthUi implements Listener {
         Material pinkGlass = VersionUtils.getStainedGlassPane("PINK");
         Material blackGlass = VersionUtils.getStainedGlassPane("BLACK");
         
-        progressBar = new ItemStack(whiteGlass != null ? whiteGlass : Material.GLASS);
-        runningBar = new ItemStack(limeGlass != null ? limeGlass : Material.GLASS);
-        successProgressBar = new ItemStack(yellowGlass != null ? yellowGlass : Material.GLASS);
-        failProgressBar = new ItemStack(pinkGlass != null ? pinkGlass : Material.GLASS);
-        strengthDividerGlass = new ItemStack(blackGlass != null ? blackGlass : Material.GLASS);
+        // 创建ItemStack，对于1.12.2及以下版本需要使用data value设置颜色
+        progressBar = createColoredGlassPane(whiteGlass, "WHITE");
+        runningBar = createColoredGlassPane(limeGlass, "LIME");
+        successProgressBar = createColoredGlassPane(yellowGlass, "YELLOW");
+        failProgressBar = createColoredGlassPane(pinkGlass, "PINK");
+        strengthDividerGlass = createColoredGlassPane(blackGlass, "BLACK");
         
         // 其他材质
         enchantingTable = new ItemStack(getEnchantingTableMaterial());
@@ -405,6 +406,26 @@ public class StrengthUi implements Listener {
         }
         int emptyIndex = playerInventory.firstEmpty();
         playerInventory.setItem(emptyIndex,stack);
+    }
+    
+    /**
+     * 创建带颜色的玻璃板（版本兼容）
+     * @param material 玻璃板材质
+     * @param color 颜色名称
+     * @return ItemStack
+     */
+    @SuppressWarnings("deprecation")
+    private ItemStack createColoredGlassPane(Material material, String color) {
+        if (material == null) {
+            return new ItemStack(Material.GLASS);
+        }
+        // 对于1.13+版本，材质本身已经包含颜色信息
+        if (VersionUtils.isVersionAtLeast(1, 13)) {
+            return new ItemStack(material);
+        }
+        // 对于1.12.2及以下版本，需要使用data value设置颜色
+        short dataValue = VersionUtils.getStainedGlassPaneData(color);
+        return new ItemStack(material, 1, dataValue);
     }
     
     /**
