@@ -417,6 +417,11 @@ public class StrengthUi implements Listener {
     @SuppressWarnings("deprecation")
     private ItemStack createColoredGlassPane(Material material, String color) {
         if (material == null) {
+            // 尝试获取普通玻璃板作为备用
+            Material glassPaneMat = VersionUtils.getMaterialSafe("GLASS_PANE");
+            if (glassPaneMat != null) {
+                return new ItemStack(glassPaneMat);
+            }
             return new ItemStack(Material.GLASS);
         }
         // 对于1.13+版本，材质本身已经包含颜色信息

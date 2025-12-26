@@ -102,15 +102,27 @@ public class VersionUtils {
      * 此方法在1.12.2及以下版本仅返回基础材质，颜色将默认为白色
      * 建议在1.12.2服务器上使用此插件时升级到1.13+以获得完整的颜色支持
      * @param color 颜色名称（如WHITE, LIME, YELLOW, PINK, BLACK）
-     * @return Material对象
+     * @return Material对象，如果找不到合适的材质则返回GLASS
      */
     public static Material getStainedGlassPane(String color) {
         // 1.13+ 使用 COLOR_STAINED_GLASS_PANE
         if (isVersionAtLeast(1, 13)) {
-            return getMaterialSafe(color + "_STAINED_GLASS_PANE");
+            Material mat = getMaterialSafe(color + "_STAINED_GLASS_PANE");
+            if (mat != null) {
+                return mat;
+            }
         }
-        // 1.12.2及以下使用 STAINED_GLASS_PANE (需要data value设置颜色，这里仅返回材质)
-        return getMaterialSafe("STAINED_GLASS_PANE");
+        // 1.12.2及以下使用 STAINED_GLASS_PANE (需要data value设置颜色)
+        Material stainedGlass = getMaterialSafe("STAINED_GLASS_PANE");
+        if (stainedGlass != null) {
+            return stainedGlass;
+        }
+        // 最终备用方案
+        Material glassPane = getMaterialSafe("GLASS_PANE");
+        if (glassPane != null) {
+            return glassPane;
+        }
+        return getMaterialSafe("GLASS");
     }
     
     /**

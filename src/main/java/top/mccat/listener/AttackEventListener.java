@@ -3,7 +3,6 @@ package top.mccat.listener;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -75,9 +74,6 @@ public class AttackEventListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void remoteDamageEvent(EntityShootBowEvent event) {
         if(!(event.getEntity() instanceof Player)){
-            return;
-        }
-        if(!(event.getProjectile() instanceof Projectile)){
             return;
         }
         Player shooter = (Player) event.getEntity();
