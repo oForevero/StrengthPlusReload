@@ -97,22 +97,25 @@ public class LoreGenerateUtils {
                         return i;
                     }
                 }
+                break;
             case 1:
                 for(int i = 0; i < strengthAttributes.size(); i++) {
                     if(strengthAttributes.get(i).contains(strengthAttribute.getMeleeDamage())){
                         return i;
                     }
                 }
-
+                break;
             case 2:
                 for(int i = 0; i < strengthAttributes.size(); i++) {
                     if(strengthAttributes.get(i).contains(strengthAttribute.getRemotelyDamage())){
                         return i;
                     }
                 }
+                break;
             default:
-                return -1;
+                break;
         }
+        return -1;
     }
 
     /**

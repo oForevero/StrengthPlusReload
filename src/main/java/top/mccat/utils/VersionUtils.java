@@ -16,11 +16,20 @@ public class VersionUtils {
     private static final int MINOR_VERSION;
     
     static {
-        String version = Bukkit.getBukkitVersion();
-        // 格式类似: 1.16.5-R0.1-SNAPSHOT 或 1.12.2-R0.1-SNAPSHOT
-        String[] parts = version.split("-")[0].split("\\.");
-        MAJOR_VERSION = Integer.parseInt(parts[0]);
-        MINOR_VERSION = parts.length > 1 ? Integer.parseInt(parts[1]) : 0;
+        int major = 1;
+        int minor = 13; // 默认假设为1.13版本
+        try {
+            String version = Bukkit.getBukkitVersion();
+            // 格式类似: 1.16.5-R0.1-SNAPSHOT 或 1.12.2-R0.1-SNAPSHOT
+            String[] parts = version.split("-")[0].split("\\.");
+            major = Integer.parseInt(parts[0]);
+            minor = parts.length > 1 ? Integer.parseInt(parts[1]) : 0;
+        } catch (Exception e) {
+            // 版本解析失败，使用默认值
+            MsgUtils.newInstance().sendToConsole("&c[StrengthPlus] 版本解析失败，使用默认兼容模式 (1.13)");
+        }
+        MAJOR_VERSION = major;
+        MINOR_VERSION = minor;
     }
     
     /**
