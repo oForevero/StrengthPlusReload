@@ -188,6 +188,8 @@ public class VersionUtils {
         if (fire != null) {
             return fire;
         }
-        return getMaterialSafe("FURNACE");
+        Material furnace = getMaterialSafe("FURNACE");
+        // 如果FURNACE也为null，返回STONE作为最终备用
+        return furnace != null ? furnace : Material.STONE;
     }
 }

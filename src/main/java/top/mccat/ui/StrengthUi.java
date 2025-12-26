@@ -422,7 +422,9 @@ public class StrengthUi implements Listener {
             if (glassPaneMat != null) {
                 return new ItemStack(glassPaneMat);
             }
-            return new ItemStack(Material.GLASS);
+            // 最终备用 - GLASS或STONE
+            Material glassMat = VersionUtils.getMaterialSafe("GLASS");
+            return new ItemStack(glassMat != null ? glassMat : Material.STONE);
         }
         // 对于1.13+版本，材质本身已经包含颜色信息
         if (VersionUtils.isVersionAtLeast(1, 13)) {

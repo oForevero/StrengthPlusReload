@@ -94,6 +94,8 @@ public class AttackEventListener implements Listener {
         
         if(damager.getType() == EntityType.ARROW){
             // 处理弓箭伤害
+            // 使用remove()而非get()来防止内存泄漏
+            // 注意：对于穿透箭矢只有第一次命中会有强化效果
             UUID projectileId = damager.getUniqueId();
             BowShotInfo shotInfo = bowShotMap.remove(projectileId);
             if(shotInfo == null){
