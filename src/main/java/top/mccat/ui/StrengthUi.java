@@ -24,6 +24,7 @@ import top.mccat.service.impl.StrengthServiceImpl;
 import top.mccat.utils.ColorParseUtils;
 import top.mccat.utils.ItemStackCheckUtils;
 import top.mccat.utils.MsgUtils;
+import top.mccat.utils.VersionUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -37,19 +38,19 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 public class StrengthUi implements Listener {
     private StrengthMenu strengthMenu;
-    private final ItemStack displayBar = new ItemStack(Material.PAINTING);
-    private final ItemStack air = new ItemStack(Material.AIR);
-    private final ItemStack progressBar = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
-    private final ItemStack runningBar = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
-    private final ItemStack successProgressBar = new ItemStack(Material.YELLOW_STAINED_GLASS_PANE);
-    private final ItemStack failProgressBar = new ItemStack(Material.PINK_STAINED_GLASS_PANE);
-    private final ItemStack strengthDividerGlass = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
-    private final ItemStack enchantingTable = new ItemStack(Material.ENCHANTING_TABLE);
-    private final ItemStack ironBars = new ItemStack(Material.IRON_BARS);
-    private final ItemStack fire = new ItemStack(Material.SOUL_CAMPFIRE);
-    private final ItemStack startButton = new ItemStack(Material.END_CRYSTAL);
-    private final ItemStack extraTable = new ItemStack(Material.END_PORTAL_FRAME);
-    private final ItemStack closeMenu = new ItemStack(Material.BARRIER);
+    private final ItemStack displayBar;
+    private final ItemStack air;
+    private final ItemStack progressBar;
+    private final ItemStack runningBar;
+    private final ItemStack successProgressBar;
+    private final ItemStack failProgressBar;
+    private final ItemStack strengthDividerGlass;
+    private final ItemStack enchantingTable;
+    private final ItemStack ironBars;
+    private final ItemStack fire;
+    private final ItemStack startButton;
+    private final ItemStack extraTable;
+    private final ItemStack closeMenu;
     private final JavaPlugin plugin;
     private StrengthService strengthService;
     private MsgUtils msgUtils;
@@ -60,18 +61,48 @@ public class StrengthUi implements Listener {
     /**
      * 整体ui数组，特殊按钮等用air itemstack填充，强化物品放置栏用
      */
-    private final ItemStack[] STRENGTH_UI = new ItemStack[]
-            {strengthDividerGlass,strengthDividerGlass,strengthDividerGlass,ironBars,ironBars,ironBars,ironBars,strengthDividerGlass,displayBar,
-                    strengthDividerGlass,strengthDividerGlass,strengthDividerGlass,ironBars,air,air,ironBars,strengthDividerGlass,strengthDividerGlass,
-                    strengthDividerGlass,air,strengthDividerGlass,ironBars,ironBars,ironBars,ironBars,strengthDividerGlass,air,
-                    strengthDividerGlass,enchantingTable,strengthDividerGlass,ironBars,fire,fire,ironBars,strengthDividerGlass,extraTable,
-                    strengthDividerGlass,strengthDividerGlass,strengthDividerGlass,strengthDividerGlass,strengthDividerGlass,strengthDividerGlass,strengthDividerGlass,startButton,strengthDividerGlass,
-                    progressBar,progressBar,progressBar,progressBar,progressBar,progressBar,progressBar,strengthDividerGlass,closeMenu};
+    private final ItemStack[] STRENGTH_UI;
 
     public StrengthUi(JavaPlugin plugin) {
         this.plugin = plugin;
         msgUtils = MsgUtils.newInstance();
         strengthMenu = StrengthMenu.newInstance();
+        
+        // 初始化版本兼容的材质
+        displayBar = new ItemStack(Material.PAINTING);
+        air = new ItemStack(Material.AIR);
+        
+        // 染色玻璃板 - 使用版本兼容方法
+        Material whiteGlass = VersionUtils.getStainedGlassPane("WHITE");
+        Material limeGlass = VersionUtils.getStainedGlassPane("LIME");
+        Material yellowGlass = VersionUtils.getStainedGlassPane("YELLOW");
+        Material pinkGlass = VersionUtils.getStainedGlassPane("PINK");
+        Material blackGlass = VersionUtils.getStainedGlassPane("BLACK");
+        
+        // 创建ItemStack，对于1.12.2及以下版本需要使用data value设置颜色
+        progressBar = createColoredGlassPane(whiteGlass, "WHITE");
+        runningBar = createColoredGlassPane(limeGlass, "LIME");
+        successProgressBar = createColoredGlassPane(yellowGlass, "YELLOW");
+        failProgressBar = createColoredGlassPane(pinkGlass, "PINK");
+        strengthDividerGlass = createColoredGlassPane(blackGlass, "BLACK");
+        
+        // 其他材质
+        enchantingTable = new ItemStack(getEnchantingTableMaterial());
+        ironBars = new ItemStack(getIronBarsMaterial());
+        fire = new ItemStack(VersionUtils.getFireMaterial());
+        startButton = new ItemStack(getEndCrystalMaterial());
+        extraTable = new ItemStack(getEndPortalFrameMaterial());
+        closeMenu = new ItemStack(getBarrierMaterial());
+        
+        // 初始化UI数组
+        STRENGTH_UI = new ItemStack[]
+                {strengthDividerGlass,strengthDividerGlass,strengthDividerGlass,ironBars,ironBars,ironBars,ironBars,strengthDividerGlass,displayBar,
+                        strengthDividerGlass,strengthDividerGlass,strengthDividerGlass,ironBars,air,air,ironBars,strengthDividerGlass,strengthDividerGlass,
+                        strengthDividerGlass,air,strengthDividerGlass,ironBars,ironBars,ironBars,ironBars,strengthDividerGlass,air,
+                        strengthDividerGlass,enchantingTable,strengthDividerGlass,ironBars,fire,fire,ironBars,strengthDividerGlass,extraTable,
+                        strengthDividerGlass,strengthDividerGlass,strengthDividerGlass,strengthDividerGlass,strengthDividerGlass,strengthDividerGlass,strengthDividerGlass,startButton,strengthDividerGlass,
+                        progressBar,progressBar,progressBar,progressBar,progressBar,progressBar,progressBar,strengthDividerGlass,closeMenu};
+        
         //赋值强化券Map代码
         Map<String, StrengthStone> stoneMap = StrengthStone.newInstance();
         Set<String> keys = stoneMap.keySet();
@@ -211,7 +242,7 @@ public class StrengthUi implements Listener {
         InventoryView inventoryView = closeEvent.getView();
         Inventory inventory = closeEvent.getInventory();
 //        如果不为54格或者不为箱子则直接return
-        String parseTitle = strengthMenu.getMenuTitle();
+        String parseTitle = ColorParseUtils.parseColorStr(strengthMenu.getMenuTitle());
         if(!inventoryView.getTitle().equals(parseTitle) || inventory.getSize() != inventorySize){
             return;
         }
@@ -375,6 +406,89 @@ public class StrengthUi implements Listener {
         }
         int emptyIndex = playerInventory.firstEmpty();
         playerInventory.setItem(emptyIndex,stack);
+    }
+    
+    /**
+     * 创建带颜色的玻璃板（版本兼容）
+     * @param material 玻璃板材质
+     * @param color 颜色名称
+     * @return ItemStack
+     */
+    @SuppressWarnings("deprecation")
+    private ItemStack createColoredGlassPane(Material material, String color) {
+        if (material == null) {
+            // 尝试获取普通玻璃板作为备用
+            Material glassPaneMat = VersionUtils.getMaterialSafe("GLASS_PANE");
+            if (glassPaneMat != null) {
+                return new ItemStack(glassPaneMat);
+            }
+            // 最终备用 - GLASS或STONE
+            Material glassMat = VersionUtils.getMaterialSafe("GLASS");
+            return new ItemStack(glassMat != null ? glassMat : Material.STONE);
+        }
+        // 对于1.13+版本，材质本身已经包含颜色信息
+        if (VersionUtils.isVersionAtLeast(1, 13)) {
+            return new ItemStack(material);
+        }
+        // 对于1.12.2及以下版本，需要使用data value设置颜色
+        short dataValue = VersionUtils.getStainedGlassPaneData(color);
+        return new ItemStack(material, 1, dataValue);
+    }
+    
+    /**
+     * 获取附魔台材质（版本兼容）
+     * @return Material
+     */
+    private Material getEnchantingTableMaterial() {
+        Material mat = VersionUtils.getMaterialSafe("ENCHANTING_TABLE");
+        if (mat != null) return mat;
+        mat = VersionUtils.getMaterialSafe("ENCHANTMENT_TABLE");
+        if (mat != null) return mat;
+        return Material.BOOKSHELF;
+    }
+    
+    /**
+     * 获取铁栏杆材质（版本兼容）
+     * @return Material
+     */
+    private Material getIronBarsMaterial() {
+        Material mat = VersionUtils.getMaterialSafe("IRON_BARS");
+        if (mat != null) return mat;
+        return Material.IRON_BLOCK;
+    }
+    
+    /**
+     * 获取末影水晶材质（版本兼容）
+     * @return Material
+     */
+    private Material getEndCrystalMaterial() {
+        Material mat = VersionUtils.getMaterialSafe("END_CRYSTAL");
+        if (mat != null) return mat;
+        mat = VersionUtils.getMaterialSafe("ENDER_CRYSTAL");
+        if (mat != null) return mat;
+        return Material.DIAMOND;
+    }
+    
+    /**
+     * 获取末地传送门框架材质（版本兼容）
+     * @return Material
+     */
+    private Material getEndPortalFrameMaterial() {
+        Material mat = VersionUtils.getMaterialSafe("END_PORTAL_FRAME");
+        if (mat != null) return mat;
+        mat = VersionUtils.getMaterialSafe("ENDER_PORTAL_FRAME");
+        if (mat != null) return mat;
+        return Material.OBSIDIAN;
+    }
+    
+    /**
+     * 获取屏障材质（版本兼容）
+     * @return Material
+     */
+    private Material getBarrierMaterial() {
+        Material mat = VersionUtils.getMaterialSafe("BARRIER");
+        if (mat != null) return mat;
+        return Material.BEDROCK;
     }
 
     public void reloadConfig(){

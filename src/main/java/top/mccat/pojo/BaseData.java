@@ -1,5 +1,7 @@
 package top.mccat.pojo;
 
+import java.io.File;
+
 /**
  * @author Kevin Li
  * @date 2022/9/7
@@ -7,7 +9,7 @@ package top.mccat.pojo;
  */
 public class BaseData {
     public static final String PLUGIN_PREFIX = "&a[&bStrengthPlus&a]";
-    public static final String BASE_DIR = "plugins\\StrengthPlus";
+    public static final String BASE_DIR = "plugins" + File.separator + "StrengthPlus";
     public static final String SP_COMMAND = "sp";
     public static final String QH_COMMAND = "qh";
     public static final String DEFAULT_COMMAND = "strengthPlus";

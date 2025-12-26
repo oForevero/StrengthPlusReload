@@ -20,6 +20,8 @@ import top.mccat.utils.RomaMathGenerateUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -38,8 +40,25 @@ public class AttackEventListener implements Listener {
     private List<Attribute> enableMeleeList;
     private List<Attribute> enableRemoteList;
     private List<Attribute> enableDefenceList;
-    private ItemStack bowWeapon = null;
-    private Player bowDamager = null;
+    
+    /**
+     * 用于跟踪弓箭射击的线程安全Map，key为箭矢UUID，value为射击信息
+     */
+    private final Map<UUID, BowShotInfo> bowShotMap = new ConcurrentHashMap<>();
+    
+    /**
+     * 弓箭射击信息类
+     */
+    private static class BowShotInfo {
+        final Player shooter;
+        final ItemStack bow;
+        
+        BowShotInfo(Player shooter, ItemStack bow) {
+            this.shooter = shooter;
+            this.bow = bow;
+        }
+    }
+    
     public AttackEventListener() {
         romaMathGenerateUtil = new RomaMathGenerateUtil();
         msgUtils = MsgUtils.newInstance();
@@ -50,41 +69,50 @@ public class AttackEventListener implements Listener {
 
     /**
      * 获取弓监听
-     * @param event
+     * @param event 弓箭射击事件
      */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void remoteDamageEvent(EntityShootBowEvent event) {
         if(!(event.getEntity() instanceof Player)){
             return;
         }
-        bowDamager = (Player) event.getEntity();
-        bowWeapon = event.getBow();
+        Player shooter = (Player) event.getEntity();
+        ItemStack bow = event.getBow();
+        UUID projectileId = event.getProjectile().getUniqueId();
+        bowShotMap.put(projectileId, new BowShotInfo(shooter, bow));
     }
 
     /**
      * 玩家伤害监听事件
      * @param damageByEntityEvent 近战事件
-     * @return
      */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void damageEvent(EntityDamageByEntityEvent damageByEntityEvent){
         Entity damager = damageByEntityEvent.getDamager();
         Player player = null;
         ItemStack weapon = null;
+        
         if(damager.getType() == EntityType.ARROW){
-            if(bowWeapon == null){
+            // 处理弓箭伤害
+            // 使用remove()而非get()来防止内存泄漏
+            // 注意：对于穿透箭矢只有第一次命中会有强化效果
+            UUID projectileId = damager.getUniqueId();
+            BowShotInfo shotInfo = bowShotMap.remove(projectileId);
+            if(shotInfo == null){
                 return;
             }
-            player = bowDamager;
-            weapon = bowWeapon;
-        }else if(!(damager instanceof Player)){
-            return;
-        }
-        if(bowWeapon == null && bowDamager == null){
+            player = shotInfo.shooter;
+            weapon = shotInfo.bow;
+        } else if(damager instanceof Player){
+            // 处理近战伤害
             player = (Player) damager;
             weapon = player.getInventory().getItemInMainHand();
+        } else {
+            return;
         }
-        if(!ItemStackCheckUtils.notNullAndAir(weapon)){
+        
+        // 确保player和weapon不为空
+        if(player == null || !ItemStackCheckUtils.notNullAndAir(weapon)){
             return;
         }
         ItemMeta itemMeta = weapon.getItemMeta();
