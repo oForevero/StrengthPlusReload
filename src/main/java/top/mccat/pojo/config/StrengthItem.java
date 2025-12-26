@@ -1,6 +1,5 @@
 package top.mccat.pojo.config;
 
-import javafx.scene.paint.Material;
 import top.mccat.anno.Value;
 import top.mccat.pojo.BaseData;
 import top.mccat.pojo.dao.YamlConfigObject;

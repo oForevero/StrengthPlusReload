@@ -1,6 +1,5 @@
 package top.mccat.utils;
 
-import com.sun.istack.internal.NotNull;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -35,7 +34,7 @@ public class MsgUtils {
      * @param msg 消息
      * @param player 玩家对象
      */
-    public void sendToPlayer(@NotNull String msg, @NotNull Player player){
+    public void sendToPlayer(String msg, Player player){
         player.sendMessage(ColorParseUtils.parseColorStr(baseConfig.getPluginName()+msg));
     }
 
@@ -44,7 +43,7 @@ public class MsgUtils {
      * @param msg 消息
      * @param player 玩家对象
      */
-    public void sendToPlayer(@NotNull String title, @NotNull String msg, @NotNull Player player){
+    public void sendToPlayer(String title, String msg, Player player){
         player.sendMessage(ColorParseUtils.parseColorStr(title+msg));
     }
 
@@ -53,7 +52,7 @@ public class MsgUtils {
      * @param msg 消息
      * @param admin 管理员
      */
-    public void sendToAdmin(@NotNull String msg, @NotNull Player admin){
+    public void sendToAdmin(String msg, Player admin){
         if(!admin.isOp() || !admin.hasPermission(StrengthPlusPermission.ADMIN_PERMISSIONS)){
             return;
         }
@@ -67,7 +66,7 @@ public class MsgUtils {
      * 发送到控制台
      * @param msg 消息
      */
-    public void sendToConsole(@NotNull String msg){
+    public void sendToConsole(String msg){
         commandSender.sendMessage(ColorParseUtils.parseColorStr(baseConfig.getPluginName()+msg));
     }
 
@@ -76,7 +75,7 @@ public class MsgUtils {
      * @param title 标题
      * @param msg 消息
      */
-    public void sendToConsole(@NotNull String title, @NotNull String msg){
+    public void sendToConsole(String title, String msg){
         commandSender.sendMessage(ColorParseUtils.parseColorStr(title+msg));
     }
 
@@ -84,7 +83,7 @@ public class MsgUtils {
      * 向管理员发送信息
      * @param msg 消息
      */
-    public void sendDebugMsgToConsole(@NotNull String msg){
+    public void sendDebugMsgToConsole(String msg){
         if(!baseConfig.isDebug()){
             return;
         }
@@ -95,7 +94,7 @@ public class MsgUtils {
      * 发送广播信息
      * @param msg 消息
      */
-    public void sendToBroadcast(@NotNull String msg){
+    public void sendToBroadcast(String msg){
         Bukkit.broadcastMessage(ColorParseUtils.parseColorStr(baseConfig.getPluginName()+msg));
     }
 
@@ -104,7 +103,7 @@ public class MsgUtils {
      * @param title 标题
      * @param msg 消息
      */
-    public void sendToBroadcast(@NotNull String title, @NotNull String msg){
+    public void sendToBroadcast(String title, String msg){
         Bukkit.broadcastMessage(ColorParseUtils.parseColorStr(title+msg));
     }
 

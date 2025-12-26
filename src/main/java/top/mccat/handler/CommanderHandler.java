@@ -1,6 +1,5 @@
 package top.mccat.handler;
 
-import com.sun.istack.internal.NotNull;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -51,7 +50,7 @@ public class CommanderHandler implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String mainCommand, @NotNull String[] commandArray) {
+    public boolean onCommand(CommandSender commandSender, Command command, String mainCommand, String[] commandArray) {
         if(commandSender instanceof Player){
             Player player = (Player)commandSender;
             switch(commandArray[0]){

@@ -1,7 +1,5 @@
 package top.mccat;
 
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -74,8 +72,7 @@ public class StrengthPlus extends JavaPlugin {
     private final String[] subUserCommands = {"menu", "help"};
     private final String[] subCommands = {"menu", "help", "givestone", "reload"};
     @Override
-    public @Nullable
-    List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 3){
             return getServer().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
         }

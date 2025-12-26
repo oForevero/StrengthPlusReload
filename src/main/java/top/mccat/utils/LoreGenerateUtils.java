@@ -1,6 +1,5 @@
 package top.mccat.utils;
 
-import com.sun.istack.internal.NotNull;
 import top.mccat.enums.StrengthType;
 import top.mccat.pojo.config.StrengthAttribute;
 import top.mccat.pojo.list.LoreList;
@@ -26,7 +25,7 @@ public class LoreGenerateUtils {
      * @param dataList 强化 lore list
      * @return 强化lore
      */
-    private LoreList<String> generateStrengthLore(@NotNull List<String> dataList){
+    private LoreList<String> generateStrengthLore(List<String> dataList){
         loreList.add(strengthAttribute.getTitle());
         loreList.add(strengthAttribute.getDivider());
         loreList.addAll(dataList);

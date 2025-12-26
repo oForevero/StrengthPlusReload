@@ -21,11 +21,11 @@
     </repositories>
 
     <dependencies>
-        <!--Spigot-API-->
+        <!--Spigot-API - 使用1.13版本以支持更多MC版本-->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.16.5-R0.1-SNAPSHOT</version>
+            <version>1.13.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

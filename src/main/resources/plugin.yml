@@ -3,8 +3,9 @@ main: top.mccat.StrengthPlus
 author: raven
 # 插件版本
 version: 2.1.0-Alpha
-# api版本
-api-version: 1.16
+# api版本 - 设置为1.13以支持更多版本
+# 注意：1.13是扁平化更新后的最低版本，低于此版本需要手动适配材质名
+api-version: 1.13
 
 #softdepend:
 commands:
